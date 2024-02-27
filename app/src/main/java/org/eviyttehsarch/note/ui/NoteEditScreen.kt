@@ -1,5 +1,6 @@
 package org.eviyttehsarch.note.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,8 @@ import org.eviyttehsarch.note.data.NoteEntity
 @Composable
 fun NoteEditScreen(
     note: NoteEntity,
-    onDone: (NoteEntity) -> Unit
+    onDone: (NoteEntity) -> Unit,
+    onBack: () -> Unit
 ) {
     var title by rememberSaveable { mutableStateOf(note.title) }
     var content by rememberSaveable { mutableStateOf(note.content) }
@@ -70,4 +72,5 @@ fun NoteEditScreen(
             )
         }
     }
+    BackHandler(onBack = onBack)
 }

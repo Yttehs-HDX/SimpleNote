@@ -29,11 +29,13 @@ interface AppDestination {
         @Composable
         fun Content(
             note: NoteEntity,
-            onDone: (NoteEntity) -> Unit
+            onDone: (NoteEntity) -> Unit,
+            onBack: () -> Unit
         ) {
             NoteEditScreen(
                 note = note,
-                onDone = onDone
+                onDone = onDone,
+                onBack = onBack
             )
         }
     }

@@ -223,7 +223,7 @@ fun MainApp(viewModel: AppViewModel) {
                                     viewModel.insertOrUpdate(targetNote)
                                     val route = AppDestination.NotesColumnDestination.route
                                     targetDestination = route
-                                    navController.navigateSingleTopTo(route)
+                                    navController.navigateBack()
                                 }
                             ) {
                                 Icon(
@@ -288,8 +288,11 @@ fun MainApp(viewModel: AppViewModel) {
                 ) {
                     AppDestination.NoteEditDestination.Content(
                         note = targetNote,
-                        onDone = {
-                            targetNote = it
+                        onDone = { targetNote = it },
+                        onBack = {
+                            val route = AppDestination.NotesColumnDestination.route
+                            targetDestination = route
+                            navController.navigateBack()
                         }
                     )
                 }
