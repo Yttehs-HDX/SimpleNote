@@ -1,14 +1,6 @@
 package org.eviyttehsarch.note
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.ui.NoteEditScreen
 import org.eviyttehsarch.note.ui.NotesColumn
@@ -24,19 +16,10 @@ interface AppDestination {
             noteList: List<NoteEntity>,
             onClick: (NoteEntity) -> Unit
         ) {
-            val isRefreshing by remember { mutableStateOf(false) }
-            val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
-            SwipeRefresh(state = swipeRefreshState, onRefresh = { /*TODO:refresh function*/ }) {
-                Box (
-                    modifier = Modifier
-                        .fillMaxSize()
-                ){
-                    NotesColumn(
-                        noteList = noteList,
-                        onClick = onClick
-                    )
-                }
-            }
+            NotesColumn(
+                noteList = noteList,
+                onClick = onClick
+            )
         }
     }
 

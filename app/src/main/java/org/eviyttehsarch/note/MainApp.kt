@@ -11,9 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -23,10 +27,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.navigateBack
 import org.eviyttehsarch.note.extra.navigateSingleTopTo
@@ -54,21 +56,28 @@ fun MainApp(viewModel: AppViewModel) {
             .fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        SystemBar(
-            statusBarColor = MaterialTheme.colorScheme.background,
-            navigationColor = MaterialTheme.colorScheme.inverseOnSurface
-        )
-
-        val noteList by viewModel.noteListFlow.collectAsState(initial = emptyList())
         val navController = rememberNavController()
         var targetDestination by remember { mutableStateOf(AppDestination.NotesColumnDestination.route) }
+        val noteList by viewModel.noteListFlow.collectAsState(initial = emptyList())
         var targetNote by remember { mutableStateOf(NoteEntity()) }
+        var isSearchState by remember { mutableStateOf(false) }
+        var searchedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
         Scaffold(
             floatingActionButton = {
                 AnimatedVisibility(
                     visible = targetDestination == AppDestination.NotesColumnDestination.route,
-                    enter = fadeIn(animationSpec = tween(durationMillis = 300, easing = LinearEasing)),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 300, easing = LinearEasing))
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearEasing
+                        )
+                    ),
+                    exit = fadeOut(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearEasing
+                        )
+                    )
                 ) {
                     FloatingActionButton(
                         onClick = {
@@ -87,19 +96,40 @@ fun MainApp(viewModel: AppViewModel) {
                 }
             },
             topBar = {
-                var isExpanded by remember { mutableStateOf(false) }
-                var searchText by remember { mutableStateOf("") }
                 AnimatedVisibility(
                     visible = targetDestination == AppDestination.NotesColumnDestination.route,
-                    enter = fadeIn(animationSpec = tween(durationMillis = 300, easing = LinearEasing)),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 300, easing = LinearEasing))
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearEasing
+                        )
+                    ),
+                    exit = fadeOut(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearEasing
+                        )
+                    )
                 ) {
                     TopAppBar(
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
                         title = {
                             AnimatedVisibility(
-                                visible = (!isExpanded),
-                                enter = fadeIn(animationSpec = tween(durationMillis = 300, easing = LinearEasing)),
-                                exit = fadeOut(animationSpec = tween(durationMillis = 30, easing = LinearEasing))
+                                visible = (!isSearchState),
+                                enter = fadeIn(
+                                    animationSpec = tween(
+                                        durationMillis = 300,
+                                        easing = LinearEasing
+                                    )
+                                ),
+                                exit = fadeOut(
+                                    animationSpec = tween(
+                                        durationMillis = 30,
+                                        easing = LinearEasing
+                                    )
+                                )
                             ) {
                                 Text(
                                     fontSize = 30.sp,
@@ -110,33 +140,42 @@ fun MainApp(viewModel: AppViewModel) {
                             }
                         },
                         actions = {
+                            var searchText by remember { mutableStateOf("") }
                             Row {
                                 AnimatedVisibility(
-                                    visible = isExpanded,
-                                    exit = fadeOut(animationSpec = tween(durationMillis = 300, easing = LinearEasing))
+                                    visible = isSearchState,
+                                    exit = fadeOut(
+                                        animationSpec = tween(
+                                            durationMillis = 300,
+                                            easing = LinearEasing
+                                        )
+                                    )
                                 ) {
                                     OutlinedTextField(
                                         value = searchText,
-                                        onValueChange = { searchText = it },
+                                        onValueChange = { tempString ->
+                                            searchText = tempString
+                                            searchedNotes =
+                                                noteList.filter { searchText.lowercase() in it.title.lowercase() }
+                                        },
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(8.dp),
-                                        placeholder = { Text(text = "Search...") },
-                                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                                            focusedBorderColor = Color.Gray,
-                                            unfocusedBorderColor = Color.LightGray
-                                        ),
+                                        placeholder = { Text(text = "Searching...") },
                                         trailingIcon = {
-                                            IconButton(onClick = { isExpanded = false }) {
-                                                Icon(Icons.Default.Search, contentDescription = "Search")
+                                            IconButton(onClick = { isSearchState = false }) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Clear,
+                                                    contentDescription = "Clear"
+                                                )
                                             }
                                         }
                                     )
                                 }
-                                if (!isExpanded) {
-                                    IconButton(onClick = { isExpanded = true }) {
+                                if (!isSearchState) {
+                                    IconButton(onClick = { isSearchState = true }) {
                                         Icon(
-                                            Icons.Default.Search,
+                                            imageVector = Icons.Default.Search,
                                             contentDescription = "Search"
                                         )
                                     }
@@ -147,8 +186,18 @@ fun MainApp(viewModel: AppViewModel) {
                 }
                 AnimatedVisibility(
                     visible = targetDestination == AppDestination.NoteEditDestination.route,
-                    enter = fadeIn(animationSpec = tween(durationMillis = 300, easing = LinearEasing)),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 300, easing = LinearEasing))
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearEasing
+                        )
+                    ),
+                    exit = fadeOut(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearEasing
+                        )
+                    )
                 ) {
                     TopAppBar(
                         title = {
@@ -165,7 +214,7 @@ fun MainApp(viewModel: AppViewModel) {
                                     viewModel.insertOrUpdate(targetNote)
                                     val route = AppDestination.NotesColumnDestination.route
                                     targetDestination = route
-                                    navController.navigateBack()
+                                    navController.navigateSingleTopTo(route)
                                 }
                             ) {
                                 Icon(
@@ -175,16 +224,33 @@ fun MainApp(viewModel: AppViewModel) {
                             }
                         },
                         actions = {
+                            var showDialog by remember { mutableStateOf(false) }
                             IconButton(
                                 onClick = {
+                                    viewModel.insertOrUpdate(targetNote)
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Filled.Check,
+                                    contentDescription = "Save"
+                                )
+                            }
+                            IconButton(
+                                onClick = { showDialog = true }
+                            ) {
+                                Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                            }
+                            DeleteWaringAlertDialog(
+                                showDialog = showDialog,
+                                onConfirm = {
+                                    showDialog = false
                                     viewModel.deleteNote(targetNote)
                                     val route = AppDestination.NotesColumnDestination.route
                                     targetDestination = route
                                     navController.navigateBack()
-                                }
-                            ) {
-                                Icon(Icons.Filled.Delete, contentDescription = "Delete")
-                            }
+                                },
+                                onDismiss = { showDialog = false }
+                            )
                         }
                     )
                 }
@@ -199,7 +265,7 @@ fun MainApp(viewModel: AppViewModel) {
                     route = AppDestination.NotesColumnDestination.route
                 ) {
                     AppDestination.NotesColumnDestination.Content(
-                        noteList = noteList,
+                        noteList = if (isSearchState) searchedNotes else noteList,
                         onClick = { note ->
                             val route = AppDestination.NoteEditDestination.route
                             targetDestination = route
@@ -213,7 +279,9 @@ fun MainApp(viewModel: AppViewModel) {
                 ) {
                     AppDestination.NoteEditDestination.Content(
                         note = targetNote,
-                        onDone = { targetNote = it }
+                        onDone = {
+                            targetNote = it
+                        }
                     )
                 }
             }
@@ -221,17 +289,31 @@ fun MainApp(viewModel: AppViewModel) {
     }
 }
 
-@Suppress("DEPRECATION")
 @Composable
-fun SystemBar(
-    statusBarColor: Color,
-    navigationColor: Color
+fun DeleteWaringAlertDialog(
+    showDialog: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
 ) {
-    val systemUiController = rememberSystemUiController()
-    LaunchedEffect(Unit) {
-        systemUiController.apply {
-            setStatusBarColor(statusBarColor)
-            setNavigationBarColor(navigationColor)
-        }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
+                Text(text = "Delete this note!")
+            },
+            text = {
+                Text(text = "It will lose forever!")
+            },
+            confirmButton = {
+                Button(onClick = onConfirm) {
+                    Text("Sure")
+                }
+            },
+            dismissButton = {
+                Button(onClick = onDismiss) {
+                    Text("Wait")
+                }
+            }
+        )
     }
 }
