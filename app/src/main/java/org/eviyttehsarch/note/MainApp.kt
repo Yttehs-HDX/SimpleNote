@@ -99,7 +99,6 @@ fun MainApp(viewModel: AppViewModel) {
                             navigationIcon = {
                                 IconButton(
                                     onClick = {
-                                        viewModel.insertOrUpdate(targetNote)
                                         val route = AppDestination.NotesColumnDestination.route
                                         targetDestination = route
                                         navController.navigateBack()
@@ -151,7 +150,10 @@ fun MainApp(viewModel: AppViewModel) {
                 ) {
                     AppDestination.NoteEditDestination.Content(
                         note = targetNote,
-                        onDone = { targetNote = it }
+                        onDone = {
+                            targetNote = it
+                            viewModel.insertOrUpdate(targetNote)
+                        }
                     )
                 }
             }
