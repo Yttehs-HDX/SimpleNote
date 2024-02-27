@@ -374,7 +374,7 @@ fun DeleteWaringAlertDialog(
             },
             confirmButton = {
                 Button(onClick = onConfirm) {
-                    Text("Sure")
+                    Text("Confirm")
                 }
             },
             dismissButton = {
