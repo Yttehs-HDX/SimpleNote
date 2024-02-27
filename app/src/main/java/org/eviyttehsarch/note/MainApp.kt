@@ -1,8 +1,13 @@
 package org.eviyttehsarch.note
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,10 +22,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,62 +38,110 @@ import org.eviyttehsarch.note.extra.navigateSingleTopTo
 @Composable
 fun MainApp(viewModel: AppViewModel) {
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+        val noteList by viewModel.noteListFlow.collectAsState(initial = emptyList())
         val navController = rememberNavController()
         var targetDestination by remember { mutableStateOf(AppDestination.NotesColumnDestination.route) }
-        var targetId by rememberSaveable { mutableLongStateOf(-1) }
-        var useMainTopBar by remember { mutableStateOf(true) }
+        var targetNote by remember { mutableStateOf(NoteEntity()) }
         Scaffold(
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        viewModel.insertOrUpdate(NoteEntity(-1, "", "", System.currentTimeMillis()))
-                    }
+                AnimatedVisibility(
+                    visible = targetDestination == AppDestination.NotesColumnDestination.route,
+                    enter = fadeIn(),
+                    exit = fadeOut()
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        tint = Color.Black,
-                        contentDescription = null
-                    )
+                    FloatingActionButton(
+                        onClick = {
+                            targetNote = NoteEntity()
+                            val route = AppDestination.NoteEditDestination.route
+                            targetDestination = route
+                            navController.navigateSingleTopTo(route)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            tint = Color.Black,
+                            contentDescription = "Edit"
+                        )
+                    }
                 }
             },
             topBar = {
-                if (useMainTopBar) {
-                    TopAppBar(
-                        title = {
-                            Text(text = "Writer")
-                        },
-                        actions = {
-                            // Search
-                            IconButton(
-                                onClick = {
-                                    // TODO
+                when (targetDestination) {
+                    AppDestination.NotesColumnDestination.route -> {
+                        TopAppBar(
+                            title = {
+                                Text(text = "Writer")
+                            },
+                            actions = {
+                                // Search
+                                IconButton(
+                                    onClick = {
+                                        // TODO()
+                                    }
+                                ) {
+                                    Icon(Icons.Default.Search, contentDescription = "Search")
                                 }
-                            ) {
-                                Icon(Icons.Default.Search, contentDescription = "Search")
                             }
-                        }
-                    )
+                        )
+                    }
+
+                    AppDestination.NoteEditDestination.route -> {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    text = "Edit Note"
+                                )
+                            },
+                            navigationIcon = {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.insertOrUpdate(targetNote)
+                                        val route = AppDestination.NotesColumnDestination.route
+                                        targetDestination = route
+                                        navController.navigateBack()
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Back"
+                                    )
+                                }
+                            },
+                            actions = {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.deleteNote(targetNote)
+                                        val route = AppDestination.NotesColumnDestination.route
+                                        targetDestination = route
+                                        navController.navigateBack()
+                                    }
+                                ) {
+                                    Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                                }
+                            }
+                        )
+                    }
                 }
             }
         ) { paddingValues ->
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
-                startDestination = targetDestination
+                startDestination = AppDestination.NotesColumnDestination.route
             ) {
                 composable(
                     route = AppDestination.NotesColumnDestination.route
                 ) {
                     AppDestination.NotesColumnDestination.Content(
-                        viewModel = viewModel,
-                        onClick = { id ->
+                        noteList = noteList,
+                        onClick = { note ->
                             val route = AppDestination.NoteEditDestination.route
-                            useMainTopBar = false
                             targetDestination = route
-                            targetId = id
+                            targetNote = note
                             navController.navigateSingleTopTo(route)
                         }
                     )
@@ -98,25 +149,9 @@ fun MainApp(viewModel: AppViewModel) {
                 composable(
                     route = AppDestination.NoteEditDestination.route
                 ) {
-                    val targetNote by viewModel.getNoteById(targetId).collectAsState(
-                        initial = NoteEntity(
-                            targetId,
-                            "",
-                            "",
-                            System.currentTimeMillis()
-                        )
-                    )
                     AppDestination.NoteEditDestination.Content(
                         note = targetNote,
-                        onSaveNote = { note ->
-                            viewModel.insertOrUpdate(note)
-                        },
-                        onBack = {
-                            val route = AppDestination.NotesColumnDestination.route
-                            useMainTopBar = true
-                            targetDestination = route
-                            navController.navigateBack()
-                        }
+                        onDone = { targetNote = it }
                     )
                 }
             }

@@ -13,11 +13,11 @@ interface AppDestination {
 
         @Composable
         fun Content(
-            viewModel: AppViewModel,
-            onClick: (Long) -> Unit
+            noteList: List<NoteEntity>,
+            onClick: (NoteEntity) -> Unit
         ) {
             NotesColumn(
-                viewModel = viewModel,
+                noteList = noteList,
                 onClick = onClick
             )
         }
@@ -29,13 +29,11 @@ interface AppDestination {
         @Composable
         fun Content(
             note: NoteEntity,
-            onSaveNote: (NoteEntity) -> Unit,
-            onBack: () -> Unit
+            onDone: (NoteEntity) -> Unit
         ) {
             NoteEditScreen(
                 note = note,
-                onSaveNote = onSaveNote,
-                onBack = onBack
+                onDone = onDone
             )
         }
     }

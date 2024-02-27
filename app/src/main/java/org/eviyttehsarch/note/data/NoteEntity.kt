@@ -6,11 +6,11 @@ import androidx.room.PrimaryKey
 @Entity
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = 0,
 
-    val title: String,
+    val title: String = "",
 
-    val content: String,
+    val content: String = "",
 
-    val modifiedDate: Long
+    val modifiedDate: Long = System.currentTimeMillis()
 )
