@@ -42,15 +42,12 @@ fun NoteEditScreen(
         ) {
             OutlinedTextField(
                 value = title,
+                maxLines = 2,
                 onValueChange = {
                     title = it
                     onDone(NoteEntity(note.id, title, content, modifiedDate))
                 },
-                label = {
-                    Text(
-                        text = "Title"
-                    )
-                },
+                placeholder = { Text(text = "Title") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
@@ -62,11 +59,7 @@ fun NoteEditScreen(
                     content = it
                     onDone(NoteEntity(note.id, title, content, modifiedDate))
                 },
-                label = {
-                    Text(
-                        text = "Content"
-                    )
-                },
+                placeholder = { Text(text = "Content") },
                 modifier = Modifier.fillMaxSize(),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(

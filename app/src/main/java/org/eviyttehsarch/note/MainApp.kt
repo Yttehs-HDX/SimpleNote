@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
@@ -158,12 +158,18 @@ fun MainApp(viewModel: AppViewModel) {
                                             searchedNotes =
                                                 noteList.filter { searchText.lowercase() in it.title.lowercase() }
                                         },
+                                        maxLines = 1,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(8.dp),
                                         placeholder = { Text(text = "Searching...") },
                                         trailingIcon = {
-                                            IconButton(onClick = { isSearchState = false }) {
+                                            IconButton(
+                                                onClick = {
+                                                    isSearchState = false
+                                                    searchText = ""
+                                                }
+                                            ) {
                                                 Icon(
                                                     imageVector = Icons.Default.Clear,
                                                     contentDescription = "Clear"
@@ -200,6 +206,9 @@ fun MainApp(viewModel: AppViewModel) {
                     )
                 ) {
                     TopAppBar(
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
                         title = {
                             Text(
                                 fontSize = 30.sp,
@@ -231,7 +240,7 @@ fun MainApp(viewModel: AppViewModel) {
                                 }
                             ) {
                                 Icon(
-                                    Icons.Filled.Check,
+                                    Icons.Filled.Done,
                                     contentDescription = "Save"
                                 )
                             }
@@ -311,7 +320,7 @@ fun DeleteWaringAlertDialog(
             },
             dismissButton = {
                 Button(onClick = onDismiss) {
-                    Text("Wait")
+                    Text("Cancel")
                 }
             }
         )
