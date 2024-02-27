@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -187,6 +188,18 @@ fun MainApp(viewModel: AppViewModel) {
                                     }
                                 }
                             }
+                            IconButton(
+                                onClick = {
+                                    val route = AppDestination.SettingsDestination.route
+                                    targetDestination = route
+                                    navController.navigateSingleTopTo(route)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Settings"
+                                )
+                            }
                         }
                     )
                 }
@@ -263,6 +276,49 @@ fun MainApp(viewModel: AppViewModel) {
                         }
                     )
                 }
+                AnimatedVisibility(
+                    visible = targetDestination == AppDestination.SettingsDestination.route,
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearEasing
+                        )
+                    ),
+                    exit = fadeOut(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearEasing
+                        )
+                    )
+                ) {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        title = {
+                            Text(
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Cursive,
+                                text = "Settings"
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = {
+                                    val route = AppDestination.NotesColumnDestination.route
+                                    targetDestination = route
+                                    navController.navigateBack()
+                                }
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Back"
+                                )
+                            }
+                        }
+                    )
+                }
             }
         ) { paddingValues ->
             NavHost(
@@ -270,9 +326,7 @@ fun MainApp(viewModel: AppViewModel) {
                 navController = navController,
                 startDestination = AppDestination.NotesColumnDestination.route
             ) {
-                composable(
-                    route = AppDestination.NotesColumnDestination.route
-                ) {
+                composable(route = AppDestination.NotesColumnDestination.route) {
                     AppDestination.NotesColumnDestination.Content(
                         noteList = if (isSearchState) searchedNotes else noteList,
                         onClick = { note ->
@@ -283,18 +337,20 @@ fun MainApp(viewModel: AppViewModel) {
                         }
                     )
                 }
-                composable(
-                    route = AppDestination.NoteEditDestination.route
-                ) {
+                composable(route = AppDestination.NoteEditDestination.route) {
                     AppDestination.NoteEditDestination.Content(
                         note = targetNote,
                         onDone = { targetNote = it },
                         onBack = {
+                            viewModel.insertOrUpdate(targetNote)
                             val route = AppDestination.NotesColumnDestination.route
                             targetDestination = route
                             navController.navigateBack()
                         }
                     )
+                }
+                composable(route = AppDestination.SettingsDestination.route) {
+                    AppDestination.SettingsDestination.Content()
                 }
             }
         }

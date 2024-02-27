@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.ui.NoteEditScreen
 import org.eviyttehsarch.note.ui.NotesColumn
+import org.eviyttehsarch.note.ui.SettingsScreen
 
 interface AppDestination {
     val route: String
@@ -37,6 +38,15 @@ interface AppDestination {
                 onDone = onDone,
                 onBack = onBack
             )
+        }
+    }
+
+    data object SettingsDestination : AppDestination {
+        override val route = "Settings"
+
+        @Composable
+        fun Content() {
+            SettingsScreen()
         }
     }
 }
