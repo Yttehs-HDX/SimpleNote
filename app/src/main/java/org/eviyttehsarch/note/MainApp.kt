@@ -136,7 +136,7 @@ fun MainApp(viewModel: AppViewModel) {
                                     fontSize = 30.sp,
                                     fontWeight = FontWeight.Bold,
                                     fontFamily = FontFamily.Cursive,
-                                    text = "Writer"
+                                    text = "Simple Note"
                                 )
                             }
                         },
