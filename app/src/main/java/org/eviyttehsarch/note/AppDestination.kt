@@ -45,8 +45,8 @@ interface AppDestination {
         override val route = "Settings"
 
         @Composable
-        fun Content() {
-            SettingsScreen()
+        fun Content(onBack: () -> Unit) {
+            SettingsScreen(onBack = onBack)
         }
     }
 }
