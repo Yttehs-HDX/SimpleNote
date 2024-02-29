@@ -1,4 +1,4 @@
-package org.eviyttehsarch.note
+package org.eviyttehsarch.note.core
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -6,7 +6,7 @@ import android.content.Context
 import org.eviyttehsarch.note.data.AppDataContainer
 import org.eviyttehsarch.note.data.DataContainer
 
-class MainApplication : Application() {
+class SimpleNoteApplication : Application() {
     lateinit var container: DataContainer
 
     companion object {

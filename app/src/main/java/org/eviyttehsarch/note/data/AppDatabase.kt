@@ -3,7 +3,7 @@ package org.eviyttehsarch.note.data
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import org.eviyttehsarch.note.MainApplication
+import org.eviyttehsarch.note.core.SimpleNoteApplication
 
 @Database(entities = [NoteEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
@@ -16,7 +16,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun getDatabase() = if (Companion::Instance.isInitialized) Instance
         else synchronized(this) {
             Room.databaseBuilder(
-                MainApplication.Context,
+                SimpleNoteApplication.Context,
                 AppDatabase::class.java,
                 "writer_database"
             )

@@ -1,6 +1,8 @@
 package org.eviyttehsarch.note
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.ui.NoteEditScreen
 import org.eviyttehsarch.note.ui.NotesColumn
@@ -14,10 +16,13 @@ interface AppDestination {
 
         @Composable
         fun Content(
+            viewModel: SettingsViewModel,
             noteList: List<NoteEntity>,
             onClick: (NoteEntity) -> Unit
         ) {
+            val style by viewModel.style.collectAsState()
             NotesColumn(
+                style = style,
                 noteList = noteList,
                 onClick = onClick
             )
@@ -45,8 +50,14 @@ interface AppDestination {
         override val route = "Settings"
 
         @Composable
-        fun Content(onBack: () -> Unit) {
-            SettingsScreen(onBack = onBack)
+        fun Content(
+            viewModel: SettingsViewModel,
+            onBack: () -> Unit
+        ) {
+            SettingsScreen(
+                viewModel = viewModel,
+                onBack = onBack
+            )
         }
     }
 }

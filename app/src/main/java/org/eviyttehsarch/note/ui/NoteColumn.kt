@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.eviyttehsarch.note.SettingsItem
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.limitContent
 import java.util.Date
@@ -32,22 +35,37 @@ import java.util.Locale
 
 @Composable
 fun NotesColumn(
+    style: SettingsItem.Style.Value,
     noteList: List<NoteEntity>,
     onClick: (NoteEntity) -> Unit
 ) {
     if (noteList.isEmpty()) {
         EmptyNoteList()
     } else {
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Adaptive(200.dp),
-            verticalItemSpacing = 4.dp,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            items(noteList) { note ->
-                NoteCard(
-                    note = note,
-                    onClick = { onClick(note) }
-                )
+        when (style) {
+            SettingsItem.Style.Value.Vertical -> {
+                LazyColumn {
+                    items(noteList) { note ->
+                        NoteCard(
+                            note = note,
+                            onClick = { onClick(note) }
+                        )
+                    }
+                }
+            }
+            SettingsItem.Style.Value.StaggeredGrid -> {
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Adaptive(200.dp),
+                    verticalItemSpacing = 4.dp,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    items(noteList) { note ->
+                        NoteCard(
+                            note = note,
+                            onClick = { onClick(note) }
+                        )
+                    }
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package org.eviyttehsarch.note
+package org.eviyttehsarch.note.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -44,14 +44,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.eviyttehsarch.note.AppDestination
+import org.eviyttehsarch.note.MainViewModel
+import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.navigateBack
 import org.eviyttehsarch.note.extra.navigateSingleTopTo
-import org.eviyttehsarch.note.ui.DeleteWaringAlertDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainApp(viewModel: AppViewModel) {
+fun MainApp(
+    viewModel: MainViewModel,
+    settingsViewModel: SettingsViewModel
+) {
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -330,6 +335,7 @@ fun MainApp(viewModel: AppViewModel) {
             ) {
                 composable(route = AppDestination.NotesColumnDestination.route) {
                     AppDestination.NotesColumnDestination.Content(
+                        viewModel = settingsViewModel,
                         noteList = if (isSearchState) searchedNotes else noteList,
                         onClick = { note ->
                             val route = AppDestination.NoteEditDestination.route
@@ -353,8 +359,8 @@ fun MainApp(viewModel: AppViewModel) {
                 }
                 composable(route = AppDestination.SettingsDestination.route) {
                     AppDestination.SettingsDestination.Content(
+                        viewModel = settingsViewModel,
                         onBack = {
-                            viewModel.insertOrUpdate(targetNote)
                             val route = AppDestination.NotesColumnDestination.route
                             targetDestination = route
                             navController.navigateBack()

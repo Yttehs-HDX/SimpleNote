@@ -9,6 +9,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import org.eviyttehsarch.note.core.AppViewModelProvider
+import org.eviyttehsarch.note.ui.MainApp
 import org.eviyttehsarch.note.ui.theme.WriterTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,9 +20,8 @@ class MainActivity : ComponentActivity() {
             WriterTheme {
                 SystemBar()
                 MainApp(
-                    viewModel = viewModel(
-                        factory = AppViewModelProvider.Factory
-                    )
+                    settingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+                    viewModel = viewModel(factory = AppViewModelProvider.Factory)
                 )
             }
         }

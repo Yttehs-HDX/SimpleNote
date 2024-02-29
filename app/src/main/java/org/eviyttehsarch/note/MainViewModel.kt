@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import org.eviyttehsarch.note.data.AppDatabase
 import org.eviyttehsarch.note.data.NoteEntity
 
-class AppViewModel(database: AppDatabase) : ViewModel() {
+class MainViewModel(database: AppDatabase) : ViewModel() {
     private val noteDao = database.noteDao()
 
     val noteListFlow = getAllNotes()

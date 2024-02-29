@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -21,8 +22,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,91 +32,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.eviyttehsarch.note.SettingsItem
+import org.eviyttehsarch.note.SettingsViewModel
 
 @Composable
-fun SettingsScreen(onBack: () -> Unit) {
+fun SettingsScreen(
+    viewModel: SettingsViewModel,
+    onBack: () -> Unit
+) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
-        ArrangeMode()
-        FontSize()
-        SortMode()
+        StyleMode(viewModel = viewModel)
     }
     BackHandler(onBack = onBack)
 }
 
 @Composable
-fun ArrangeMode() {
-    var isChange by remember { mutableStateOf(false) }
-    val value = if (isChange){
-        "瀑布流"
-    }else{
-        "竖栏"
-    }
+fun StyleMode(viewModel: SettingsViewModel) {
+    val key = SettingsItem.Style.key
+    val value by viewModel.style.collectAsState()
     SettingsUnit(
-        key = "排列模式",
-        value = value,
+        key = key,
+        value = value.toString(),
         menuItemList = { onClose ->
             MenuItem(
-                text = "竖栏",
+                text = SettingsItem.Style.Value.Vertical.toString(),
                 onClick = {
+                    viewModel.saveStyleData(SettingsItem.Style.Value.Vertical)
                     onClose()
-                    isChange = false
                 }
             )
             MenuItem(
-                text = "瀑布流",
+                text = SettingsItem.Style.Value.StaggeredGrid.toString(),
                 onClick = {
+                    viewModel.saveStyleData(SettingsItem.Style.Value.StaggeredGrid)
                     onClose()
-                    isChange = true
-                }
-            )
-        }
-    )
-}
-
-
-@Composable
-fun FontSize() {
-    var fontSize by remember { mutableIntStateOf(10) }
-    val num = 10
-    SettingsUnit(
-        key = "字体大小",
-        value = fontSize.toString(),
-        menuItemList = {onClose ->
-            for (i in 0..20 step 2){
-                MenuItem(
-                    text = (num + i).toString(),
-                    onClick = {
-                        onClose()
-                        fontSize = num + i
-                    }
-                )
-            }
-        }
-    )
-}
-
-@Composable
-fun SortMode() {
-    var sortMode by remember { mutableStateOf("按时间顺序") }
-    SettingsUnit(
-        key = "排序方式",
-        value = sortMode,
-        menuItemList = {onClose ->
-            MenuItem(
-                text = "按时间顺序",
-                onClick = {
-                    onClose()
-                    sortMode = "按时间顺序"
-                }
-            )
-            MenuItem(
-                text = "按标题顺序",
-                onClick = {
-                    onClose()
-                    sortMode = "按标题顺序"
                 }
             )
         }
@@ -189,13 +142,14 @@ fun MenuItem(
 ) {
     Box(
         modifier = Modifier
+            .fillMaxWidth()
             .clickable {
                 onClick()
             },
     ) {
         Text(
             modifier = Modifier
-                .align(Alignment.Center)
+                .align(Alignment.CenterStart)
                 .padding(16.dp),
             text = text
         )
