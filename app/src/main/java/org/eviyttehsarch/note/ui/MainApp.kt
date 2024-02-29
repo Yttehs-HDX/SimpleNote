@@ -6,11 +6,9 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -40,17 +38,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -58,10 +49,8 @@ import org.eviyttehsarch.note.AppDestination
 import org.eviyttehsarch.note.MainViewModel
 import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.data.NoteEntity
-import org.eviyttehsarch.note.extra.ToastUtil.showToast
 import org.eviyttehsarch.note.extra.navigateBack
 import org.eviyttehsarch.note.extra.navigateSingleTopTo
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +58,6 @@ fun MainApp(
     viewModel: MainViewModel,
     settingsViewModel: SettingsViewModel
 ) {
-    val size = remember { mutableStateOf(Size.Zero) }
     Surface(
         modifier = Modifier
             .onGloballyPositioned { coordinates ->
@@ -84,6 +72,7 @@ fun MainApp(
         var targetNote by remember { mutableStateOf(NoteEntity()) }
         var isSearchState by remember { mutableStateOf(false) }
         var searchedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
+        var isNewNote by remember { mutableStateOf(false) }
         var offset by remember { mutableStateOf(Offset.Zero) }
         Scaffold(
             floatingActionButton = {
@@ -128,6 +117,7 @@ fun MainApp(
                                 )
                             },
                         onClick = {
+                            isNewNote = true
                             targetNote = NoteEntity(id = (noteList.size + 1).toLong())
                             val route = AppDestination.NoteEditDestination.route
                             targetDestination = route
@@ -279,7 +269,12 @@ fun MainApp(
                         navigationIcon = {
                             IconButton(
                                 onClick = {
-                                    if (targetNote.title != "" && targetNote.content != "") {
+                                    if (isNewNote) {
+                                        if (targetNote.title != "" || targetNote.content != "") {
+                                            viewModel.insertOrUpdate(targetNote)
+                                        }
+                                        isNewNote = false
+                                    } else {
                                         viewModel.insertOrUpdate(targetNote)
                                     }
                                     val route = AppDestination.NotesColumnDestination.route
@@ -298,8 +293,9 @@ fun MainApp(
                             IconButton(
                                 onClick = {
                                     viewModel.insertOrUpdate(targetNote)
-                                    val id = targetNote.id
-                                    Log.v("TAG", "id = $id")
+                                    if (isNewNote) {
+                                        isNewNote = false
+                                    }
                                 }
                             ) {
                                 Icon(
@@ -393,7 +389,14 @@ fun MainApp(
                         note = targetNote,
                         onDone = { targetNote = it },
                         onBack = {
-                            viewModel.insertOrUpdate(targetNote)
+                            if (isNewNote) {
+                                if (targetNote.title != "" || targetNote.content != "") {
+                                    viewModel.insertOrUpdate(targetNote)
+                                }
+                                isNewNote = false
+                            } else {
+                                viewModel.insertOrUpdate(targetNote)
+                            }
                             val route = AppDestination.NotesColumnDestination.route
                             targetDestination = route
                             navController.navigateBack()
