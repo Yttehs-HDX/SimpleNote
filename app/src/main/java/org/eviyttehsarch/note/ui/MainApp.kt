@@ -41,13 +41,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -66,8 +69,12 @@ fun MainApp(
     viewModel: MainViewModel,
     settingsViewModel: SettingsViewModel
 ) {
+    val size = remember { mutableStateOf(Size.Zero) }
     Surface(
         modifier = Modifier
+            .onGloballyPositioned { coordinates ->
+                size.value = coordinates.size.toSize()
+            }
             .fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
@@ -113,6 +120,10 @@ fun MainApp(
                                     },
                                     onDrag = { _: PointerInputChange, dragAmount: Offset ->
                                         offset += dragAmount
+                                        offset = Offset(
+                                            x = offset.x.coerceIn(-size.value.width+200f, 0f),
+                                            y = offset.y.coerceIn(-size.value.height+200f, 0f),
+                                        )
                                     }
                                 )
                             },
