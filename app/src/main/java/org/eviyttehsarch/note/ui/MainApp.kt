@@ -1,5 +1,6 @@
 package org.eviyttehsarch.note.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -87,7 +88,7 @@ fun MainApp(
                 ) {
                     FloatingActionButton(
                         onClick = {
-                            targetNote = NoteEntity()
+                            targetNote = NoteEntity(id = (noteList.size + 1).toLong())
                             val route = AppDestination.NoteEditDestination.route
                             targetDestination = route
                             navController.navigateSingleTopTo(route)
@@ -257,6 +258,8 @@ fun MainApp(
                             IconButton(
                                 onClick = {
                                     viewModel.insertOrUpdate(targetNote)
+                                    val id = targetNote.id
+                                    Log.v("TAG", "id = $id")
                                 }
                             ) {
                                 Icon(
