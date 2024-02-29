@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
                 SystemBar()
                 MainApp(
                     settingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
-                    viewModel = viewModel(factory = AppViewModelProvider.Factory)
+                    mainViewModel = viewModel(factory = AppViewModelProvider.Factory)
                 )
             }
         }

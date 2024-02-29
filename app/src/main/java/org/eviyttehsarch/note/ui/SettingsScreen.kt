@@ -58,16 +58,16 @@ fun StyleMode(viewModel: SettingsViewModel) {
         value = value.toString(),
         menuItemList = { onClose ->
             MenuItem(
-                text = SettingsItem.Style.Value.Vertical.toString(),
+                text = SettingsItem.Style.StyleValue.Vertical.toString(),
                 onClick = {
-                    viewModel.saveStyleData(SettingsItem.Style.Value.Vertical)
+                    viewModel.saveStyleData(SettingsItem.Style.StyleValue.Vertical)
                     onClose()
                 }
             )
             MenuItem(
-                text = SettingsItem.Style.Value.StaggeredGrid.toString(),
+                text = SettingsItem.Style.StyleValue.StaggeredGrid.toString(),
                 onClick = {
-                    viewModel.saveStyleData(SettingsItem.Style.Value.StaggeredGrid)
+                    viewModel.saveStyleData(SettingsItem.Style.StyleValue.StaggeredGrid)
                     onClose()
                 }
             )

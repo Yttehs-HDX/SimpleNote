@@ -54,10 +54,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.eviyttehsarch.note.AppDestination
+import org.eviyttehsarch.note.LocationValue
 import org.eviyttehsarch.note.MainViewModel
 import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.data.NoteEntity
-import org.eviyttehsarch.note.extra.ToastUtil.showToast
 import org.eviyttehsarch.note.extra.navigateBack
 import org.eviyttehsarch.note.extra.navigateSingleTopTo
 import kotlin.math.roundToInt
@@ -65,7 +65,7 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainApp(
-    viewModel: MainViewModel,
+    mainViewModel: MainViewModel,
     settingsViewModel: SettingsViewModel
 ) {
     val size = remember { mutableStateOf(Size.Zero) }
@@ -79,43 +79,45 @@ fun MainApp(
     ) {
         val navController = rememberNavController()
         var targetDestination by remember { mutableStateOf(AppDestination.NotesColumnDestination.route) }
-        val noteList by viewModel.noteListFlow.collectAsState(initial = emptyList())
+        val noteList by mainViewModel.noteListFlow.collectAsState(initial = emptyList())
         var targetNote by remember { mutableStateOf(NoteEntity()) }
         var isSearchState by remember { mutableStateOf(false) }
         var searchedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
         var isNewNote by remember { mutableStateOf(false) }
-        var offset by remember { mutableStateOf(Offset.Zero) }
+        val location by settingsViewModel.location.collectAsState()
+        var offset by remember { mutableStateOf(Offset(location.first, location.second)) }
         Scaffold(
             floatingActionButton = {
                 AnimatedVisibility(
-                    visible = targetDestination == AppDestination.NotesColumnDestination.route,
+                    visible = targetDestination == AppDestination.NotesColumnDestination.route
+                            && !isSearchState,
                     enter = fadeIn(
                         animationSpec = tween(
-                            durationMillis = 300,
+                            durationMillis = 100,
                             easing = LinearEasing
                         )
                     ),
                     exit = fadeOut(
                         animationSpec = tween(
-                            durationMillis = 300,
+                            durationMillis = 100,
                             easing = LinearEasing
                         )
                     )
                 ) {
                     FloatingActionButton(
                         modifier = Modifier
-                            .offset {
-                                IntOffset(offset.x.roundToInt(), offset.y.roundToInt())
-                            }
+                            .offset { IntOffset(offset.x.roundToInt(), offset.y.roundToInt()) }
                             .pointerInput(Unit) {
                                 detectDragGesturesAfterLongPress(
                                     onDragEnd = {
-                                        showToast("onDragEnd")
+                                        settingsViewModel.saveLocationData(
+                                            LocationValue(offset.x, offset.y)
+                                        )
                                     },
                                     onDrag = { _: PointerInputChange, dragAmount: Offset ->
                                         offset += dragAmount
                                         offset = Offset(
-                                            x = offset.x.coerceIn(-size.value.width + 250f, 0f),
+                                            x = offset.x.coerceIn(-size.value.width + 230f, 0f),
                                             y = offset.y.coerceIn(-size.value.height + 200f, 0f),
                                         )
                                     }
@@ -276,11 +278,11 @@ fun MainApp(
                                 onClick = {
                                     if (isNewNote) {
                                         if (targetNote.title != "" || targetNote.content != "") {
-                                            viewModel.insertOrUpdate(targetNote)
+                                            mainViewModel.insertOrUpdate(targetNote)
                                         }
                                         isNewNote = false
                                     } else {
-                                        viewModel.insertOrUpdate(targetNote)
+                                        mainViewModel.insertOrUpdate(targetNote)
                                     }
                                     val route = AppDestination.NotesColumnDestination.route
                                     targetDestination = route
@@ -297,7 +299,7 @@ fun MainApp(
                             var showDialog by remember { mutableStateOf(false) }
                             IconButton(
                                 onClick = {
-                                    viewModel.insertOrUpdate(targetNote)
+                                    mainViewModel.insertOrUpdate(targetNote)
                                     if (isNewNote) {
                                         isNewNote = false
                                     }
@@ -317,7 +319,7 @@ fun MainApp(
                                 showDialog = showDialog,
                                 onConfirm = {
                                     showDialog = false
-                                    viewModel.deleteNote(targetNote)
+                                    mainViewModel.deleteNote(targetNote)
                                     val route = AppDestination.NotesColumnDestination.route
                                     targetDestination = route
                                     navController.navigateBack()
@@ -396,11 +398,11 @@ fun MainApp(
                         onBack = {
                             if (isNewNote) {
                                 if (targetNote.title != "" || targetNote.content != "") {
-                                    viewModel.insertOrUpdate(targetNote)
+                                    mainViewModel.insertOrUpdate(targetNote)
                                 }
                                 isNewNote = false
                             } else {
-                                viewModel.insertOrUpdate(targetNote)
+                                mainViewModel.insertOrUpdate(targetNote)
                             }
                             val route = AppDestination.NotesColumnDestination.route
                             targetDestination = route

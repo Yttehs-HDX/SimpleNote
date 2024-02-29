@@ -13,21 +13,41 @@ class SettingsViewModel : ViewModel() {
     private val sharedPreferences = SimpleNoteApplication.Context.getSharedPreferences("settings_shared_pref", Context.MODE_PRIVATE)
 
     private val _style = MutableStateFlow(SettingsItem.Style.defaultValue)
-    val style: StateFlow<SettingsItem.Style.Value>
+    val style: StateFlow<StyleValue>
         get() = _style
 
+    private val _location = MutableStateFlow(SettingsItem.Location.defaultValue)
+    val location: StateFlow<LocationValue>
+        get() = _location
+
     init {
-        loadStyleData(SettingsItem.Style.key, SettingsItem.Style.defaultValue)
+        loadStyleData(SettingsItem.Style.defaultValue)
+        loadLocationData(SettingsItem.Location.defaultValue)
     }
 
-    private fun loadStyleData(key: String, defaultValue: SettingsItem.Style.Value) {
+    private fun loadLocationData(defaultValue: LocationValue) {
+        val key = SettingsItem.Location.key
+        viewModelScope.launch {
+            val stringValue = sharedPreferences.getString(key, null)
+            _location.value = stringValue?.toLocationOrDefault() ?: defaultValue
+        }
+    }
+
+    fun saveLocationData(value: LocationValue) {
+        val key = SettingsItem.Location.key
+        _location.value = value
+        saveData(key, value.toString())
+    }
+
+    private fun loadStyleData(defaultValue: StyleValue) {
+        val key = SettingsItem.Style.key
         viewModelScope.launch {
             val stringValue = sharedPreferences.getString(key, null)
             _style.value = stringValue?.toStyleOrDefault() ?: defaultValue
         }
     }
 
-    fun saveStyleData(value: SettingsItem.Style.Value) {
+    fun saveStyleData(value: StyleValue) {
         val key = SettingsItem.Style.key
         _style.value = value
         saveData(key, value.toString())

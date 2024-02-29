@@ -35,7 +35,7 @@ import java.util.Locale
 
 @Composable
 fun NotesColumn(
-    style: SettingsItem.Style.Value,
+    style: SettingsItem.Style.StyleValue,
     noteList: List<NoteEntity>,
     onClick: (NoteEntity) -> Unit
 ) {
@@ -43,7 +43,7 @@ fun NotesColumn(
         EmptyNoteList()
     } else {
         when (style) {
-            SettingsItem.Style.Value.Vertical -> {
+            SettingsItem.Style.StyleValue.Vertical -> {
                 LazyColumn {
                     items(noteList) { note ->
                         NoteCard(
@@ -53,7 +53,7 @@ fun NotesColumn(
                     }
                 }
             }
-            SettingsItem.Style.Value.StaggeredGrid -> {
+            SettingsItem.Style.StyleValue.StaggeredGrid -> {
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(200.dp),
                     verticalItemSpacing = 4.dp,
