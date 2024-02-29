@@ -1,14 +1,15 @@
 package org.eviyttehsarch.note.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -38,10 +39,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -49,8 +57,10 @@ import org.eviyttehsarch.note.AppDestination
 import org.eviyttehsarch.note.MainViewModel
 import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.data.NoteEntity
+import org.eviyttehsarch.note.extra.ToastUtil.showToast
 import org.eviyttehsarch.note.extra.navigateBack
 import org.eviyttehsarch.note.extra.navigateSingleTopTo
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,6 +68,7 @@ fun MainApp(
     viewModel: MainViewModel,
     settingsViewModel: SettingsViewModel
 ) {
+    val size = remember { mutableStateOf(Size.Zero) }
     Surface(
         modifier = Modifier
             .onGloballyPositioned { coordinates ->
@@ -96,7 +107,7 @@ fun MainApp(
                             .offset {
                                 IntOffset(offset.x.roundToInt(), offset.y.roundToInt())
                             }
-                            .pointerInput(Unit){
+                            .pointerInput(Unit) {
                                 detectDragGesturesAfterLongPress(
                                     onDragStart = {
                                         showToast("onDragStart")
@@ -110,8 +121,8 @@ fun MainApp(
                                     onDrag = { _: PointerInputChange, dragAmount: Offset ->
                                         offset += dragAmount
                                         offset = Offset(
-                                            x = offset.x.coerceIn(-size.value.width+200f, 0f),
-                                            y = offset.y.coerceIn(-size.value.height+200f, 0f),
+                                            x = offset.x.coerceIn(-size.value.width + 200f, 0f),
+                                            y = offset.y.coerceIn(-size.value.height + 200f, 0f),
                                         )
                                     }
                                 )
