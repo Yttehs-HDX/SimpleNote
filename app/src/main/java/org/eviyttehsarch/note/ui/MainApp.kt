@@ -6,9 +6,11 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -38,8 +40,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
@@ -49,8 +55,10 @@ import org.eviyttehsarch.note.AppDestination
 import org.eviyttehsarch.note.MainViewModel
 import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.data.NoteEntity
+import org.eviyttehsarch.note.extra.ToastUtil.showToast
 import org.eviyttehsarch.note.extra.navigateBack
 import org.eviyttehsarch.note.extra.navigateSingleTopTo
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +77,7 @@ fun MainApp(
         var targetNote by remember { mutableStateOf(NoteEntity()) }
         var isSearchState by remember { mutableStateOf(false) }
         var searchedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
+        var offset by remember { mutableStateOf(Offset.Zero) }
         Scaffold(
             floatingActionButton = {
                 AnimatedVisibility(
@@ -87,6 +96,26 @@ fun MainApp(
                     )
                 ) {
                     FloatingActionButton(
+                        modifier = Modifier
+                            .offset {
+                                IntOffset(offset.x.roundToInt(), offset.y.roundToInt())
+                            }
+                            .pointerInput(Unit){
+                                detectDragGesturesAfterLongPress(
+                                    onDragStart = {
+                                        showToast("onDragStart")
+                                    },
+                                    onDragEnd = {
+                                        showToast("onDragEnd")
+                                    },
+                                    onDragCancel = {
+                                        showToast("onDragCancel")
+                                    },
+                                    onDrag = { _: PointerInputChange, dragAmount: Offset ->
+                                        offset += dragAmount
+                                    }
+                                )
+                            },
                         onClick = {
                             targetNote = NoteEntity(id = (noteList.size + 1).toLong())
                             val route = AppDestination.NoteEditDestination.route
