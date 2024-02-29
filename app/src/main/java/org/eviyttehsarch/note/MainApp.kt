@@ -233,7 +233,9 @@ fun MainApp(viewModel: AppViewModel) {
                         navigationIcon = {
                             IconButton(
                                 onClick = {
-                                    viewModel.insertOrUpdate(targetNote)
+                                    if (targetNote.title != "" && targetNote.content != "") {
+                                        viewModel.insertOrUpdate(targetNote)
+                                    }
                                     val route = AppDestination.NotesColumnDestination.route
                                     targetDestination = route
                                     navController.navigateBack()
