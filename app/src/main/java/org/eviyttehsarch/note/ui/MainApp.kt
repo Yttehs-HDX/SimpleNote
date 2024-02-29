@@ -109,19 +109,13 @@ fun MainApp(
                             }
                             .pointerInput(Unit) {
                                 detectDragGesturesAfterLongPress(
-                                    onDragStart = {
-                                        showToast("onDragStart")
-                                    },
                                     onDragEnd = {
                                         showToast("onDragEnd")
-                                    },
-                                    onDragCancel = {
-                                        showToast("onDragCancel")
                                     },
                                     onDrag = { _: PointerInputChange, dragAmount: Offset ->
                                         offset += dragAmount
                                         offset = Offset(
-                                            x = offset.x.coerceIn(-size.value.width + 200f, 0f),
+                                            x = offset.x.coerceIn(-size.value.width + 250f, 0f),
                                             y = offset.y.coerceIn(-size.value.height + 200f, 0f),
                                         )
                                     }

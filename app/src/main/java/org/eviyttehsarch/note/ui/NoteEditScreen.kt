@@ -75,7 +75,6 @@ fun NoteEditScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 value = content,
-                maxLines = 2,
                 onValueChange = {
                     content = it
                     onDone(NoteEntity(note.id, title, content, modifiedDate))
