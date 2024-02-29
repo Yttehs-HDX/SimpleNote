@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,9 +38,88 @@ fun SettingsScreen(onBack: () -> Unit) {
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
-        //TODO()
+        ArrangeMode()
+        FontSize()
+        SortMode()
     }
     BackHandler(onBack = onBack)
+}
+
+@Composable
+fun ArrangeMode() {
+    var isChange by remember { mutableStateOf(false) }
+    val value = if (isChange){
+        "瀑布流"
+    }else{
+        "竖栏"
+    }
+    SettingsUnit(
+        key = "排列模式",
+        value = value,
+        menuItemList = { onClose ->
+            MenuItem(
+                text = "竖栏",
+                onClick = {
+                    onClose()
+                    isChange = false
+                }
+            )
+            MenuItem(
+                text = "瀑布流",
+                onClick = {
+                    onClose()
+                    isChange = true
+                }
+            )
+        }
+    )
+}
+
+
+@Composable
+fun FontSize() {
+    var fontSize by remember { mutableIntStateOf(10) }
+    val num = 10
+    SettingsUnit(
+        key = "字体大小",
+        value = fontSize.toString(),
+        menuItemList = {onClose ->
+            for (i in 0..20 step 2){
+                MenuItem(
+                    text = (num + i).toString(),
+                    onClick = {
+                        onClose()
+                        fontSize = num + i
+                    }
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun SortMode() {
+    var sortMode by remember { mutableStateOf("按时间顺序") }
+    SettingsUnit(
+        key = "排序方式",
+        value = sortMode,
+        menuItemList = {onClose ->
+            MenuItem(
+                text = "按时间顺序",
+                onClick = {
+                    onClose()
+                    sortMode = "按时间顺序"
+                }
+            )
+            MenuItem(
+                text = "按标题顺序",
+                onClick = {
+                    onClose()
+                    sortMode = "按标题顺序"
+                }
+            )
+        }
+    )
 }
 
 @Composable
