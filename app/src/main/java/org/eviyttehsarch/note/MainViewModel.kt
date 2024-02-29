@@ -1,5 +1,8 @@
 package org.eviyttehsarch.note
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +15,8 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
 
     val noteListFlow = getAllNotes()
 
+    var targetId by mutableLongStateOf(0)
+
     // 获取所有笔记数据的 Flow
     private fun getAllNotes(): Flow<List<NoteEntity>> {
         return noteDao.getAllNotes()
@@ -20,7 +25,7 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     // 插入或更新笔记数据
     fun insertOrUpdate(note: NoteEntity) {
         viewModelScope.launch {
-            noteDao.insertOrUpdate(note)
+            targetId = noteDao.insertOrUpdate(note)
         }
     }
 

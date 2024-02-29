@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.eviyttehsarch.note.SettingsItem
 import org.eviyttehsarch.note.SettingsViewModel
+import org.eviyttehsarch.note.StyleValue
 
 @Composable
 fun SettingsScreen(
@@ -45,6 +46,7 @@ fun SettingsScreen(
             .verticalScroll(rememberScrollState())
     ) {
         StyleMode(viewModel = viewModel)
+        LocationMode(viewModel = viewModel)
     }
     BackHandler(onBack = onBack)
 }
@@ -58,16 +60,35 @@ fun StyleMode(viewModel: SettingsViewModel) {
         value = value.toString(),
         menuItemList = { onClose ->
             MenuItem(
-                text = SettingsItem.Style.StyleValue.Vertical.toString(),
+                text = StyleValue.Vertical.toString(),
                 onClick = {
-                    viewModel.saveStyleData(SettingsItem.Style.StyleValue.Vertical)
+                    viewModel.saveStyleData(StyleValue.Vertical)
                     onClose()
                 }
             )
             MenuItem(
-                text = SettingsItem.Style.StyleValue.StaggeredGrid.toString(),
+                text = StyleValue.StaggeredGrid.toString(),
                 onClick = {
-                    viewModel.saveStyleData(SettingsItem.Style.StyleValue.StaggeredGrid)
+                    viewModel.saveStyleData(StyleValue.StaggeredGrid)
+                    onClose()
+                }
+            )
+        }
+    )
+}
+
+@Composable
+fun LocationMode(viewModel: SettingsViewModel) {
+    val key = SettingsItem.Location.key
+    val value by viewModel.location.collectAsState()
+    SettingsUnit(
+        key = key,
+        value = if (value == SettingsItem.Location.defaultValue) "Default" else "Custom",
+        menuItemList = { onClose ->
+            MenuItem(
+                text = "Default",
+                onClick = {
+                    viewModel.saveLocationData(SettingsItem.Location.defaultValue)
                     onClose()
                 }
             )

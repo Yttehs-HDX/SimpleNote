@@ -60,4 +60,9 @@ class SettingsViewModel : ViewModel() {
             }
         }
     }
+
+    fun resetSettings() {
+        saveStyleData(SettingsItem.Style.defaultValue)
+        saveLocationData(SettingsItem.Location.defaultValue)
+    }
 }

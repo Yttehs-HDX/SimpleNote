@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,9 +51,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import org.eviyttehsarch.note.AppDestination
 import org.eviyttehsarch.note.LocationValue
 import org.eviyttehsarch.note.MainViewModel
@@ -65,6 +66,7 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainApp(
+    navController: NavHostController,
     mainViewModel: MainViewModel,
     settingsViewModel: SettingsViewModel
 ) {
@@ -77,7 +79,6 @@ fun MainApp(
             .fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        val navController = rememberNavController()
         var targetDestination by remember { mutableStateOf(AppDestination.NotesColumnDestination.route) }
         val noteList by mainViewModel.noteListFlow.collectAsState(initial = emptyList())
         var targetNote by remember { mutableStateOf(NoteEntity()) }
@@ -85,7 +86,6 @@ fun MainApp(
         var searchedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
         var isNewNote by remember { mutableStateOf(false) }
         val location by settingsViewModel.location.collectAsState()
-        var offset by remember { mutableStateOf(Offset(location.first, location.second)) }
         Scaffold(
             floatingActionButton = {
                 AnimatedVisibility(
@@ -104,6 +104,7 @@ fun MainApp(
                         )
                     )
                 ) {
+                    var offset by remember { mutableStateOf(Offset(location.first, location.second)) }
                     FloatingActionButton(
                         modifier = Modifier
                             .offset { IntOffset(offset.x.roundToInt(), offset.y.roundToInt()) }
@@ -365,8 +366,18 @@ fun MainApp(
                                 }
                             ) {
                                 Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = "Back"
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(
+                                onClick = { settingsViewModel.resetSettings() }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Refresh,
+                                    contentDescription = "Reset"
                                 )
                             }
                         }

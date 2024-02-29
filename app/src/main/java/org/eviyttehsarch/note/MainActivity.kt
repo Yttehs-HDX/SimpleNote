@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.eviyttehsarch.note.core.AppViewModelProvider
 import org.eviyttehsarch.note.ui.MainApp
@@ -20,6 +21,7 @@ class MainActivity : ComponentActivity() {
             WriterTheme {
                 SystemBar()
                 MainApp(
+                    navController = rememberNavController(),
                     settingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
                     mainViewModel = viewModel(factory = AppViewModelProvider.Factory)
                 )

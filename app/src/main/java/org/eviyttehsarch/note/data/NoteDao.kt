@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE) // 如果主键冲突，则替换
-    suspend fun insertOrUpdate(note: NoteEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(note: NoteEntity): Long
 
     @Query("SELECT * FROM NoteEntity ORDER BY modifiedDate DESC")
     fun getAllNotes(): Flow<List<NoteEntity>>
