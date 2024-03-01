@@ -20,23 +20,14 @@ class SettingsViewModel : ViewModel() {
     val location: StateFlow<LocationValue>
         get() = _location
 
+    private val _timeFormat = MutableStateFlow(SettingsItem.DateFormat.defaultValue)
+    val timeFormat: StateFlow<DateFormatValue>
+        get() = _timeFormat
+
     init {
         loadStyleData(SettingsItem.Style.defaultValue)
+        loadDateFormatData(SettingsItem.DateFormat.defaultValue)
         loadLocationData(SettingsItem.Location.defaultValue)
-    }
-
-    private fun loadLocationData(defaultValue: LocationValue) {
-        val key = SettingsItem.Location.key
-        viewModelScope.launch {
-            val stringValue = sharedPreferences.getString(key, null)
-            _location.value = stringValue?.toLocationOrDefault() ?: defaultValue
-        }
-    }
-
-    fun saveLocationData(value: LocationValue) {
-        val key = SettingsItem.Location.key
-        _location.value = value
-        saveData(key, value.toString())
     }
 
     private fun loadStyleData(defaultValue: StyleValue) {
@@ -50,6 +41,34 @@ class SettingsViewModel : ViewModel() {
     fun saveStyleData(value: StyleValue) {
         val key = SettingsItem.Style.key
         _style.value = value
+        saveData(key, value.toString())
+    }
+
+    private fun loadDateFormatData(defaultValue: DateFormatValue) {
+        val key = SettingsItem.DateFormat.key
+        viewModelScope.launch {
+            val stringValue = sharedPreferences.getString(key, null)
+            _timeFormat.value = stringValue?.toDateFormatOrDefault() ?: defaultValue
+        }
+    }
+
+    fun saveDateFormatData(value: DateFormatValue) {
+        val key = SettingsItem.DateFormat.key
+        _timeFormat.value = value
+        saveData(key, value.toString())
+    }
+
+    private fun loadLocationData(defaultValue: LocationValue) {
+        val key = SettingsItem.Location.key
+        viewModelScope.launch {
+            val stringValue = sharedPreferences.getString(key, null)
+            _location.value = stringValue?.toLocationOrDefault() ?: defaultValue
+        }
+    }
+
+    fun saveLocationData(value: LocationValue) {
+        val key = SettingsItem.Location.key
+        _location.value = value
         saveData(key, value.toString())
     }
 

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.eviyttehsarch.note.DateFormatValue
 import org.eviyttehsarch.note.StyleValue
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.limitContent
@@ -35,8 +36,9 @@ import java.util.Locale
 
 @Composable
 fun NotesColumn(
-    style: StyleValue,
     noteList: List<NoteEntity>,
+    style: StyleValue,
+    dateFormat: String,
     onClick: (NoteEntity) -> Unit
 ) {
     if (noteList.isEmpty()) {
@@ -48,6 +50,7 @@ fun NotesColumn(
                     items(noteList) { note ->
                         NoteCard(
                             note = note,
+                            dateFormat = dateFormat,
                             onClick = { onClick(note) }
                         )
                     }
@@ -62,6 +65,7 @@ fun NotesColumn(
                     items(noteList) { note ->
                         NoteCard(
                             note = note,
+                            dateFormat = dateFormat,
                             onClick = { onClick(note) }
                         )
                     }
@@ -74,6 +78,7 @@ fun NotesColumn(
 @Composable
 fun NoteCard(
     note: NoteEntity,
+    dateFormat: String,
     onClick: () -> Unit
 ) {
     Card(
@@ -99,7 +104,7 @@ fun NoteCard(
                     .padding(bottom = 8.dp)
                     .heightIn(30.dp)
             )
-            val formattedDate = SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault()).format(Date(note.modifiedDate))
+            val formattedDate = SimpleDateFormat(dateFormat, Locale.getDefault()).format(Date(note.modifiedDate))
             Row {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
@@ -135,6 +140,7 @@ fun EmptyNoteList() {
 fun PreviewNoteCard() {
     NoteCard(
         note = NoteEntity(0, "Simple title", "This is content", 0),
+        dateFormat = DateFormatValue.Ordinary.toString(),
         onClick = { }
     )
 }

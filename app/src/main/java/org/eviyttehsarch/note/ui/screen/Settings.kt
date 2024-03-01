@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.eviyttehsarch.note.DateFormatValue
 import org.eviyttehsarch.note.SettingsItem
 import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.StyleValue
@@ -46,6 +47,7 @@ fun Settings(
             .verticalScroll(rememberScrollState())
     ) {
         StyleMode(viewModel = viewModel)
+        DateFormatMode(viewModel = viewModel)
         LocationMode(viewModel = viewModel)
     }
     BackHandler(onBack = onBack)
@@ -59,20 +61,36 @@ fun StyleMode(viewModel: SettingsViewModel) {
         key = key,
         value = value.toString(),
         menuItemList = { onClose ->
-            MenuItem(
-                text = StyleValue.Vertical.toString(),
-                onClick = {
-                    viewModel.saveStyleData(StyleValue.Vertical)
-                    onClose()
-                }
-            )
-            MenuItem(
-                text = StyleValue.StaggeredGrid.toString(),
-                onClick = {
-                    viewModel.saveStyleData(StyleValue.StaggeredGrid)
-                    onClose()
-                }
-            )
+            for (optionValue in StyleValue.entries) {
+                MenuItem(
+                    text = optionValue.toString(),
+                    onClick = {
+                        viewModel.saveStyleData(optionValue)
+                        onClose()
+                    }
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun DateFormatMode(viewModel: SettingsViewModel) {
+    val key = SettingsItem.DateFormat.key
+    val value by viewModel.timeFormat.collectAsState()
+    SettingsUnit(
+        key = key,
+        value = value.toUiState(),
+        menuItemList = { onClose ->
+            for (optionValue in DateFormatValue.entries) {
+                MenuItem(
+                    text = optionValue.toUiState(),
+                    onClick = {
+                        viewModel.saveDateFormatData(optionValue)
+                        onClose()
+                    }
+                )
+            }
         }
     )
 }
