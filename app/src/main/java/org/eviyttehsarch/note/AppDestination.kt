@@ -21,7 +21,7 @@ interface AppDestination {
             onClick: (NoteEntity) -> Unit
         ) {
             val style by viewModel.style.collectAsState()
-            val dateFormat by viewModel.timeFormat.collectAsState()
+            val dateFormat by viewModel.dateFormat.collectAsState()
             NotesColumn(
                 noteList = noteList,
                 style = style,

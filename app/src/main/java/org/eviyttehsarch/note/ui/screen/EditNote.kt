@@ -49,7 +49,7 @@ fun EditNote(
         ) {
             TextField(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(16.dp))
                     .fillMaxWidth(),
                 value = title,
                 textStyle = MaterialTheme.typography.headlineSmall,
@@ -75,7 +75,7 @@ fun EditNote(
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(16.dp))
                     .fillMaxWidth(),
                 value = content,
                 onValueChange = {

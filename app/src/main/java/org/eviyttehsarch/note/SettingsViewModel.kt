@@ -20,9 +20,9 @@ class SettingsViewModel : ViewModel() {
     val location: StateFlow<LocationValue>
         get() = _location
 
-    private val _timeFormat = MutableStateFlow(SettingsItem.DateFormat.defaultValue)
-    val timeFormat: StateFlow<DateFormatValue>
-        get() = _timeFormat
+    private val _dateFormat = MutableStateFlow(SettingsItem.DateFormat.defaultValue)
+    val dateFormat: StateFlow<DateFormatValue>
+        get() = _dateFormat
 
     init {
         loadStyleData(SettingsItem.Style.defaultValue)
@@ -48,13 +48,13 @@ class SettingsViewModel : ViewModel() {
         val key = SettingsItem.DateFormat.key
         viewModelScope.launch {
             val stringValue = sharedPreferences.getString(key, null)
-            _timeFormat.value = stringValue?.toDateFormatOrDefault() ?: defaultValue
+            _dateFormat.value = stringValue?.toDateFormatOrDefault() ?: defaultValue
         }
     }
 
     fun saveDateFormatData(value: DateFormatValue) {
         val key = SettingsItem.DateFormat.key
-        _timeFormat.value = value
+        _dateFormat.value = value
         saveData(key, value.toString())
     }
 
@@ -82,6 +82,7 @@ class SettingsViewModel : ViewModel() {
 
     fun resetSettings() {
         saveStyleData(SettingsItem.Style.defaultValue)
+        saveDateFormatData(SettingsItem.DateFormat.defaultValue)
         saveLocationData(SettingsItem.Location.defaultValue)
     }
 }

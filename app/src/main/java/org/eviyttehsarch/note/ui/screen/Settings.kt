@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,8 +47,13 @@ fun Settings(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
+        SubSettingsTitle(title = "Main Page")
         StyleMode(viewModel = viewModel)
+        HorizontalDivider()
+        SubSettingsTitle(title = "Note Card")
         DateFormatMode(viewModel = viewModel)
+        HorizontalDivider()
+        SubSettingsTitle(title = "Floating Button")
         LocationMode(viewModel = viewModel)
     }
     BackHandler(onBack = onBack)
@@ -77,7 +83,7 @@ fun StyleMode(viewModel: SettingsViewModel) {
 @Composable
 fun DateFormatMode(viewModel: SettingsViewModel) {
     val key = SettingsItem.DateFormat.key
-    val value by viewModel.timeFormat.collectAsState()
+    val value by viewModel.dateFormat.collectAsState()
     SettingsUnit(
         key = key,
         value = value.toUiState(),
@@ -115,6 +121,30 @@ fun LocationMode(viewModel: SettingsViewModel) {
 }
 
 @Composable
+fun SubSettingsTitle(title: String) {
+    Row(
+        // Click nothing, just for animation here
+        modifier = Modifier.clickable { /* Click nothing */ }
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            modifier = Modifier
+                .padding(
+                    top = 8.dp,
+                    bottom = 8.dp,
+                    start = 16.dp,
+                    end = 16.dp
+                )
+                .align(Alignment.CenterVertically),
+            text = title,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.secondary
+        )
+        Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
 fun SettingsUnit(
     key: String,
     value: String,
@@ -130,8 +160,8 @@ fun SettingsUnit(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.CenterVertically),
-            fontWeight = FontWeight.Bold,
-            text = key
+            text = key,
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.weight(1f))
         Box(

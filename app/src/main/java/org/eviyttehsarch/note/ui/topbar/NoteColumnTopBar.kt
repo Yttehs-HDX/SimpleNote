@@ -1,5 +1,6 @@
 package org.eviyttehsarch.note.ui.topbar
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -38,7 +39,8 @@ fun NoteColumnTopBar(
     onSearchStart: () -> Unit,
     onSearchStop: () -> Unit,
     onSearch: (String) -> Unit,
-    onClickSettingsButton: () -> Unit
+    onClickSettingsButton: () -> Unit,
+    onBack: () -> Unit
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -88,7 +90,8 @@ fun NoteColumnTopBar(
                     onSearchStop = onSearchStop,
                     onSearch = { input ->
                         onSearch(input)
-                    }
+                    },
+                    onBack = onBack
                 )
                 IconButton(
                     onClick = onClickSettingsButton
@@ -108,7 +111,8 @@ fun SearchBox(
     searchState: Boolean,
     onSearchStart: () -> Unit,
     onSearchStop: () -> Unit,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
+    onBack: () -> Unit
 ) {
     Row {
         AnimatedVisibility(
@@ -155,5 +159,8 @@ fun SearchBox(
                 )
             }
         }
+    }
+    if (searchState) {
+        BackHandler(onBack = onBack)
     }
 }

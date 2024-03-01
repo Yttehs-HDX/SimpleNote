@@ -77,6 +77,9 @@ fun MainApp(
                         val route = AppDestination.SettingsDestination.route
                         targetDestination = route
                         navController.navigateSingleTopTo(route)
+                    },
+                    onBack = {
+                        searchState = false
                     }
                 )
                 EditNoteTopBar(

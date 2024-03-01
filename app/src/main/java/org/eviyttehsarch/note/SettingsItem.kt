@@ -25,7 +25,7 @@ interface SettingsItem<T> {
     }
 
     data object DateFormat : SettingsItem<DateFormat.DateFormatValue> {
-        override val key: String = "TimeFormat"
+        override val key: String = "DateFormat"
         override val defaultValue: DateFormatValue = DateFormatValue.Ordinary
 
         enum class DateFormatValue {
