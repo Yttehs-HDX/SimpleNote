@@ -99,7 +99,7 @@ fun NoteCard(
                     .padding(bottom = 8.dp)
                     .heightIn(30.dp)
             )
-            val formattedDate = SimpleDateFormat("yy-MM-DD HH:MM", Locale.getDefault()).format(Date(note.modifiedDate))
+            val formattedDate = SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault()).format(Date(note.modifiedDate))
             Row {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(

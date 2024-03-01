@@ -36,7 +36,7 @@ fun NoteEditScreen(
 ) {
     var title by rememberSaveable { mutableStateOf(note.title) }
     var content by rememberSaveable { mutableStateOf(note.content) }
-    val modifiedDate by rememberSaveable { mutableLongStateOf(note.modifiedDate) }
+    var modifiedDate by rememberSaveable { mutableLongStateOf(note.modifiedDate) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -55,6 +55,7 @@ fun NoteEditScreen(
                 maxLines = 2,
                 onValueChange = {
                     title = it
+                    modifiedDate = System.currentTimeMillis()
                     onDone(NoteEntity(note.id, title, content, modifiedDate))
                 },
                 placeholder = { Text(text = "Title") },
@@ -77,6 +78,7 @@ fun NoteEditScreen(
                 value = content,
                 onValueChange = {
                     content = it
+                    modifiedDate = System.currentTimeMillis()
                     onDone(NoteEntity(note.id, title, content, modifiedDate))
                 },
                 placeholder = { Text(text = "Title") },
