@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.eviyttehsarch.note.SettingsItem
+import org.eviyttehsarch.note.StyleValue
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.limitContent
 import java.util.Date
@@ -35,7 +35,7 @@ import java.util.Locale
 
 @Composable
 fun NotesColumn(
-    style: SettingsItem.Style.StyleValue,
+    style: StyleValue,
     noteList: List<NoteEntity>,
     onClick: (NoteEntity) -> Unit
 ) {
@@ -43,7 +43,7 @@ fun NotesColumn(
         EmptyNoteList()
     } else {
         when (style) {
-            SettingsItem.Style.StyleValue.Vertical -> {
+            StyleValue.Vertical -> {
                 LazyColumn {
                     items(noteList) { note ->
                         NoteCard(
@@ -53,9 +53,9 @@ fun NotesColumn(
                     }
                 }
             }
-            SettingsItem.Style.StyleValue.StaggeredGrid -> {
+            StyleValue.StaggeredGrid -> {
                 LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(200.dp),
+                    columns = StaggeredGridCells.Fixed(2),
                     verticalItemSpacing = 4.dp,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
