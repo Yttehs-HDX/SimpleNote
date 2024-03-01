@@ -5,6 +5,8 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -21,10 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import org.eviyttehsarch.note.data.NoteEntity
+import org.eviyttehsarch.note.extra.ToastUtil
 import org.eviyttehsarch.note.ui.BasicCompose
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,14 +55,21 @@ fun EditNoteTopBar(
             )
         )
     ) {
+        val interactionSource = remember { MutableInteractionSource() }
         TopAppBar(
             colors = BasicCompose.topAppBarColors(),
             title = {
                 Text(
+                    modifier = Modifier.clickable(
+                        interactionSource = interactionSource,
+                        indication = null
+                    ) {
+                        ToastUtil.showToast("Try to write something ^_^")
+                    },
+                    text = "Edit Note",
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Cursive,
-                    text = "Edit Note"
+                    fontFamily = FontFamily.Cursive
                 )
             },
             navigationIcon = {

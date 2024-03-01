@@ -6,6 +6,8 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.eviyttehsarch.note.extra.ToastUtil
 import org.eviyttehsarch.note.ui.BasicCompose
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,6 +60,7 @@ fun NoteColumnTopBar(
             )
         )
     ) {
+        val interactionSource = remember { MutableInteractionSource() }
         TopAppBar(
             colors = BasicCompose.topAppBarColors(),
             title = {
@@ -76,10 +80,16 @@ fun NoteColumnTopBar(
                     )
                 ) {
                     Text(
+                        modifier = Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = null
+                        ) {
+                            ToastUtil.showToast("^_^")
+                        },
+                        text = "Simple Note",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Cursive,
-                        text = "Simple Note"
+                        fontFamily = FontFamily.Cursive
                     )
                 }
             },
