@@ -11,8 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -107,6 +105,7 @@ fun EditNoteTopBar(
                     onConfirm = {
                         showDialog = false
                         onDeleteNote(note)
+                        ToastUtil.forceShowToast("Delete succeed")
                         onBack()
                     },
                     onDismiss = { showDialog = false }
@@ -122,25 +121,11 @@ fun DeleteWaringAlertDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = {
-                Text(text = "Delete this note!")
-            },
-            text = {
-                Text(text = "It will lose forever!")
-            },
-            confirmButton = {
-                Button(onClick = onConfirm) {
-                    Text("Confirm")
-                }
-            },
-            dismissButton = {
-                Button(onClick = onDismiss) {
-                    Text("Dismiss")
-                }
-            }
-        )
-    }
+    BasicCompose.WaringAlertDialog(
+        visible = showDialog,
+        title = "Delete this note",
+        text = "It will lose forever",
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
+    )
 }

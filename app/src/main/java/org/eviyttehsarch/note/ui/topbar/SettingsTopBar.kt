@@ -16,7 +16,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +49,7 @@ fun SettingsTopBar(
             )
         )
     ) {
+        var showDialog by remember { mutableStateOf(false) }
         val interactionSource = remember { MutableInteractionSource() }
         TopAppBar(
             colors = BasicCompose.topAppBarColors(),
@@ -75,7 +79,9 @@ fun SettingsTopBar(
             },
             actions = {
                 IconButton(
-                    onClick = onClickResetButton
+                    onClick = {
+                        showDialog = true
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Refresh,
@@ -84,5 +90,31 @@ fun SettingsTopBar(
                 }
             }
         )
+        ResetWarningAlertDialog(
+            showDialog = showDialog,
+            onConfirm = {
+                onClickResetButton()
+                ToastUtil.forceShowToast("Reset succeed")
+                showDialog = false
+            },
+            onDismiss = {
+                showDialog = false
+            }
+        )
     }
+}
+
+@Composable
+fun ResetWarningAlertDialog(
+    showDialog: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    BasicCompose.WaringAlertDialog(
+        visible = showDialog,
+        title = "Reset all settings",
+        text = "Settings will be reset to default",
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
+    )
 }

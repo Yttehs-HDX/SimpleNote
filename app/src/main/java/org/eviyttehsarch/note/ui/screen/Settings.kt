@@ -14,14 +14,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.twotone.Build
+import androidx.compose.material.icons.twotone.Info
+import androidx.compose.material.icons.twotone.KeyboardArrowDown
+import androidx.compose.material.icons.twotone.KeyboardArrowUp
+import androidx.compose.material.icons.twotone.Person
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +60,12 @@ fun Settings(
         HorizontalDivider()
         SubSettingsTitle(title = "Floating Button")
         LocationMode(viewModel = viewModel)
+        HorizontalDivider()
+        SubSettingsTitle(title = "About")
+        AboutUnit(key = "Version", value = "v1.0", icon = Icons.TwoTone.Info)
+        AboutUnit(key = "Author 1", value = "Yttehs", icon = Icons.TwoTone.Person)
+        AboutUnit(key = "Author 2", value = "Eviarch", icon = Icons.TwoTone.Person)
+        AboutUnit(key = "Dev Tool", value = "Android Studio", icon = Icons.TwoTone.Build)
     }
     BackHandler(onBack = onBack)
 }
@@ -196,9 +207,49 @@ fun SettingsUnit(
                         shape = RoundedCornerShape(90f)
                     ),
                 imageVector =
-                if (isExpand) Icons.Default.KeyboardArrowUp
-                else Icons.Default.KeyboardArrowDown,
+                if (isExpand) Icons.TwoTone.KeyboardArrowUp
+                else Icons.TwoTone.KeyboardArrowDown,
                 contentDescription = "Expand"
+            )
+        }
+    }
+}
+
+@Composable
+fun AboutUnit(
+    key: String,
+    value: String,
+    icon: ImageVector
+) {
+    Row(
+        // Click nothing, just for animation here
+        modifier = Modifier.clickable { /* Click nothing */ }
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.CenterVertically),
+            text = key,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.CenterVertically),
+            text = value,
+        )
+        Box(
+            modifier = Modifier
+                .minimumInteractiveComponentSize()
+                .align(Alignment.CenterVertically)
+        ) {
+            Icon(
+                modifier = Modifier
+                    .align(Alignment.Center),
+                imageVector = icon,
+                contentDescription = key
             )
         }
     }
