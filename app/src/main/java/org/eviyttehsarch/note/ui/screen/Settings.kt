@@ -1,4 +1,4 @@
-package org.eviyttehsarch.note.ui
+package org.eviyttehsarch.note.ui.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -37,7 +37,7 @@ import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.StyleValue
 
 @Composable
-fun SettingsScreen(
+fun Settings(
     viewModel: SettingsViewModel,
     onBack: () -> Unit
 ) {

@@ -1,4 +1,4 @@
-package org.eviyttehsarch.note.ui
+package org.eviyttehsarch.note.ui.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import org.eviyttehsarch.note.data.NoteEntity
 
 @Composable
-fun NoteEditScreen(
+fun EditNote(
     note: NoteEntity,
     onDone: (NoteEntity) -> Unit,
     onBack: () -> Unit
@@ -97,33 +95,4 @@ fun NoteEditScreen(
         }
     }
     BackHandler(onBack = onBack)
-}
-
-@Composable
-fun DeleteWaringAlertDialog(
-    showDialog: Boolean,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = {
-                Text(text = "Delete this note!")
-            },
-            text = {
-                Text(text = "It will lose forever!")
-            },
-            confirmButton = {
-                Button(onClick = onConfirm) {
-                    Text("Confirm")
-                }
-            },
-            dismissButton = {
-                Button(onClick = onDismiss) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
 }

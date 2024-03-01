@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrUpdate(note: NoteEntity): Long
+    suspend fun insertOrUpdate(note: NoteEntity)
 
     @Query("SELECT * FROM NoteEntity ORDER BY modifiedDate DESC")
     fun getAllNotes(): Flow<List<NoteEntity>>

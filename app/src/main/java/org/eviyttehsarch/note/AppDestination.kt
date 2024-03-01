@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import org.eviyttehsarch.note.data.NoteEntity
-import org.eviyttehsarch.note.ui.NoteEditScreen
-import org.eviyttehsarch.note.ui.NotesColumn
-import org.eviyttehsarch.note.ui.SettingsScreen
+import org.eviyttehsarch.note.ui.screen.EditNote
+import org.eviyttehsarch.note.ui.screen.NotesColumn
+import org.eviyttehsarch.note.ui.screen.Settings
 
 interface AppDestination {
     val route: String
@@ -29,7 +29,7 @@ interface AppDestination {
         }
     }
 
-    data object NoteEditDestination : AppDestination {
+    data object EditNoteDestination : AppDestination {
         override val route = "note"
 
         @Composable
@@ -38,7 +38,7 @@ interface AppDestination {
             onDone: (NoteEntity) -> Unit,
             onBack: () -> Unit
         ) {
-            NoteEditScreen(
+            EditNote(
                 note = note,
                 onDone = onDone,
                 onBack = onBack
@@ -54,7 +54,7 @@ interface AppDestination {
             viewModel: SettingsViewModel,
             onBack: () -> Unit
         ) {
-            SettingsScreen(
+            Settings(
                 viewModel = viewModel,
                 onBack = onBack
             )

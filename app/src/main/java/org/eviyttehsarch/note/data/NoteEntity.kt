@@ -3,10 +3,12 @@ package org.eviyttehsarch.note.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+const val EmptyId = 0L
+
 @Entity
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val id: Long = EmptyId,
 
     val title: String = "",
 

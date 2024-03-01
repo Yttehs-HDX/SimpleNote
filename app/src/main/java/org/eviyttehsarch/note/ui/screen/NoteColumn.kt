@@ -1,4 +1,4 @@
-package org.eviyttehsarch.note.ui
+package org.eviyttehsarch.note.ui.screen
 
 import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.clickable
