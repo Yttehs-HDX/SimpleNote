@@ -18,7 +18,8 @@ interface AppDestination {
         fun Content(
             viewModel: SettingsViewModel,
             noteList: List<NoteEntity>,
-            onClick: (NoteEntity) -> Unit
+            onClick: (NoteEntity) -> Unit,
+            onDeleteNote: (NoteEntity) -> Unit
         ) {
             val style by viewModel.style.collectAsState()
             val dateFormat by viewModel.dateFormat.collectAsState()
@@ -26,7 +27,8 @@ interface AppDestination {
                 noteList = noteList,
                 style = style,
                 dateFormat = dateFormat.toString(),
-                onClick = onClick
+                onClick = onClick,
+                onDeleteNote = onDeleteNote
             )
         }
     }

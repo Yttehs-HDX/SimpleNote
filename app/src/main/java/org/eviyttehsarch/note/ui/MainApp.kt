@@ -18,7 +18,6 @@ import androidx.navigation.compose.composable
 import org.eviyttehsarch.note.AppDestination
 import org.eviyttehsarch.note.MainViewModel
 import org.eviyttehsarch.note.SettingsViewModel
-import org.eviyttehsarch.note.data.EmptyId
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.navigateBack
 import org.eviyttehsarch.note.extra.navigateSingleTopTo
@@ -50,7 +49,7 @@ fun MainApp(
                             && !searchState,
                     startLocation = location,
                     onClick = {
-                        targetNote = NoteEntity(id = (allNotes.size + 1).toLong())
+                        targetNote = NoteEntity(id = mainViewModel.generateUniqueId())
                         val route = AppDestination.EditNoteDestination.route
                         targetDestination = route
                         navController.navigateSingleTopTo(route)
@@ -71,7 +70,10 @@ fun MainApp(
                         searchState = false
                     },
                     onSearch = { input ->
-                        searchedNotes = allNotes.filter { input in it.title.lowercase() }
+                        searchedNotes = allNotes.filter { eachNote ->
+                            input.lowercase() in eachNote.title.lowercase() ||
+                                    input.lowercase() in eachNote.content.lowercase()
+                        }
                     },
                     onClickSettingsButton = {
                         val route = AppDestination.SettingsDestination.route
@@ -86,20 +88,16 @@ fun MainApp(
                     visible = targetDestination == AppDestination.EditNoteDestination.route,
                     note = targetNote,
                     onSaveNote = { note ->
-                        if (note.id == EmptyId) {
-                            mainViewModel.insertOrUpdate(note.copy(id = mainViewModel.generateUniqueId()))
-                        } else {
-                            mainViewModel.insertOrUpdate(note)
-                        }
+                        targetNote = note
+                        mainViewModel.insertOrUpdate(targetNote)
                     },
                     onDeleteNote = { note ->
                         mainViewModel.deleteNote(note)
-                    },
-                    onBack = {
-                        targetDestination = homeRoute
-                        navController.navigateBack()
                     }
-                )
+                ) {
+                    targetDestination = homeRoute
+                    navController.navigateBack()
+                }
                 SettingsTopBar(
                     visible = targetDestination == AppDestination.SettingsDestination.route,
                     onClickResetButton = {
@@ -126,6 +124,9 @@ fun MainApp(
                             targetDestination = route
                             targetNote = note
                             navController.navigateSingleTopTo(route)
+                        },
+                        onDeleteNote = { note ->
+                            mainViewModel.deleteNote(note)
                         }
                     )
                 }
@@ -134,13 +135,7 @@ fun MainApp(
                         note = targetNote,
                         onDone = { note ->
                             targetNote = note
-                            if (note.title != "" || note.content != "") {
-                                if (note.id == EmptyId) {
-                                    mainViewModel.insertOrUpdate(note.copy(id = mainViewModel.generateUniqueId()))
-                                } else {
-                                    mainViewModel.insertOrUpdate(note)
-                                }
-                            }
+                            mainViewModel.insertOrUpdate(targetNote)
                         },
                         onBack = {
                             targetDestination = homeRoute

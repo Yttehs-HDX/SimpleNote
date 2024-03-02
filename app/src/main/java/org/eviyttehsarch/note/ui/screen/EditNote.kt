@@ -3,11 +3,13 @@ package org.eviyttehsarch.note.ui.screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -59,7 +61,16 @@ fun EditNote(
                     modifiedDate = System.currentTimeMillis()
                     onDone(NoteEntity(note.id, title, content, modifiedDate))
                 },
-                placeholder = { Text(text = "Title") },
+                placeholder = {
+                    Row {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Title",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+                    }
+                },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         onDone(NoteEntity(note.id, title, content, modifiedDate))
@@ -83,11 +94,20 @@ fun EditNote(
                     modifiedDate = System.currentTimeMillis()
                     onDone(NoteEntity(note.id, title, content, modifiedDate))
                 },
-                placeholder = { Text(text = "Content") },
+                placeholder = {
+                    Row {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Content",
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+                    }
+                },
                 keyboardActions = KeyboardActions(
                     onDone = {
                         onDone(NoteEntity(note.id, title, content, modifiedDate))
-                    }
+                    },
+
                 ),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -98,5 +118,10 @@ fun EditNote(
             )
         }
     }
-    BackHandler(onBack = onBack)
+    BackHandler(
+        onBack = {
+            onDone(note)
+            onBack()
+        }
+    )
 }

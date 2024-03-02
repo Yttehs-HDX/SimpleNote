@@ -1,7 +1,7 @@
 package org.eviyttehsarch.note.ui.screen
 
 import android.icu.text.SimpleDateFormat
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,14 +23,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.eviyttehsarch.note.DateFormatValue
 import org.eviyttehsarch.note.StyleValue
 import org.eviyttehsarch.note.data.NoteEntity
+import org.eviyttehsarch.note.extra.ToastUtil
 import org.eviyttehsarch.note.extra.limitContent
+import org.eviyttehsarch.note.ui.BasicCompose
 import java.util.Date
 import java.util.Locale
 
@@ -39,7 +46,8 @@ fun NotesColumn(
     noteList: List<NoteEntity>,
     style: StyleValue,
     dateFormat: String,
-    onClick: (NoteEntity) -> Unit
+    onClick: (NoteEntity) -> Unit,
+    onDeleteNote: (NoteEntity) -> Unit
 ) {
     if (noteList.isEmpty()) {
         EmptyNoteList()
@@ -48,10 +56,21 @@ fun NotesColumn(
             StyleValue.Vertical -> {
                 LazyColumn {
                     items(noteList) { note ->
+                        var showDialog by remember { mutableStateOf(false) }
                         NoteCard(
                             note = note,
                             dateFormat = dateFormat,
-                            onClick = { onClick(note) }
+                            onClick = { onClick(note) },
+                            onLongPress = { showDialog = true }
+                        )
+                        DeleteWaringAlertDialog(
+                            showDialog = showDialog,
+                            onConfirm = {
+                                onDeleteNote(note)
+                                ToastUtil.forceShowToast("Delete succeed")
+                                showDialog = false
+                            },
+                            onDismiss = { showDialog = false }
                         )
                     }
                 }
@@ -63,10 +82,21 @@ fun NotesColumn(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     items(noteList) { note ->
+                        var showDialog by remember { mutableStateOf(false) }
                         NoteCard(
                             note = note,
                             dateFormat = dateFormat,
-                            onClick = { onClick(note) }
+                            onClick = { onClick(note) },
+                            onLongPress = { showDialog = true }
+                        )
+                        DeleteWaringAlertDialog(
+                            showDialog = showDialog,
+                            onConfirm = {
+                                onDeleteNote(note)
+                                ToastUtil.forceShowToast("Delete succeed")
+                                showDialog = false
+                            },
+                            onDismiss = { showDialog = false }
                         )
                     }
                 }
@@ -79,14 +109,22 @@ fun NotesColumn(
 fun NoteCard(
     note: NoteEntity,
     dateFormat: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongPress: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable {
-                onClick()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        onClick()
+                    },
+                    onLongPress = {
+                        onLongPress()
+                    }
+                )
             }
     ) {
         Column(
@@ -117,6 +155,21 @@ fun NoteCard(
 }
 
 @Composable
+fun DeleteWaringAlertDialog(
+    showDialog: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    BasicCompose.WaringAlertDialog(
+        visible = showDialog,
+        title = "Delete this note",
+        text = "It will lose forever",
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
+    )
+}
+
+@Composable
 fun EmptyNoteList() {
     Box(
         modifier = Modifier
@@ -141,7 +194,8 @@ fun PreviewNoteCard() {
     NoteCard(
         note = NoteEntity(0, "Simple title", "This is content", 0),
         dateFormat = DateFormatValue.Ordinary.toString(),
-        onClick = { }
+        onClick = { },
+        onLongPress = { }
     )
 }
 

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.ToastUtil
 import org.eviyttehsarch.note.ui.BasicCompose
+import org.eviyttehsarch.note.ui.screen.DeleteWaringAlertDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +54,7 @@ fun EditNoteTopBar(
             )
         )
     ) {
+        var showDialog by remember { mutableStateOf(false) }
         val interactionSource = remember { MutableInteractionSource() }
         TopAppBar(
             colors = BasicCompose.topAppBarColors(),
@@ -73,59 +75,43 @@ fun EditNoteTopBar(
             navigationIcon = {
                 IconButton(
                     onClick = {
-                        if (note.title != "" || note.content != "") {
-                            onSaveNote(note)
-                        }
+                        onSaveNote(note)
                         onBack()
                     }
                 ) {
                     Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }
             },
             actions = {
-                var showDialog by remember { mutableStateOf(false) }
                 IconButton(
                     onClick = { onSaveNote(note) }
                 ) {
                     Icon(
-                        Icons.Filled.Done,
+                        imageVector = Icons.Filled.Done,
                         contentDescription = "Save"
                     )
                 }
                 IconButton(
                     onClick = { showDialog = true }
                 ) {
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete"
+                    )
                 }
-                DeleteWaringAlertDialog(
-                    showDialog = showDialog,
-                    onConfirm = {
-                        showDialog = false
-                        onDeleteNote(note)
-                        ToastUtil.forceShowToast("Delete succeed")
-                        onBack()
-                    },
-                    onDismiss = { showDialog = false }
-                )
             }
         )
+        DeleteWaringAlertDialog(
+            showDialog = showDialog,
+            onConfirm = {
+                showDialog = false
+                onDeleteNote(note)
+                onBack()
+            },
+            onDismiss = { showDialog = false }
+        )
     }
-}
-
-@Composable
-fun DeleteWaringAlertDialog(
-    showDialog: Boolean,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    BasicCompose.WaringAlertDialog(
-        visible = showDialog,
-        title = "Delete this note",
-        text = "It will lose forever",
-        onConfirm = onConfirm,
-        onDismiss = onDismiss
-    )
 }
