@@ -16,9 +16,13 @@ class SettingsViewModel : ViewModel() {
     val style: StateFlow<StyleValue>
         get() = _style
 
-    private val _location = MutableStateFlow(SettingsItem.Location.defaultValue)
-    val location: StateFlow<LocationValue>
-        get() = _location
+    private val _verticalPosition = MutableStateFlow(SettingsItem.VerticalPosition.defaultValue)
+    val verticalPosition: StateFlow<PositionValue>
+        get() = _verticalPosition
+
+    private val _horizontalPosition = MutableStateFlow(SettingsItem.HorizontalPosition.defaultValue)
+    val horizontalPosition: StateFlow<PositionValue>
+        get() = _horizontalPosition
 
     private val _dateFormat = MutableStateFlow(SettingsItem.DateFormat.defaultValue)
     val dateFormat: StateFlow<DateFormatValue>
@@ -27,7 +31,8 @@ class SettingsViewModel : ViewModel() {
     init {
         loadStyleData(SettingsItem.Style.defaultValue)
         loadDateFormatData(SettingsItem.DateFormat.defaultValue)
-        loadLocationData(SettingsItem.Location.defaultValue)
+        loadVerticalPositionData(SettingsItem.VerticalPosition.defaultValue)
+        loadHorizontalPositionData(SettingsItem.HorizontalPosition.defaultValue)
     }
 
     private fun loadStyleData(defaultValue: StyleValue) {
@@ -58,17 +63,31 @@ class SettingsViewModel : ViewModel() {
         saveData(key, value.toString())
     }
 
-    private fun loadLocationData(defaultValue: LocationValue) {
-        val key = SettingsItem.Location.key
+    private fun loadVerticalPositionData(defaultValue: PositionValue) {
+        val key = SettingsItem.VerticalPosition.key
         viewModelScope.launch {
             val stringValue = sharedPreferences.getString(key, null)
-            _location.value = stringValue?.toLocationOrDefault() ?: defaultValue
+            _verticalPosition.value = stringValue?.toPositionOrDefault() ?: defaultValue
         }
     }
 
-    fun saveLocationData(value: LocationValue) {
-        val key = SettingsItem.Location.key
-        _location.value = value
+    fun saveVerticalPositionData(value: PositionValue) {
+        val key = SettingsItem.VerticalPosition.key
+        _verticalPosition.value = value
+        saveData(key, value.toString())
+    }
+
+    private fun loadHorizontalPositionData(defaultValue: PositionValue) {
+        val key = SettingsItem.HorizontalPosition.key
+        viewModelScope.launch {
+            val stringValue = sharedPreferences.getString(key, null)
+            _horizontalPosition.value = stringValue?.toPositionOrDefault() ?: defaultValue
+        }
+    }
+
+    fun saveHorizontalPositionData(value: PositionValue) {
+        val key = SettingsItem.HorizontalPosition.key
+        _horizontalPosition.value = value
         saveData(key, value.toString())
     }
 
@@ -83,6 +102,7 @@ class SettingsViewModel : ViewModel() {
     fun resetSettings() {
         saveStyleData(SettingsItem.Style.defaultValue)
         saveDateFormatData(SettingsItem.DateFormat.defaultValue)
-        saveLocationData(SettingsItem.Location.defaultValue)
+        saveVerticalPositionData(SettingsItem.VerticalPosition.defaultValue)
+        saveHorizontalPositionData(SettingsItem.HorizontalPosition.defaultValue)
     }
 }

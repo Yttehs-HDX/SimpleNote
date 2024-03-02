@@ -1,6 +1,5 @@
 package org.eviyttehsarch.note.ui.screen
 
-import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -37,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +61,8 @@ fun Settings(
         DateFormatMode(viewModel = viewModel)
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
-        LocationMode(viewModel = viewModel)
+        VerticalPositionMode(viewModel = viewModel)
+        HorizontalPositionMode(viewModel = viewModel)
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.about))
         AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.version), value = SimpleNoteApplication.Context.getString(R.string.version_number), icon = Icons.TwoTone.Info)
@@ -84,7 +82,7 @@ fun StyleMode(viewModel: SettingsViewModel) {
         menuItemList = { onClose ->
             for (optionValue in StyleValue.entries) {
                 MenuItem(
-                    text = optionValue.toString(),
+                    text = optionValue.toUiState(),
                     onClick = {
                         viewModel.saveStyleData(optionValue)
                         onClose()
@@ -116,11 +114,11 @@ fun DateFormatMode(viewModel: SettingsViewModel) {
 }
 
 @Composable
-fun LocationMode(viewModel: SettingsViewModel) {
-    val value by viewModel.location.collectAsState()
+fun VerticalPositionMode(viewModel: SettingsViewModel) {
+    val value by viewModel.verticalPosition.collectAsState()
     SettingsUnit(
-        key = SimpleNoteApplication.Context.getString(R.string.location),
-        value = if (value == SettingsItem.Location.defaultValue)
+        key = SimpleNoteApplication.Context.getString(R.string.vertical_position),
+        value = if (value == SettingsItem.VerticalPosition.defaultValue)
             SimpleNoteApplication.Context.getString(R.string.default_text)
         else
             SimpleNoteApplication.Context.getString(R.string.custom),
@@ -128,7 +126,28 @@ fun LocationMode(viewModel: SettingsViewModel) {
             MenuItem(
                 text = SimpleNoteApplication.Context.getString(R.string.default_text),
                 onClick = {
-                    viewModel.saveLocationData(SettingsItem.Location.defaultValue)
+                    viewModel.saveVerticalPositionData(SettingsItem.VerticalPosition.defaultValue)
+                    onClose()
+                }
+            )
+        }
+    )
+}
+
+@Composable
+fun HorizontalPositionMode(viewModel: SettingsViewModel) {
+    val value by viewModel.horizontalPosition.collectAsState()
+    SettingsUnit(
+        key = SimpleNoteApplication.Context.getString(R.string.horizontal_position),
+        value = if (value == SettingsItem.HorizontalPosition.defaultValue)
+            SimpleNoteApplication.Context.getString(R.string.default_text)
+        else
+            SimpleNoteApplication.Context.getString(R.string.custom),
+        menuItemList = { onClose ->
+            MenuItem(
+                text = SimpleNoteApplication.Context.getString(R.string.default_text),
+                onClick = {
+                    viewModel.saveHorizontalPositionData(SettingsItem.HorizontalPosition.defaultValue)
                     onClose()
                 }
             )

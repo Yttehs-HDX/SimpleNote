@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -24,7 +23,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.eviyttehsarch.note.AppDestination
 import org.eviyttehsarch.note.MainViewModel
-import org.eviyttehsarch.note.SettingsItem
 import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.navigateBack
@@ -56,20 +54,30 @@ fun MainApp(
         var searchedNotes by rememberSaveable { mutableStateOf<List<NoteEntity>>(emptyList()) }
         Scaffold(
             floatingActionButton = {
-                val location by settingsViewModel.location.collectAsState()
+                val configuration = LocalConfiguration.current
+                val isLandscape = remember(configuration) {
+                    configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                }
+                val verticalPosition by settingsViewModel.verticalPosition.collectAsState()
+                val horizontalPosition by settingsViewModel.horizontalPosition.collectAsState()
                 AddNoteFloatingButton(
                     visible = targetDestination == AppDestination.NotesColumnDestination.route
                             && !searchState,
-                    viewModel = settingsViewModel,
-                    startLocation = location,
+                    landscape = isLandscape,
+                    verticalStartPosition = verticalPosition,
+                    horizontalStartPosition = horizontalPosition,
                     onClick = {
                         mainViewModel.updateNote(NoteEntity(id = mainViewModel.generateUniqueId()))
                         val route = AppDestination.EditNoteDestination.route
                         mainViewModel.updateDestination(route)
                         navController.navigateSingleTopTo(route)
                     },
-                    onStop = { targetLocation ->
-                        settingsViewModel.saveLocationData(targetLocation)
+                    onStop = { position ->
+                        if (isLandscape) {
+                            settingsViewModel.saveHorizontalPositionData(position)
+                        } else {
+                            settingsViewModel.saveVerticalPositionData(position)
+                        }
                     }
                 )
             },

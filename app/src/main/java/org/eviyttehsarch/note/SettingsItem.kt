@@ -1,6 +1,8 @@
 package org.eviyttehsarch.note
 
-typealias LocationValue = Pair<Float, Float>
+import org.eviyttehsarch.note.core.SimpleNoteApplication
+
+typealias PositionValue = Pair<Float, Float>
 typealias StyleValue = SettingsItem.Style.StyleValue
 typealias DateFormatValue = SettingsItem.DateFormat.DateFormatValue
 
@@ -15,10 +17,17 @@ interface SettingsItem<T> {
         enum class StyleValue {
             Vertical, StaggeredGrid;
 
+            fun toUiState(): String {
+                return when (this) {
+                    Vertical -> SimpleNoteApplication.Context.getString(R.string.vertical)
+                    StaggeredGrid -> SimpleNoteApplication.Context.getString(R.string.staggered_grid)
+                }
+            }
+
             override fun toString(): String {
                 return when (this) {
                     Vertical -> "Vertical"
-                    StaggeredGrid -> "Staggered grid"
+                    StaggeredGrid -> "Staggered Grid"
                 }
             }
         }
@@ -33,9 +42,9 @@ interface SettingsItem<T> {
 
             fun toUiState(): String {
                 return when (this) {
-                    Simple -> "Simple"
-                    Ordinary -> "Ordinary"
-                    Complex -> "Complex"
+                    Simple -> SimpleNoteApplication.Context.getString(R.string.simple)
+                    Ordinary -> SimpleNoteApplication.Context.getString(R.string.ordinary)
+                    Complex -> SimpleNoteApplication.Context.getString(R.string.complex)
                 }
             }
 
@@ -49,9 +58,14 @@ interface SettingsItem<T> {
         }
     }
 
-    data object Location : SettingsItem<LocationValue> {
-        override val key: String = "Location"
-        override val defaultValue: LocationValue = 0f to 0f
+    data object VerticalPosition : SettingsItem<PositionValue> {
+        override val key: String = "Vertical Position"
+        override val defaultValue: PositionValue = 0f to 0f
+    }
+
+    data object HorizontalPosition : SettingsItem<PositionValue> {
+        override val key: String = "Horizontal Position"
+        override val defaultValue: PositionValue = 0f to 0f
     }
 }
 
@@ -71,12 +85,12 @@ fun String.toDateFormatOrDefault(): DateFormatValue {
     }
 }
 
-fun String.toLocationOrDefault(): LocationValue {
+fun String.toPositionOrDefault(): PositionValue {
     val regex = Regex("\\((-?\\d+\\.\\d+), (-?\\d+\\.\\d+)\\)")
     val matchResult = regex.find(this)
     return if (matchResult != null && matchResult.groupValues.size == 3) {
         val firstFloat = matchResult.groupValues[1].toFloatOrNull() ?: 0f
         val secondFloat = matchResult.groupValues[2].toFloatOrNull() ?: 0f
-        Pair(firstFloat, secondFloat)
-    } else SettingsItem.Location.defaultValue
+        firstFloat to secondFloat
+    } else SettingsItem.VerticalPosition.defaultValue
 }

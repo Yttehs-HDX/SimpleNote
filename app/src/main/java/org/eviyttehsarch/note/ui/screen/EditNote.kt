@@ -67,7 +67,7 @@ fun EditNote(
                     Row {
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = SimpleNoteApplication.Context.getString(R.string.tittle),
+                            text = SimpleNoteApplication.Context.getString(R.string.title),
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -100,7 +100,7 @@ fun EditNote(
                     Row {
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = SimpleNoteApplication.Context.getString(R.string.tittle),
+                            text = SimpleNoteApplication.Context.getString(R.string.title),
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
