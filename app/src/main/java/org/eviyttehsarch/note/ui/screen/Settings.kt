@@ -39,9 +39,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.eviyttehsarch.note.DateFormatValue
+import org.eviyttehsarch.note.R
 import org.eviyttehsarch.note.SettingsItem
 import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.StyleValue
+import org.eviyttehsarch.note.core.SimpleNoteApplication
 
 @Composable
 fun Settings(
@@ -52,30 +54,29 @@ fun Settings(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
-        SubSettingsTitle(title = "Main Page")
+        SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.main_page))
         StyleMode(viewModel = viewModel)
         HorizontalDivider()
-        SubSettingsTitle(title = "Note Card")
+        SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.note_card))
         DateFormatMode(viewModel = viewModel)
         HorizontalDivider()
-        SubSettingsTitle(title = "Floating Button")
+        SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
         LocationMode(viewModel = viewModel)
         HorizontalDivider()
-        SubSettingsTitle(title = "About")
-        AboutUnit(key = "Version", value = "v1.0", icon = Icons.TwoTone.Info)
-        AboutUnit(key = "Collaborator", value = "Eviarch", icon = Icons.TwoTone.Person)
-        AboutUnit(key = "Collaborator", value = "Yttehs", icon = Icons.TwoTone.Person)
-        AboutUnit(key = "Dev Tool", value = "Android Studio", icon = Icons.TwoTone.Build)
+        SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.about))
+        AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.version), value = SimpleNoteApplication.Context.getString(R.string.version_number), icon = Icons.TwoTone.Info)
+        AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.collaborator), value = SimpleNoteApplication.Context.getString(R.string.collaborator_one), icon = Icons.TwoTone.Person)
+        AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.collaborator), value = SimpleNoteApplication.Context.getString(R.string.collaborator_two), icon = Icons.TwoTone.Person)
+        AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.develop_tool), value = SimpleNoteApplication.Context.getString(R.string.develop_tool_name), icon = Icons.TwoTone.Build)
     }
     BackHandler(onBack = onBack)
 }
 
 @Composable
 fun StyleMode(viewModel: SettingsViewModel) {
-    val key = SettingsItem.Style.key
     val value by viewModel.style.collectAsState()
     SettingsUnit(
-        key = key,
+        key = SimpleNoteApplication.Context.getString(R.string.style),
         value = value.toString(),
         menuItemList = { onClose ->
             for (optionValue in StyleValue.entries) {
@@ -93,10 +94,9 @@ fun StyleMode(viewModel: SettingsViewModel) {
 
 @Composable
 fun DateFormatMode(viewModel: SettingsViewModel) {
-    val key = SettingsItem.DateFormat.key
     val value by viewModel.dateFormat.collectAsState()
     SettingsUnit(
-        key = key,
+        key = SimpleNoteApplication.Context.getString(R.string.date_format),
         value = value.toUiState(),
         menuItemList = { onClose ->
             for (optionValue in DateFormatValue.entries) {
@@ -114,14 +114,16 @@ fun DateFormatMode(viewModel: SettingsViewModel) {
 
 @Composable
 fun LocationMode(viewModel: SettingsViewModel) {
-    val key = SettingsItem.Location.key
     val value by viewModel.location.collectAsState()
     SettingsUnit(
-        key = key,
-        value = if (value == SettingsItem.Location.defaultValue) "Default" else "Custom",
+        key = SimpleNoteApplication.Context.getString(R.string.location),
+        value = if (value == SettingsItem.Location.defaultValue)
+            SimpleNoteApplication.Context.getString(R.string.default_text)
+        else
+            SimpleNoteApplication.Context.getString(R.string.custom),
         menuItemList = { onClose ->
             MenuItem(
-                text = "Default",
+                text = SimpleNoteApplication.Context.getString(R.string.default_text),
                 onClick = {
                     viewModel.saveLocationData(SettingsItem.Location.defaultValue)
                     onClose()

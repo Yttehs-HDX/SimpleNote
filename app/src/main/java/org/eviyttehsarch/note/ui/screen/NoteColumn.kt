@@ -33,7 +33,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.eviyttehsarch.note.DateFormatValue
+import org.eviyttehsarch.note.R
 import org.eviyttehsarch.note.StyleValue
+import org.eviyttehsarch.note.core.SimpleNoteApplication
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.ToastUtil
 import org.eviyttehsarch.note.extra.limitContent
@@ -67,7 +69,7 @@ fun NotesColumn(
                             showDialog = showDialog,
                             onConfirm = {
                                 onDeleteNote(note)
-                                ToastUtil.forceShowToast("Delete succeed")
+                                ToastUtil.forceShowToast(SimpleNoteApplication.Context.getString(R.string.delete_succeed))
                                 showDialog = false
                             },
                             onDismiss = { showDialog = false }
@@ -93,7 +95,7 @@ fun NotesColumn(
                             showDialog = showDialog,
                             onConfirm = {
                                 onDeleteNote(note)
-                                ToastUtil.forceShowToast("Delete succeed")
+                                ToastUtil.forceShowToast(SimpleNoteApplication.Context.getString(R.string.delete_succeed))
                                 showDialog = false
                             },
                             onDismiss = { showDialog = false }
@@ -162,8 +164,8 @@ fun DeleteWaringAlertDialog(
 ) {
     BasicCompose.WaringAlertDialog(
         visible = showDialog,
-        title = "Delete this note",
-        text = "It will lose forever",
+        title = SimpleNoteApplication.Context.getString(R.string.delete_this_note),
+        text = SimpleNoteApplication.Context.getString(R.string.it_will_lose_forever),
         onConfirm = onConfirm,
         onDismiss = onDismiss
     )

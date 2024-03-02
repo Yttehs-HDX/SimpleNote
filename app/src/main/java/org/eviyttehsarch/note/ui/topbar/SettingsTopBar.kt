@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import org.eviyttehsarch.note.R
+import org.eviyttehsarch.note.core.SimpleNoteApplication
 import org.eviyttehsarch.note.extra.ToastUtil
 import org.eviyttehsarch.note.ui.BasicCompose
 
@@ -59,9 +61,9 @@ fun SettingsTopBar(
                         interactionSource = interactionSource,
                         indication = null
                     ) {
-                        ToastUtil.showToast("Thanks for using ^_^")
+                        ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.thanks_for_using))
                     },
-                    text = "Settings",
+                    text = SimpleNoteApplication.Context.getString(R.string.settings),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Cursive
@@ -94,7 +96,7 @@ fun SettingsTopBar(
             showDialog = showDialog,
             onConfirm = {
                 onClickResetButton()
-                ToastUtil.forceShowToast("Reset succeed")
+                ToastUtil.forceShowToast(SimpleNoteApplication.Context.getString(R.string.reset_succeed))
                 showDialog = false
             },
             onDismiss = {
@@ -112,8 +114,8 @@ fun ResetWarningAlertDialog(
 ) {
     BasicCompose.WaringAlertDialog(
         visible = showDialog,
-        title = "Reset all settings",
-        text = "Settings will be reset to default",
+        title = SimpleNoteApplication.Context.getString(R.string.reset_all_settings),
+        text = SimpleNoteApplication.Context.getString(R.string.settings_will_be_reset_default),
         onConfirm = onConfirm,
         onDismiss = onDismiss
     )

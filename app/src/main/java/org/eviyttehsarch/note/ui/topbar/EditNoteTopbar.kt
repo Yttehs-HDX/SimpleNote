@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import org.eviyttehsarch.note.R
+import org.eviyttehsarch.note.core.SimpleNoteApplication
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.ToastUtil
 import org.eviyttehsarch.note.ui.BasicCompose
@@ -64,9 +66,9 @@ fun EditNoteTopBar(
                         interactionSource = interactionSource,
                         indication = null
                     ) {
-                        ToastUtil.showToast("Try to write something ^_^")
+                        ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.try_to_write_something))
                     },
-                    text = "Edit Note",
+                    text = SimpleNoteApplication.Context.getString(R.string.edit_note),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Cursive

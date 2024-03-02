@@ -39,6 +39,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.eviyttehsarch.note.R
+import org.eviyttehsarch.note.core.SimpleNoteApplication
 import org.eviyttehsarch.note.extra.ToastUtil
 import org.eviyttehsarch.note.ui.BasicCompose
 
@@ -92,9 +94,9 @@ fun NoteColumnTopBar(
                             interactionSource = interactionSource,
                             indication = null
                         ) {
-                            ToastUtil.showToast("^_^")
+                            ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.smile_face))
                         },
-                        text = "Simple Note",
+                        text = SimpleNoteApplication.Context.getString(R.string.app_name),
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily.Cursive
@@ -160,7 +162,7 @@ fun SearchBox(
                     Row {
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Searching...",
+                            text = SimpleNoteApplication.Context.getString(R.string.searching),
                             color = MaterialTheme.colorScheme.surfaceTint,
                             fontWeight = FontWeight.Light
                         )

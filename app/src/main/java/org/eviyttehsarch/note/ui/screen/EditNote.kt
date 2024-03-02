@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.eviyttehsarch.note.R
+import org.eviyttehsarch.note.core.SimpleNoteApplication
 import org.eviyttehsarch.note.data.NoteEntity
 
 @Composable
@@ -65,7 +67,7 @@ fun EditNote(
                     Row {
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Title",
+                            text = SimpleNoteApplication.Context.getString(R.string.tittle),
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -98,7 +100,7 @@ fun EditNote(
                     Row {
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Content",
+                            text = SimpleNoteApplication.Context.getString(R.string.tittle),
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
