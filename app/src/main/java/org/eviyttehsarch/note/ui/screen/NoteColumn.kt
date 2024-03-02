@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.eviyttehsarch.note.DateFormatValue
@@ -79,7 +80,7 @@ fun NotesColumn(
             }
             StyleValue.StaggeredGrid -> {
                 LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(2),
+                    columns = StaggeredGridCells.Fixed(LocalConfiguration.current.screenWidthDp / 200),
                     verticalItemSpacing = 4.dp,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
