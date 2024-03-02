@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -38,9 +38,9 @@ fun MainApp(
         val homeRoute = AppDestination.NotesColumnDestination.route
         val targetDestination by mainViewModel.targetDestination.collectAsState()
         val allNotes by mainViewModel.noteListFlow.collectAsState(initial = emptyList())
-        var targetNote by remember { mutableStateOf(NoteEntity()) }
-        var searchState by remember { mutableStateOf(false) }
-        var searchedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
+        val targetNote by mainViewModel.targetNote.collectAsState()
+        var searchState by rememberSaveable { mutableStateOf(false) }
+        var searchedNotes by rememberSaveable { mutableStateOf<List<NoteEntity>>(emptyList()) }
         Scaffold(
             floatingActionButton = {
                 val location by settingsViewModel.location.collectAsState()
@@ -49,7 +49,7 @@ fun MainApp(
                             && !searchState,
                     startLocation = location,
                     onClick = {
-                        targetNote = NoteEntity(id = mainViewModel.generateUniqueId())
+                        mainViewModel.updateNote(NoteEntity(id = mainViewModel.generateUniqueId()))
                         val route = AppDestination.EditNoteDestination.route
                         mainViewModel.updateDestination(route)
                         navController.navigateSingleTopTo(route)
@@ -88,7 +88,7 @@ fun MainApp(
                     visible = targetDestination == AppDestination.EditNoteDestination.route,
                     note = targetNote,
                     onSaveNote = { note ->
-                        targetNote = note
+                        mainViewModel.updateNote(note)
                         mainViewModel.insertOrUpdate(targetNote)
                     },
                     onDeleteNote = { note ->
@@ -122,7 +122,7 @@ fun MainApp(
                         onClick = { note ->
                             val route = AppDestination.EditNoteDestination.route
                             mainViewModel.updateDestination(route)
-                            targetNote = note
+                            mainViewModel.updateNote(note)
                             navController.navigateSingleTopTo(route)
                         },
                         onDeleteNote = { note ->
@@ -134,7 +134,7 @@ fun MainApp(
                     AppDestination.EditNoteDestination.Content(
                         note = targetNote,
                         onDone = { note ->
-                            targetNote = note
+                            mainViewModel.updateNote(note)
                             mainViewModel.insertOrUpdate(targetNote)
                         },
                         onBack = {

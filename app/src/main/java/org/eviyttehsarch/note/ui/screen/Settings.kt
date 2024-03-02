@@ -63,8 +63,8 @@ fun Settings(
         HorizontalDivider()
         SubSettingsTitle(title = "About")
         AboutUnit(key = "Version", value = "v1.0", icon = Icons.TwoTone.Info)
-        AboutUnit(key = "Author 1", value = "Yttehs", icon = Icons.TwoTone.Person)
-        AboutUnit(key = "Author 2", value = "Eviarch", icon = Icons.TwoTone.Person)
+        AboutUnit(key = "Collaborator", value = "Eviarch", icon = Icons.TwoTone.Person)
+        AboutUnit(key = "Collaborator", value = "Yttehs", icon = Icons.TwoTone.Person)
         AboutUnit(key = "Dev Tool", value = "Android Studio", icon = Icons.TwoTone.Build)
     }
     BackHandler(onBack = onBack)

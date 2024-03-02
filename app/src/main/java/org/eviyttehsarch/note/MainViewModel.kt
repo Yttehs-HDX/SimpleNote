@@ -19,8 +19,16 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     val targetDestination: StateFlow<String>
         get() = _targetDestination
 
+    private val _targetNote = MutableStateFlow(NoteEntity())
+    val targetNote: StateFlow<NoteEntity>
+        get() = _targetNote
+
     fun updateDestination(destination: String) {
         _targetDestination.value = destination
+    }
+
+    fun updateNote(note: NoteEntity) {
+        _targetNote.value = note
     }
 
     fun insertOrUpdate(note: NoteEntity) {

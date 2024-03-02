@@ -29,6 +29,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -143,7 +144,7 @@ fun SearchBox(
         ) {
             val focusRequester = FocusRequester()
             val keyboardController = LocalSoftwareKeyboardController.current
-            var inputText by remember { mutableStateOf("") }
+            var inputText by rememberSaveable { mutableStateOf("") }
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -67,7 +67,7 @@ fun EditNote(
                         Text(
                             text = "Title",
                             style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.outlineVariant
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 },
@@ -99,7 +99,7 @@ fun EditNote(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Content",
-                            color = MaterialTheme.colorScheme.outlineVariant
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 },
