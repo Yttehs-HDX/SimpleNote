@@ -36,7 +36,7 @@ fun MainApp(
         color = MaterialTheme.colorScheme.background
     ) {
         val homeRoute = AppDestination.NotesColumnDestination.route
-        var targetDestination by remember { mutableStateOf(AppDestination.NotesColumnDestination.route) }
+        val targetDestination by mainViewModel.targetDestination.collectAsState()
         val allNotes by mainViewModel.noteListFlow.collectAsState(initial = emptyList())
         var targetNote by remember { mutableStateOf(NoteEntity()) }
         var searchState by remember { mutableStateOf(false) }
@@ -51,7 +51,7 @@ fun MainApp(
                     onClick = {
                         targetNote = NoteEntity(id = mainViewModel.generateUniqueId())
                         val route = AppDestination.EditNoteDestination.route
-                        targetDestination = route
+                        mainViewModel.updateDestination(route)
                         navController.navigateSingleTopTo(route)
                     },
                     onStop = { targetLocation ->
@@ -77,7 +77,7 @@ fun MainApp(
                     },
                     onClickSettingsButton = {
                         val route = AppDestination.SettingsDestination.route
-                        targetDestination = route
+                        mainViewModel.updateDestination(route)
                         navController.navigateSingleTopTo(route)
                     },
                     onBack = {
@@ -95,7 +95,7 @@ fun MainApp(
                         mainViewModel.deleteNote(note)
                     }
                 ) {
-                    targetDestination = homeRoute
+                    mainViewModel.updateDestination(homeRoute)
                     navController.navigateBack()
                 }
                 SettingsTopBar(
@@ -104,7 +104,7 @@ fun MainApp(
                         settingsViewModel.resetSettings()
                     },
                     onBack = {
-                        targetDestination = homeRoute
+                        mainViewModel.updateDestination(homeRoute)
                         navController.navigateBack()
                     }
                 )
@@ -121,7 +121,7 @@ fun MainApp(
                         noteList = if (searchState) searchedNotes else allNotes,
                         onClick = { note ->
                             val route = AppDestination.EditNoteDestination.route
-                            targetDestination = route
+                            mainViewModel.updateDestination(route)
                             targetNote = note
                             navController.navigateSingleTopTo(route)
                         },
@@ -138,7 +138,7 @@ fun MainApp(
                             mainViewModel.insertOrUpdate(targetNote)
                         },
                         onBack = {
-                            targetDestination = homeRoute
+                            mainViewModel.updateDestination(homeRoute)
                             navController.navigateBack()
                         }
                     )
@@ -147,7 +147,7 @@ fun MainApp(
                     AppDestination.SettingsDestination.Content(
                         viewModel = settingsViewModel,
                         onBack = {
-                            targetDestination = homeRoute
+                            mainViewModel.updateDestination(homeRoute)
                             navController.navigateBack()
                         }
                     )

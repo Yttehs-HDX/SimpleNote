@@ -3,6 +3,8 @@ package org.eviyttehsarch.note
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.eviyttehsarch.note.data.AppDatabase
 import org.eviyttehsarch.note.data.NoteEntity
@@ -12,6 +14,14 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     private val noteDao = database.noteDao()
 
     val noteListFlow = getAllNotes()
+
+    private val _targetDestination = MutableStateFlow(AppDestination.NotesColumnDestination.route)
+    val targetDestination: StateFlow<String>
+        get() = _targetDestination
+
+    fun updateDestination(destination: String) {
+        _targetDestination.value = destination
+    }
 
     fun insertOrUpdate(note: NoteEntity) {
         viewModelScope.launch {
