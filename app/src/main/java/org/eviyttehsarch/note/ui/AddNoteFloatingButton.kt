@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntOffset
 import org.eviyttehsarch.note.PositionValue
 import kotlin.math.roundToInt
@@ -56,6 +57,7 @@ fun AddNoteFloatingButton(
                 else verticalStartPosition.toOffset()
             )
         }
+        val screenState = LocalConfiguration.current
         FloatingActionButton(
             modifier = Modifier
                 .offset {
@@ -69,6 +71,10 @@ fun AddNoteFloatingButton(
                         onDrag = { change, dragAmount ->
                             change.consume()
                             offset += dragAmount
+                            offset = Offset(
+                                x = offset.x.coerceIn(-2 * screenState.screenWidthDp.toFloat(), 0f),
+                                y = offset.y.coerceIn(-2 * screenState.screenHeightDp.toFloat(), 0f),
+                            )
                         },
                         onDragEnd = {
                             onStop(offset.toPosition())
