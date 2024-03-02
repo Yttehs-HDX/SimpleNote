@@ -1,5 +1,6 @@
 package org.eviyttehsarch.note.ui
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -24,17 +25,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntOffset
 import org.eviyttehsarch.note.LocationValue
+import org.eviyttehsarch.note.SettingsItem
+import org.eviyttehsarch.note.SettingsViewModel
 import kotlin.math.roundToInt
 
 @Composable
 fun AddNoteFloatingButton(
     visible: Boolean,
+    viewModel: SettingsViewModel,
     startLocation: LocationValue,
     onClick: () -> Unit,
     onStop: (LocationValue) -> Unit
 ) {
+    ScreenOrientationDetection(viewModel = viewModel)
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(
@@ -75,6 +81,19 @@ fun AddNoteFloatingButton(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ScreenOrientationDetection(
+    viewModel: SettingsViewModel
+) {
+    val configuration = LocalConfiguration.current
+    val orientation = configuration.orientation
+    if (orientation != Configuration.ORIENTATION_LANDSCAPE){
+        viewModel.saveLocationData(SettingsItem.Location.defaultValue)
+    }else{
+        viewModel.saveLocationData(SettingsItem.Location.defaultValue)
     }
 }
 

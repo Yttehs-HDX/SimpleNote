@@ -1,5 +1,6 @@
 package org.eviyttehsarch.note.ui.screen
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -35,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,6 +65,7 @@ fun Settings(
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
         LocationMode(viewModel = viewModel)
+        ScreenOrientationMode()
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.about))
         AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.version), value = SimpleNoteApplication.Context.getString(R.string.version_number), icon = Icons.TwoTone.Info)
@@ -70,6 +74,19 @@ fun Settings(
         AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.develop_tool), value = SimpleNoteApplication.Context.getString(R.string.develop_tool_name), icon = Icons.TwoTone.Build)
     }
     BackHandler(onBack = onBack)
+}
+
+@Composable
+fun ScreenOrientationMode() {
+    val configuration = LocalConfiguration.current
+    val orientation = configuration.orientation
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "Screen orientation: ${if (orientation == Configuration.ORIENTATION_LANDSCAPE) "Landscape" else "Portrait"}")
+    }
 }
 
 @Composable

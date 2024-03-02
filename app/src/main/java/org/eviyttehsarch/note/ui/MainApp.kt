@@ -1,5 +1,6 @@
 package org.eviyttehsarch.note.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -9,14 +10,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.eviyttehsarch.note.AppDestination
 import org.eviyttehsarch.note.MainViewModel
+import org.eviyttehsarch.note.SettingsItem
 import org.eviyttehsarch.note.SettingsViewModel
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.extra.navigateBack
@@ -31,8 +39,13 @@ fun MainApp(
     mainViewModel: MainViewModel,
     settingsViewModel: SettingsViewModel
 ) {
+    val surfaceSize = remember { mutableStateOf(Size.Zero) }
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .onGloballyPositioned { coordinates ->
+                surfaceSize.value = coordinates.size.toSize()
+            }
+            .fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         val homeRoute = AppDestination.NotesColumnDestination.route
@@ -47,6 +60,7 @@ fun MainApp(
                 AddNoteFloatingButton(
                     visible = targetDestination == AppDestination.NotesColumnDestination.route
                             && !searchState,
+                    viewModel = settingsViewModel,
                     startLocation = location,
                     onClick = {
                         mainViewModel.updateNote(NoteEntity(id = mainViewModel.generateUniqueId()))
@@ -156,3 +170,4 @@ fun MainApp(
         }
     }
 }
+
