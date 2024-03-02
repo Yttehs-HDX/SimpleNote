@@ -65,7 +65,6 @@ fun Settings(
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
         LocationMode(viewModel = viewModel)
-        ScreenOrientationMode()
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.about))
         AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.version), value = SimpleNoteApplication.Context.getString(R.string.version_number), icon = Icons.TwoTone.Info)
@@ -74,19 +73,6 @@ fun Settings(
         AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.develop_tool), value = SimpleNoteApplication.Context.getString(R.string.develop_tool_name), icon = Icons.TwoTone.Build)
     }
     BackHandler(onBack = onBack)
-}
-
-@Composable
-fun ScreenOrientationMode() {
-    val configuration = LocalConfiguration.current
-    val orientation = configuration.orientation
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Screen orientation: ${if (orientation == Configuration.ORIENTATION_LANDSCAPE) "Landscape" else "Portrait"}")
-    }
 }
 
 @Composable

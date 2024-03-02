@@ -90,9 +90,7 @@ fun ScreenOrientationDetection(
 ) {
     val configuration = LocalConfiguration.current
     val orientation = configuration.orientation
-    if (orientation != Configuration.ORIENTATION_LANDSCAPE){
-        viewModel.saveLocationData(SettingsItem.Location.defaultValue)
-    }else{
+    if (orientation != Configuration.ORIENTATION_LANDSCAPE) {
         viewModel.saveLocationData(SettingsItem.Location.defaultValue)
     }
 }
