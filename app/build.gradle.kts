@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "org.eviyttehsarch.note"
+    namespace = "top.eviarch.simplenote"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "org.eviyttehsarch.note"
+        applicationId = "top.eviarch.simplenote"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

@@ -15,7 +15,7 @@
         android:theme="@style/Theme.SimpleNote"
         tools:targetApi="34">
         <activity
-            android:name="org.eviyttehsarch.note.MainActivity"
+            android:name="top.eviarch.simplenote.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.SimpleNote">
