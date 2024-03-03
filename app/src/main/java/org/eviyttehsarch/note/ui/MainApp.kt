@@ -45,6 +45,7 @@ fun MainApp(
         val targetNote by mainViewModel.targetNote.collectAsState()
         val targetOffset by mainViewModel.targetOffset.collectAsState()
         var searchState by rememberSaveable { mutableStateOf(false) }
+        var matchedString by rememberSaveable { mutableStateOf("") }
         var searchedNotes by rememberSaveable { mutableStateOf<List<NoteEntity>>(emptyList()) }
         Scaffold(
             floatingActionButton = {
@@ -83,12 +84,13 @@ fun MainApp(
                         searchState = true
                     },
                     onSearchStop = {
+                        matchedString = ""
                         searchState = false
                     },
                     onSearch = { input ->
+                        matchedString = input
                         searchedNotes = allNotes.filter { eachNote ->
-                            input.lowercase() in eachNote.title.lowercase() ||
-                                    input.lowercase() in eachNote.content.lowercase()
+                            input in eachNote.title || input in eachNote.content
                         }
                     },
                     onClickSettingsButton = {
@@ -97,6 +99,7 @@ fun MainApp(
                         navController.navigateSingleTopTo(route)
                     },
                     onBack = {
+                        matchedString = ""
                         searchState = false
                     }
                 )
@@ -120,6 +123,7 @@ fun MainApp(
                         settingsViewModel.resetSettings()
                     },
                     onBack = {
+                        matchedString = ""
                         mainViewModel.updateDestination(homeRoute)
                         navController.navigateBack()
                     }
@@ -135,6 +139,8 @@ fun MainApp(
                     AppDestination.NotesColumnDestination.Content(
                         viewModel = settingsViewModel,
                         noteList = if (searchState) searchedNotes else allNotes,
+                        searchState = searchState,
+                        matchedString = matchedString,
                         onClick = { note, offset ->
                             val route = AppDestination.EditNoteDestination.route
                             mainViewModel.updateDestination(route)

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -170,6 +171,9 @@ fun SearchBox(
                 },
                 trailingIcon = {
                     IconButton(
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.surfaceTint
+                        ),
                         onClick = {
                             inputText = ""
                             onSearchStop()
@@ -177,7 +181,7 @@ fun SearchBox(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "Clear"
+                            contentDescription = "Clear",
                         )
                     }
                 }
@@ -199,7 +203,5 @@ fun SearchBox(
             }
         }
     }
-    if (searchState) {
-        BackHandler(onBack = onBack)
-    }
+    BackHandler(onBack = onBack)
 }

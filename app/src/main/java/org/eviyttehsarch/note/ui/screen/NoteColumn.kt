@@ -32,6 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.eviyttehsarch.note.DateFormatValue
@@ -51,6 +54,8 @@ fun NotesColumn(
     noteList: List<NoteEntity>,
     style: StyleValue,
     dateFormat: String,
+    searchState: Boolean,
+    matchedString: String,
     onClick: (NoteEntity, Offset) -> Unit,
     onDeleteNote: (NoteEntity) -> Unit
 ) {
@@ -64,6 +69,8 @@ fun NotesColumn(
                         var showDialog by remember { mutableStateOf(false) }
                         NoteCard(
                             note = note,
+                            searchState = searchState,
+                            matchedString = matchedString,
                             dateFormat = dateFormat,
                             onClick = { offset ->
                                 onClick(note, offset)
@@ -92,6 +99,8 @@ fun NotesColumn(
                         var showDialog by remember { mutableStateOf(false) }
                         NoteCard(
                             note = note,
+                            searchState = searchState,
+                            matchedString = matchedString,
                             dateFormat = dateFormat,
                             onClick = { offset ->
                                 onClick(note, offset)
@@ -117,6 +126,8 @@ fun NotesColumn(
 @Composable
 fun NoteCard(
     note: NoteEntity,
+    searchState: Boolean,
+    matchedString: String,
     dateFormat: String,
     onClick: (Offset) -> Unit,
     onLongPress: () -> Unit
@@ -139,13 +150,39 @@ fun NoteCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
+            val annotatedTitle = buildAnnotatedString {
+                val fullStringList = note.title.split(matchedString)
+                for (index in fullStringList.indices) {
+                    if (index != 0) {
+                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.error)) {
+                            append(matchedString)
+                        }
+                    }
+                    withStyle(style = SpanStyle()) { append(fullStringList[index]) }
+                }
+            }
+            val title = buildAnnotatedString {
+                append(note.title.limitContent(20))
+            }
             Text(
-                text = note.title.limitContent(20),
+                text = if (searchState) annotatedTitle else title,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+            val annotatedContent = buildAnnotatedString {
+                val fullStringList = note.content.split(matchedString)
+                for (index in fullStringList.indices) {
+                    if (index != 0) {
+                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.error)) { append(matchedString) }
+                    }
+                    withStyle(style = SpanStyle()) { append(fullStringList[index]) }
+                }
+            }
+            val content = buildAnnotatedString {
+                append(note.content.limitContent(100))
+            }
             Text(
-                text = note.content.limitContent(100),
+                text = if (searchState) annotatedContent else content,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
@@ -201,15 +238,11 @@ fun EmptyNoteList() {
 @Composable
 fun PreviewNoteCard() {
     NoteCard(
-        note = NoteEntity(0, "Simple title", "This is content", 0),
+        note = NoteEntity(0, "This is title", "This is content", 0),
         dateFormat = DateFormatValue.Ordinary.toString(),
+        searchState = true,
+        matchedString = "is",
         onClick = { },
         onLongPress = { }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewEmptyNoteList() {
-    EmptyNoteList()
 }

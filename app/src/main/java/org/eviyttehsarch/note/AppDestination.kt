@@ -19,6 +19,8 @@ interface AppDestination {
         fun Content(
             viewModel: SettingsViewModel,
             noteList: List<NoteEntity>,
+            searchState: Boolean,
+            matchedString: String,
             onClick: (NoteEntity, Offset) -> Unit,
             onDeleteNote: (NoteEntity) -> Unit
         ) {
@@ -28,6 +30,8 @@ interface AppDestination {
                 noteList = noteList,
                 style = style,
                 dateFormat = dateFormat.toString(),
+                searchState = searchState,
+                matchedString = matchedString,
                 onClick = onClick,
                 onDeleteNote = onDeleteNote
             )
@@ -46,7 +50,6 @@ interface AppDestination {
         ) {
             EditNote(
                 note = note,
-                noteOffset = noteOffset,
                 onDone = onDone,
                 onBack = onBack
             )

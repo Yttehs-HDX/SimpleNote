@@ -25,7 +25,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.eviyttehsarch.note.R
@@ -35,7 +34,6 @@ import org.eviyttehsarch.note.data.NoteEntity
 @Composable
 fun EditNote(
     note: NoteEntity,
-    noteOffset: Offset,
     onDone: (NoteEntity) -> Unit,
     onBack: () -> Unit
 ) {
