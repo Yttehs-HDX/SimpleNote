@@ -1,6 +1,10 @@
 package org.eviyttehsarch.note.ui
 
 import android.content.res.Configuration
+import android.util.Log
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -13,11 +17,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 import org.eviyttehsarch.note.AppDestination
 import org.eviyttehsarch.note.MainViewModel
 import org.eviyttehsarch.note.SettingsViewModel
@@ -28,6 +34,7 @@ import org.eviyttehsarch.note.ui.topbar.EditNoteTopBar
 import org.eviyttehsarch.note.ui.topbar.NoteColumnTopBar
 import org.eviyttehsarch.note.ui.topbar.SettingsTopBar
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainApp(
     navController: NavHostController,
@@ -126,10 +133,10 @@ fun MainApp(
                 )
             }
         ) { paddingValues ->
-            NavHost(
+            AnimatedNavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
-                startDestination = AppDestination.NotesColumnDestination.route
+                startDestination = AppDestination.NotesColumnDestination.route,
             ) {
                 composable(route = AppDestination.NotesColumnDestination.route) {
                     AppDestination.NotesColumnDestination.Content(
@@ -147,7 +154,14 @@ fun MainApp(
                         }
                     )
                 }
-                composable(route = AppDestination.EditNoteDestination.route) {
+                composable(
+                    route = AppDestination.EditNoteDestination.route,
+                    enterTransition = {
+                        Log.v("TAG", "offset = $targetOffset")
+                        expandIn(animationSpec = tween(1000), expandFrom = Alignment.Center)
+                        { IntSize(0,0) }
+                    }
+                ) {
                     AppDestination.EditNoteDestination.Content(
                         note = targetNote,
                         noteOffset = targetOffset,
