@@ -10,6 +10,8 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import org.eviyttehsarch.note.R
+import org.eviyttehsarch.note.core.SimpleNoteApplication
 
 object BasicCompose {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +48,7 @@ object BasicCompose {
                         modifier = Modifier.clickable {
                             onConfirm()
                         },
-                        text = "Confirm",
+                        text = SimpleNoteApplication.Context.getString(R.string.confirm),
                         color = MaterialTheme.colorScheme.secondary
                     )
                 },
@@ -55,7 +57,7 @@ object BasicCompose {
                         modifier = Modifier.clickable {
                             onDismiss()
                         },
-                        text = "Dismiss",
+                        text = SimpleNoteApplication.Context.getString(R.string.dismiss),
                         color = MaterialTheme.colorScheme.secondary
                     )
                 }

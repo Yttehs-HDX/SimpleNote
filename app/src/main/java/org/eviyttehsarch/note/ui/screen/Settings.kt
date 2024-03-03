@@ -78,7 +78,7 @@ fun StyleMode(viewModel: SettingsViewModel) {
     val value by viewModel.style.collectAsState()
     SettingsUnit(
         key = SimpleNoteApplication.Context.getString(R.string.style),
-        value = value.toString(),
+        value = value.toUiState(),
         menuItemList = { onClose ->
             for (optionValue in StyleValue.entries) {
                 MenuItem(
