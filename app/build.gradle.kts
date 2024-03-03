@@ -83,4 +83,5 @@ dependencies {
     // Accompanist
     val accompanistVersion = "0.34.0"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
+    implementation("com.google.accompanist:accompanist-navigation-animation:$accompanistVersion")
 }
