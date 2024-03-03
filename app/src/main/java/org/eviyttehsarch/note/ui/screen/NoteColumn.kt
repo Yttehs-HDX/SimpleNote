@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +51,7 @@ fun NotesColumn(
     noteList: List<NoteEntity>,
     style: StyleValue,
     dateFormat: String,
-    onClick: (NoteEntity) -> Unit,
+    onClick: (NoteEntity, Offset) -> Unit,
     onDeleteNote: (NoteEntity) -> Unit
 ) {
     if (noteList.isEmpty()) {
@@ -64,7 +65,9 @@ fun NotesColumn(
                         NoteCard(
                             note = note,
                             dateFormat = dateFormat,
-                            onClick = { onClick(note) },
+                            onClick = { offset ->
+                                onClick(note, offset)
+                            },
                             onLongPress = { showDialog = true }
                         )
                         DeleteWaringAlertDialog(
@@ -90,7 +93,9 @@ fun NotesColumn(
                         NoteCard(
                             note = note,
                             dateFormat = dateFormat,
-                            onClick = { onClick(note) },
+                            onClick = { offset ->
+                                onClick(note, offset)
+                            },
                             onLongPress = { showDialog = true }
                         )
                         DeleteWaringAlertDialog(
@@ -113,7 +118,7 @@ fun NotesColumn(
 fun NoteCard(
     note: NoteEntity,
     dateFormat: String,
-    onClick: () -> Unit,
+    onClick: (Offset) -> Unit,
     onLongPress: () -> Unit
 ) {
     Card(
@@ -122,8 +127,8 @@ fun NoteCard(
             .fillMaxWidth()
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = {
-                        onClick()
+                    onTap = { offset ->
+                        onClick(offset)
                     },
                     onLongPress = {
                         onLongPress()

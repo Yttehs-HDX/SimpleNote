@@ -1,5 +1,6 @@
 package org.eviyttehsarch.note
 
+import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
@@ -23,12 +24,20 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     val targetNote: StateFlow<NoteEntity>
         get() = _targetNote
 
+    private val _targetOffset = MutableStateFlow(Offset.Zero)
+    val targetOffset: StateFlow<Offset>
+        get() = _targetOffset
+
     fun updateDestination(destination: String) {
         _targetDestination.value = destination
     }
 
     fun updateNote(note: NoteEntity) {
         _targetNote.value = note
+    }
+
+    fun updateOffset(offset: Offset) {
+        _targetOffset.value = offset
     }
 
     fun insertOrUpdate(note: NoteEntity) {

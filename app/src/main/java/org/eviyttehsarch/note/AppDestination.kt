@@ -3,6 +3,7 @@ package org.eviyttehsarch.note
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.geometry.Offset
 import org.eviyttehsarch.note.data.NoteEntity
 import org.eviyttehsarch.note.ui.screen.EditNote
 import org.eviyttehsarch.note.ui.screen.NotesColumn
@@ -18,7 +19,7 @@ interface AppDestination {
         fun Content(
             viewModel: SettingsViewModel,
             noteList: List<NoteEntity>,
-            onClick: (NoteEntity) -> Unit,
+            onClick: (NoteEntity, Offset) -> Unit,
             onDeleteNote: (NoteEntity) -> Unit
         ) {
             val style by viewModel.style.collectAsState()
@@ -39,11 +40,13 @@ interface AppDestination {
         @Composable
         fun Content(
             note: NoteEntity,
+            noteOffset: Offset,
             onDone: (NoteEntity) -> Unit,
             onBack: () -> Unit
         ) {
             EditNote(
                 note = note,
+                noteOffset = noteOffset,
                 onDone = onDone,
                 onBack = onBack
             )

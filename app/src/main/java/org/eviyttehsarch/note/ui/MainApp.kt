@@ -43,6 +43,7 @@ fun MainApp(
         val targetDestination by mainViewModel.targetDestination.collectAsState()
         val allNotes by mainViewModel.noteListFlow.collectAsState(initial = emptyList())
         val targetNote by mainViewModel.targetNote.collectAsState()
+        val targetOffset by mainViewModel.targetOffset.collectAsState()
         var searchState by rememberSaveable { mutableStateOf(false) }
         var searchedNotes by rememberSaveable { mutableStateOf<List<NoteEntity>>(emptyList()) }
         Scaffold(
@@ -134,10 +135,11 @@ fun MainApp(
                     AppDestination.NotesColumnDestination.Content(
                         viewModel = settingsViewModel,
                         noteList = if (searchState) searchedNotes else allNotes,
-                        onClick = { note ->
+                        onClick = { note, offset ->
                             val route = AppDestination.EditNoteDestination.route
                             mainViewModel.updateDestination(route)
                             mainViewModel.updateNote(note)
+                            mainViewModel.updateOffset(offset)
                             navController.navigateSingleTopTo(route)
                         },
                         onDeleteNote = { note ->
@@ -148,6 +150,7 @@ fun MainApp(
                 composable(route = AppDestination.EditNoteDestination.route) {
                     AppDestination.EditNoteDestination.Content(
                         note = targetNote,
+                        noteOffset = targetOffset,
                         onDone = { note ->
                             mainViewModel.updateNote(note)
                             mainViewModel.insertOrUpdate(targetNote)
