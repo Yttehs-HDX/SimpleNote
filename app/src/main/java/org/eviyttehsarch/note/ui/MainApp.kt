@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -162,8 +163,16 @@ fun MainApp(
                 composable(
                     route = AppDestination.EditNoteDestination.route,
                     enterTransition = {
-                        expandIn(animationSpec = tween(1000), expandFrom = Alignment.Center)
-                        { IntSize(0,0) }
+                        expandIn(
+                            animationSpec = tween(500),
+                            expandFrom = Alignment.Center
+                        ) { IntSize.Zero }
+                    },
+                    exitTransition = {
+                        shrinkOut(
+                            animationSpec = tween(500),
+                            shrinkTowards = Alignment.Center
+                        ) { IntSize.Zero }
                     }
                 ) {
                     AppDestination.EditNoteDestination.Content(
