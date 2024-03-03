@@ -43,6 +43,7 @@ import org.eviyttehsarch.note.extra.limitContent
 import org.eviyttehsarch.note.ui.BasicCompose
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 @Composable
 fun NotesColumn(
@@ -80,7 +81,7 @@ fun NotesColumn(
             }
             StyleValue.StaggeredGrid -> {
                 LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(LocalConfiguration.current.screenWidthDp / 200),
+                    columns = StaggeredGridCells.Fixed((LocalConfiguration.current.screenWidthDp.toFloat() / 200f).roundToInt()),
                     verticalItemSpacing = 4.dp,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
