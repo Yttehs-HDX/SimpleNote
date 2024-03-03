@@ -1,2 +1,20 @@
 # Simple-Note
-A tool to keep notes locally.
+
+## 项目背景
+
+
+
+## 安装
+
+
+
+## 使用
+
+
+
+## 主要项目负责人
+
+
+
+## 开源协议
+

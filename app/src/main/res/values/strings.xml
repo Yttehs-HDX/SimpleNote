@@ -24,7 +24,7 @@
     <string name="custom">Custom</string>
     <string name="try_to_write_something">"Try to write something ^_^</string>
     <string name="edit_note" translatable="false">Edit Note</string>
-    <string name="smile_face">^_^</string>
+    <string name="smile_face" translatable="false">^_^</string>
     <string name="searching">Searching…</string>
     <string name="thanks_for_using">Thanks for using ^_^</string>
     <string name="settings" translatable="false">Settings</string>
