@@ -1,7 +1,6 @@
 package org.eviyttehsarch.note.ui
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -50,7 +49,6 @@ fun MainApp(
         val targetDestination by mainViewModel.targetDestination.collectAsState()
         val allNotes by mainViewModel.noteListFlow.collectAsState(initial = emptyList())
         val targetNote by mainViewModel.targetNote.collectAsState()
-        val targetOffset by mainViewModel.targetOffset.collectAsState()
         var searchState by rememberSaveable { mutableStateOf(false) }
         var matchedString by rememberSaveable { mutableStateOf("") }
         var searchedNotes by rememberSaveable { mutableStateOf<List<NoteEntity>>(emptyList()) }
@@ -137,6 +135,7 @@ fun MainApp(
                 )
             }
         ) { paddingValues ->
+            @Suppress("DEPRECATION")
             AnimatedNavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navController,
@@ -163,23 +162,20 @@ fun MainApp(
                 composable(
                     route = AppDestination.EditNoteDestination.route,
                     enterTransition = {
-                        Log.v("TAG", "offset = $targetOffset")
                         expandIn(animationSpec = tween(1000), expandFrom = Alignment.Center)
                         { IntSize(0,0) }
                     }
                 ) {
                     AppDestination.EditNoteDestination.Content(
                         note = targetNote,
-                        noteOffset = targetOffset,
                         onDone = { note ->
                             mainViewModel.updateNote(note)
                             mainViewModel.insertOrUpdate(targetNote)
-                        },
-                        onBack = {
-                            mainViewModel.updateDestination(homeRoute)
-                            navController.navigateBack()
                         }
-                    )
+                    ) {
+                        mainViewModel.updateDestination(homeRoute)
+                        navController.navigateBack()
+                    }
                 }
                 composable(route = AppDestination.SettingsDestination.route) {
                     AppDestination.SettingsDestination.Content(

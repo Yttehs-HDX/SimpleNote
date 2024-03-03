@@ -44,7 +44,6 @@ interface AppDestination {
         @Composable
         fun Content(
             note: NoteEntity,
-            noteOffset: Offset,
             onDone: (NoteEntity) -> Unit,
             onBack: () -> Unit
         ) {
