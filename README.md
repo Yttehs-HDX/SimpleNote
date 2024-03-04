@@ -11,11 +11,12 @@ Simple Note is an Android application developed by two university freshmen, leve
 - **Local Storage:** Utilizes Jetpack Room for efficient local storage of notes.
 - **Search Highlight:** Provides a feature to highlight search results within notes for better readability.
 - **Monet Colors:** Utilizes vibrant and modern color schemes for an appealing user interface.
+- **Floating Action Button:** Customize the position of the button through dragging, and the horizontal and vertical screens are recorded separately.
 
 ## Collaborators
 
 - [Yttehs](https://github.com/Yttehs-HDX) - MVVM, UI, Navigation, SQLite
-- [Eviarch](https://github.com/eviarch666) - UI, Localization, Icon
+- [Eviarch](https://github.com/eviarch666) - UI, Animation, Localization, Icon
 
 ## Download
 
