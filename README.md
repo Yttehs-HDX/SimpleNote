@@ -15,7 +15,7 @@ Simple Note is an Android application developed by two university freshmen, leve
 ## Collaborators
 
 - [Yttehs](https://github.com/Yttehs-HDX) - MVVM, UI, Navigation, SQLite
-- [Eviarch](https://github.com/eviarch666) - UI, Localization
+- [Eviarch](https://github.com/eviarch666) - UI, Localization, Icon
 
 ## Download
 

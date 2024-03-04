@@ -15,7 +15,7 @@ Simple Note 是由两名大学新生开发的 Android 应用程序，利用了 J
 ## 贡献者
 
 - [Yttehs](https://github.com/Yttehs-HDX) - MVVM, UI, Navigation, SQLite
-- [Eviarch](https://github.com/eviarch666) - UI, Localization
+- [Eviarch](https://github.com/eviarch666) - UI, Localization, Icon
 
 ## 下载地址
 
