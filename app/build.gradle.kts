@@ -71,9 +71,6 @@ dependencies {
     // NavController
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    //SwipeRefresh
-    implementation("com.google.accompanist:accompanist-swiperefresh:0.34.0")
-
     // Room
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
