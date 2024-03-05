@@ -88,9 +88,11 @@ fun MainApp(
                     searchState = searchState,
                     onSearchStart = {
                         searchState = true
+                        searchedNotes = allNotes
                     },
                     onSearchStop = {
                         matchedString = ""
+                        searchedNotes = emptyList()
                         searchState = false
                     },
                     onSearch = { input ->
@@ -106,6 +108,7 @@ fun MainApp(
                     },
                     onBack = {
                         matchedString = ""
+                        searchedNotes = emptyList()
                         searchState = false
                     }
                 )
@@ -130,7 +133,6 @@ fun MainApp(
                         settingsViewModel.resetSettings()
                     },
                     onBack = {
-                        matchedString = ""
                         mainViewModel.updateDestination(homeRoute)
                         navController.navigateBack()
                     }
@@ -154,9 +156,11 @@ fun MainApp(
                             mainViewModel.updateDestination(route)
                             mainViewModel.updateNote(note)
                             navController.navigateSingleTopTo(route)
+                            searchState = false
                         },
                         onDeleteNote = { note ->
                             mainViewModel.deleteNote(note)
+                            searchedNotes = searchedNotes.filter { it != note }
                         }
                     )
                 }
