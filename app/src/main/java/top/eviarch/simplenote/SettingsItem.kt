@@ -58,14 +58,17 @@ interface SettingsItem<T> {
         }
     }
 
-    data object VerticalPosition : SettingsItem<PositionValue> {
-        override val key: String = "Vertical Position"
+    data object Position : SettingsItem<PositionValue> {
+        override val key: String = "Position"
         override val defaultValue: PositionValue = 0f to 0f
     }
 
-    data object HorizontalPosition : SettingsItem<PositionValue> {
+    data object VerticalPosition : SettingsItem<PositionValue> by Position {
+        override val key: String = "Vertical Position"
+    }
+
+    data object HorizontalPosition : SettingsItem<PositionValue> by Position {
         override val key: String = "Horizontal Position"
-        override val defaultValue: PositionValue = 0f to 0f
     }
 }
 
