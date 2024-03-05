@@ -19,7 +19,7 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     val targetDestination: StateFlow<String>
         get() = _targetDestination
 
-    private val _targetNote = MutableStateFlow(NoteEntity())
+    private val _targetNote = MutableStateFlow(NoteEntity(id = generateUniqueId()))
     val targetNote: StateFlow<NoteEntity>
         get() = _targetNote
 
