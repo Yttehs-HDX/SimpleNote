@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -44,7 +45,6 @@ import androidx.compose.ui.unit.sp
 import top.eviarch.simplenote.R
 import top.eviarch.simplenote.core.SimpleNoteApplication
 import top.eviarch.simplenote.extra.ToastUtil
-import top.eviarch.simplenote.ui.BasicCompose
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +76,11 @@ fun NoteColumnTopBar(
         val interactionSource = remember { MutableInteractionSource() }
         TopAppBar(
             scrollBehavior = scrollBehavior,
-            colors = BasicCompose.topAppBarColors(),
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
             title = {
                 AnimatedVisibility(
                     visible = !searchState,

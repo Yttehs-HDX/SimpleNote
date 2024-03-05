@@ -22,7 +22,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavHostController
@@ -52,15 +51,20 @@ fun MainApp(
     ) {
         val homeRoute = AppDestination.NotesColumnDestination.route
         val targetDestination by mainViewModel.targetDestination.collectAsState()
+
         val allNotes by mainViewModel.noteListFlow.collectAsState(initial = emptyList())
         val targetNote by mainViewModel.targetNote.collectAsState()
+
         var searchState by rememberSaveable { mutableStateOf(false) }
         var matchedString by rememberSaveable { mutableStateOf("") }
         var searchedNotes by rememberSaveable { mutableStateOf<List<NoteEntity>>(emptyList()) }
 
-        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+        val noteColumnTopBarState = rememberTopAppBarState()
+        val noteColumnTopBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(noteColumnTopBarState)
+        val editNoteTopBarState = rememberTopAppBarState()
+        val editNoteTopBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(editNoteTopBarState)
         Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            Modifier.fillMaxSize(),
             floatingActionButton = {
                 val configuration = LocalConfiguration.current
                 val isLandscape = remember(configuration) {
@@ -91,7 +95,7 @@ fun MainApp(
             },
             topBar = {
                 NoteColumnTopBar(
-                    scrollBehavior = scrollBehavior,
+                    scrollBehavior = noteColumnTopBarScrollBehavior,
                     visible = targetDestination == AppDestination.NotesColumnDestination.route,
                     searchState = searchState,
                     onSearchStart = {
@@ -121,6 +125,7 @@ fun MainApp(
                     }
                 )
                 EditNoteTopBar(
+                    scrollBehavior = editNoteTopBarScrollBehavior,
                     visible = targetDestination == AppDestination.EditNoteDestination.route,
                     note = targetNote,
                     onSaveNote = { note ->
@@ -155,6 +160,7 @@ fun MainApp(
             ) {
                 composable(route = AppDestination.NotesColumnDestination.route) {
                     AppDestination.NotesColumnDestination.Content(
+                        scrollBehavior = noteColumnTopBarScrollBehavior,
                         viewModel = settingsViewModel,
                         noteList = if (searchState) searchedNotes else allNotes,
                         searchState = searchState,
@@ -188,6 +194,7 @@ fun MainApp(
                     }
                 ) {
                     AppDestination.EditNoteDestination.Content(
+                        scrollBehavior = editNoteTopBarScrollBehavior,
                         note = targetNote,
                         onDone = { note ->
                             mainViewModel.updateNote(note)

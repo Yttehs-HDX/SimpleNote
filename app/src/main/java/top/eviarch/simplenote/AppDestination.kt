@@ -1,5 +1,7 @@
 package top.eviarch.simplenote
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,8 +16,10 @@ interface AppDestination {
     data object NotesColumnDestination : AppDestination {
         override val route = "main"
 
+        @OptIn(ExperimentalMaterial3Api::class)
         @Composable
         fun Content(
+            scrollBehavior: TopAppBarScrollBehavior,
             viewModel: SettingsViewModel,
             noteList: List<NoteEntity>,
             searchState: Boolean,
@@ -26,6 +30,7 @@ interface AppDestination {
             val style by viewModel.style.collectAsState()
             val dateFormat by viewModel.dateFormat.collectAsState()
             NotesColumn(
+                scrollBehavior = scrollBehavior,
                 noteList = noteList,
                 style = style,
                 dateFormat = dateFormat.toString(),
@@ -40,13 +45,16 @@ interface AppDestination {
     data object EditNoteDestination : AppDestination {
         override val route = "note"
 
+        @OptIn(ExperimentalMaterial3Api::class)
         @Composable
         fun Content(
+            scrollBehavior: TopAppBarScrollBehavior,
             note: NoteEntity,
             onDone: (NoteEntity) -> Unit,
             onBack: () -> Unit
         ) {
             EditNote(
+                scrollBehavior = scrollBehavior,
                 note = note,
                 onDone = onDone,
                 onBack = onBack
