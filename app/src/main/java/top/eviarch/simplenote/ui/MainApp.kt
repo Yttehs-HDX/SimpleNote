@@ -68,7 +68,7 @@ fun MainApp(
                     verticalStartPosition = verticalPosition,
                     horizontalStartPosition = horizontalPosition,
                     onClick = {
-                        mainViewModel.updateNote(NoteEntity(id = mainViewModel.generateUniqueId()))
+                        mainViewModel.updateNote(targetNote)
                         val route = AppDestination.EditNoteDestination.route
                         mainViewModel.updateDestination(route)
                         navController.navigateSingleTopTo(route)
@@ -114,15 +114,16 @@ fun MainApp(
                     note = targetNote,
                     onSaveNote = { note ->
                         mainViewModel.updateNote(note)
-                        mainViewModel.insertOrUpdate(targetNote)
                     },
                     onDeleteNote = { note ->
                         mainViewModel.deleteNote(note)
+                    },
+                    onBack = {
+                        mainViewModel.clearTargetNote()
+                        mainViewModel.updateDestination(homeRoute)
+                        navController.navigateBack()
                     }
-                ) {
-                    mainViewModel.updateDestination(homeRoute)
-                    navController.navigateBack()
-                }
+                )
                 SettingsTopBar(
                     visible = targetDestination == AppDestination.SettingsDestination.route,
                     onClickResetButton = {
@@ -178,9 +179,9 @@ fun MainApp(
                         note = targetNote,
                         onDone = { note ->
                             mainViewModel.updateNote(note)
-                            mainViewModel.insertOrUpdate(targetNote)
                         },
                         onBack = {
+                            mainViewModel.clearTargetNote()
                             mainViewModel.updateDestination(homeRoute)
                             navController.navigateBack()
                         }

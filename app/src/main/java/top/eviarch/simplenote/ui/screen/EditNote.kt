@@ -104,8 +104,7 @@ fun EditNote(
                 onDone = {
                     onDone(NoteEntity(note.id, title, content, modifiedDate))
                 },
-
-                ),
+            ),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -116,7 +115,7 @@ fun EditNote(
     }
     BackHandler(
         onBack = {
-            onDone(note)
+            onDone(NoteEntity(note.id, title, content, modifiedDate))
             onBack()
         }
     )

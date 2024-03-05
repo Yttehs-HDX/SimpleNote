@@ -29,25 +29,27 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
 
     fun updateNote(note: NoteEntity) {
         _targetNote.value = note
-    }
-
-    fun insertOrUpdate(note: NoteEntity) {
         viewModelScope.launch {
             noteDao.insertOrUpdate(note)
         }
     }
 
+    fun clearTargetNote() {
+        _targetNote.value = NoteEntity(id = generateUniqueId())
+    }
+
     fun deleteNote(note: NoteEntity) {
+        clearTargetNote()
         viewModelScope.launch {
             noteDao.deleteNote(note)
         }
     }
 
-    private fun getAllNotes(): Flow<List<NoteEntity>> {
-        return noteDao.getAllNotes()
+    private fun generateUniqueId(): Long {
+        return UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE
     }
 
-    fun generateUniqueId(): Long {
-        return UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE
+    private fun getAllNotes(): Flow<List<NoteEntity>> {
+        return noteDao.getAllNotes()
     }
 }
