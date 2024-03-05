@@ -64,7 +64,9 @@ fun NotesColumn(
     } else {
         when (style) {
             StyleValue.Vertical -> {
-                LazyColumn {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     items(noteList) { note ->
                         var showDialog by remember { mutableStateOf(false) }
                         NoteCard(
@@ -91,6 +93,7 @@ fun NotesColumn(
             }
             StyleValue.StaggeredGrid -> {
                 LazyVerticalStaggeredGrid(
+                    modifier = Modifier.fillMaxSize(),
                     columns = StaggeredGridCells.Fixed((LocalConfiguration.current.screenWidthDp.toFloat() / 200f).roundToInt()),
                     verticalItemSpacing = 4.dp,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),

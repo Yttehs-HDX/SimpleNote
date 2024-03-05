@@ -7,9 +7,12 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntSize
 import androidx.navigation.NavHostController
@@ -34,7 +38,7 @@ import top.eviarch.simplenote.ui.topbar.EditNoteTopBar
 import top.eviarch.simplenote.ui.topbar.NoteColumnTopBar
 import top.eviarch.simplenote.ui.topbar.SettingsTopBar
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainApp(
     navController: NavHostController,
@@ -53,7 +57,10 @@ fun MainApp(
         var searchState by rememberSaveable { mutableStateOf(false) }
         var matchedString by rememberSaveable { mutableStateOf("") }
         var searchedNotes by rememberSaveable { mutableStateOf<List<NoteEntity>>(emptyList()) }
+
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
         Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             floatingActionButton = {
                 val configuration = LocalConfiguration.current
                 val isLandscape = remember(configuration) {
@@ -84,6 +91,7 @@ fun MainApp(
             },
             topBar = {
                 NoteColumnTopBar(
+                    scrollBehavior = scrollBehavior,
                     visible = targetDestination == AppDestination.NotesColumnDestination.route,
                     searchState = searchState,
                     onSearchStart = {
