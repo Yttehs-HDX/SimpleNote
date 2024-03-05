@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -150,36 +151,40 @@ fun NoteCard(
             modifier = Modifier.padding(16.dp)
         ) {
             val annotatedTitle = buildAnnotatedString {
-                val fullStringList = note.title.split(matchedString)
+                val fullStringList = note.title.limitContent(20, ellipsis = "").split(matchedString)
                 for (index in fullStringList.indices) {
                     if (index != 0) {
                         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.error)) {
                             append(matchedString)
                         }
                     }
-                    withStyle(style = SpanStyle()) { append(fullStringList[index]) }
+                    append(fullStringList[index])
+                }
+                if (note.content.length > 20) {
+                    append("...")
                 }
             }
-            val title = buildAnnotatedString {
-                append(note.title.limitContent(20))
-            }
+            val title = AnnotatedString(note.title.limitContent(20))
             Text(
                 text = if (searchState) annotatedTitle else title,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             val annotatedContent = buildAnnotatedString {
-                val fullStringList = note.content.split(matchedString)
+                val fullStringList = note.content.limitContent(100, ellipsis = "").split(matchedString)
                 for (index in fullStringList.indices) {
                     if (index != 0) {
-                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.error)) { append(matchedString) }
+                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.error)) {
+                            append(matchedString)
+                        }
                     }
-                    withStyle(style = SpanStyle()) { append(fullStringList[index]) }
+                    append(fullStringList[index])
+                }
+                if (note.content.length > 100) {
+                    append("...")
                 }
             }
-            val content = buildAnnotatedString {
-                append(note.content.limitContent(100))
-            }
+            val content = AnnotatedString(note.content.limitContent(100))
             Text(
                 text = if (searchState) annotatedContent else content,
                 style = MaterialTheme.typography.bodyMedium,
