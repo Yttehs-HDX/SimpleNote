@@ -16,6 +16,11 @@ class SettingsViewModel : ViewModel() {
     val style: StateFlow<StyleValue>
         get() = _style
 
+    private val _autoDeleteDate = MutableStateFlow(SettingsItem.StorageManager.defaultValue)
+
+    val autoDeleteDate: StateFlow<StorageManagerValue>
+        get() = _autoDeleteDate
+
     private val _verticalPosition = MutableStateFlow(SettingsItem.VerticalPosition.defaultValue)
     val verticalPosition: StateFlow<PositionValue>
         get() = _verticalPosition
@@ -31,6 +36,7 @@ class SettingsViewModel : ViewModel() {
     init {
         loadStyleData(SettingsItem.Style.defaultValue)
         loadDateFormatData(SettingsItem.DateFormat.defaultValue)
+        loadAutoDeleteDateData(SettingsItem.StorageManager.defaultValue)
         loadVerticalPositionData(SettingsItem.VerticalPosition.defaultValue)
         loadHorizontalPositionData(SettingsItem.HorizontalPosition.defaultValue)
     }
@@ -60,6 +66,20 @@ class SettingsViewModel : ViewModel() {
     fun saveDateFormatData(value: DateFormatValue) {
         val key = SettingsItem.DateFormat.key
         _dateFormat.value = value
+        saveData(key, value.toString())
+    }
+
+    private fun loadAutoDeleteDateData(defaultValue: StorageManagerValue) {
+        val key = SettingsItem.StorageManager.key
+        viewModelScope.launch {
+            val stringValue = sharedPreferences.getString(key, null)
+            _autoDeleteDate.value = stringValue?.toStorageManagerOrDefault() ?: defaultValue
+        }
+    }
+
+    fun saveAutoDeleteDateData(value: StorageManagerValue) {
+        val key = SettingsItem.StorageManager.key
+        _autoDeleteDate.value = value
         saveData(key, value.toString())
     }
 
@@ -102,6 +122,7 @@ class SettingsViewModel : ViewModel() {
     fun resetSettings() {
         saveStyleData(SettingsItem.Style.defaultValue)
         saveDateFormatData(SettingsItem.DateFormat.defaultValue)
+        saveAutoDeleteDateData(SettingsItem.StorageManager.defaultValue)
         saveVerticalPositionData(SettingsItem.VerticalPosition.defaultValue)
         saveHorizontalPositionData(SettingsItem.HorizontalPosition.defaultValue)
     }

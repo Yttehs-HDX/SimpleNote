@@ -2,9 +2,10 @@ package top.eviarch.simplenote
 
 import top.eviarch.simplenote.core.SimpleNoteApplication
 
-typealias PositionValue = Pair<Float, Float>
 typealias StyleValue = SettingsItem.Style.StyleValue
 typealias DateFormatValue = SettingsItem.DateFormat.DateFormatValue
+typealias StorageManagerValue = SettingsItem.StorageManager.StorageManagerValue
+typealias PositionValue = Pair<Float, Float>
 
 interface SettingsItem<T> {
     val key: String
@@ -58,6 +59,60 @@ interface SettingsItem<T> {
         }
     }
 
+    data object StorageManager : SettingsItem<StorageManagerValue> {
+        override val key: String = "StorageManager"
+        override val defaultValue: StorageManagerValue = StorageManagerValue.Never
+
+        enum class StorageManagerValue {
+            Hour1, Day1, Day30, Day90, Day180, Year1, Year2, Year3, Year10, Never;
+
+            fun toUiState(): String {
+                return when (this) {
+                    Hour1 -> SimpleNoteApplication.Context.getString(R.string.hour_1)
+                    Day1 -> SimpleNoteApplication.Context.getString(R.string.day_1)
+                    Day30 -> SimpleNoteApplication.Context.getString(R.string.day_30)
+                    Day90 -> SimpleNoteApplication.Context.getString(R.string.day_90)
+                    Day180 -> SimpleNoteApplication.Context.getString(R.string.day_180)
+                    Year1 -> SimpleNoteApplication.Context.getString(R.string.year_1)
+                    Year2 -> SimpleNoteApplication.Context.getString(R.string.year_2)
+                    Year3 -> SimpleNoteApplication.Context.getString(R.string.year_3)
+                    Year10 -> SimpleNoteApplication.Context.getString(R.string.year_10)
+                    Never -> SimpleNoteApplication.Context.getString(R.string.never)
+                }
+            }
+
+            fun toTimeMillis(): Long {
+                return when (this) {
+                    Hour1 -> 60 * 60 * 1000L
+                    Day1 -> 24 * 60 * 60 * 1000L
+                    Day30 -> 30 * 24 * 60 * 60 * 1000L
+                    Day90 -> 90 * 24 * 60 * 60 * 1000L
+                    Day180 -> 180 * 24 * 60 * 60 * 1000L
+                    Year1 -> 365 * 24 * 60 * 60 * 1000L
+                    Year2 -> 730 * 24 * 60 * 60 * 1000L
+                    Year3 -> 1095 * 24 * 60 * 60 * 1000L
+                    Year10 -> 3650 * 24 * 60 * 60 * 1000L
+                    Never -> -1
+                }
+            }
+
+            override fun toString(): String {
+                return when (this) {
+                    Hour1 -> "1h"
+                    Day1 -> "1d"
+                    Day30 -> "30d"
+                    Day90 -> "90d"
+                    Day180 -> "1y"
+                    Year1 -> "1y"
+                    Year2 -> "2y"
+                    Year3 -> "3y"
+                    Year10 -> "10y"
+                    Never -> "n"
+                }
+            }
+        }
+    }
+
     data object Position : SettingsItem<PositionValue> {
         override val key: String = "Position"
         override val defaultValue: PositionValue = 0f to 0f
@@ -85,6 +140,21 @@ fun String.toDateFormatOrDefault(): DateFormatValue {
         DateFormatValue.Simple.toString() -> DateFormatValue.Simple
         DateFormatValue.Complex.toString() -> DateFormatValue.Complex
         else -> DateFormatValue.Ordinary
+    }
+}
+
+fun String.toStorageManagerOrDefault(): StorageManagerValue {
+    return when (this) {
+        StorageManagerValue.Hour1.toString() -> StorageManagerValue.Hour1
+        StorageManagerValue.Day1.toString() -> StorageManagerValue.Day1
+        StorageManagerValue.Day30.toString() -> StorageManagerValue.Day30
+        StorageManagerValue.Day90.toString() -> StorageManagerValue.Day90
+        StorageManagerValue.Day180.toString() -> StorageManagerValue.Day180
+        StorageManagerValue.Year1.toString() -> StorageManagerValue.Year1
+        StorageManagerValue.Year2.toString() -> StorageManagerValue.Year2
+        StorageManagerValue.Year3.toString() -> StorageManagerValue.Year3
+        StorageManagerValue.Year10.toString() -> StorageManagerValue.Year10
+        else -> StorageManagerValue.Never
     }
 }
 

@@ -60,6 +60,9 @@ fun Settings(
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.note_card))
         DateFormatMode(viewModel = viewModel)
         HorizontalDivider()
+        SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.storage_manager))
+        StorageManagerMode(viewModel = viewModel)
+        HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
         VerticalPositionMode(viewModel = viewModel)
         HorizontalPositionMode(viewModel = viewModel)
@@ -105,6 +108,26 @@ fun DateFormatMode(viewModel: SettingsViewModel) {
                     text = optionValue.toUiState(),
                     onClick = {
                         viewModel.saveDateFormatData(optionValue)
+                        onClose()
+                    }
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun StorageManagerMode(viewModel: SettingsViewModel) {
+    val value by viewModel.autoDeleteDate.collectAsState()
+    SettingsUnit(
+        key = SimpleNoteApplication.Context.getString(R.string.auto_delete_date),
+        value = value.toUiState(),
+        menuItemList = { onClose ->
+            for (optionValue in SettingsItem.StorageManager.StorageManagerValue.entries) {
+                MenuItem(
+                    text = optionValue.toUiState(),
+                    onClick = {
+                        viewModel.saveAutoDeleteDateData(optionValue)
                         onClose()
                     }
                 )

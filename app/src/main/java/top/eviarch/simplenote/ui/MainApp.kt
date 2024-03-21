@@ -30,6 +30,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import top.eviarch.simplenote.AppDestination
 import top.eviarch.simplenote.MainViewModel
 import top.eviarch.simplenote.SettingsViewModel
+import top.eviarch.simplenote.StorageManagerValue
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.extra.navigateBack
 import top.eviarch.simplenote.extra.navigateSingleTopTo
@@ -217,5 +218,23 @@ fun MainApp(
                 }
             }
         }
+        val deleteDate by settingsViewModel.autoDeleteDate.collectAsState()
+        val time = System.currentTimeMillis()
+        val deletingNotes = if (deleteDate == StorageManagerValue.Never) emptyList()
+        else allNotes.filter { it.modifiedDate < time - deleteDate.toTimeMillis() }
+        val showDialog by mainViewModel.showAutoDeleteDialog.collectAsState()
+        AutoDeleteNoteAlert(
+            showDialog = showDialog,
+            deletingNotes = deletingNotes,
+            onConfirm = {
+                deletingNotes.forEach {
+                    mainViewModel.deleteNote(it)
+                }
+                mainViewModel.updateAutoDeleteDialogVisibility(false)
+            },
+            onDismiss = {
+                mainViewModel.updateAutoDeleteDialogVisibility(false)
+            }
+        )
     }
 }

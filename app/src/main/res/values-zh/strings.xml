@@ -31,4 +31,17 @@
     <string name="staggered_grid">瀑布流</string>
     <string name="dismiss">取消</string>
     <string name="confirm">确认</string>
+    <string name="auto_delete_date">自动删除日期</string>
+    <string name="storage_manager">存储空间管理器</string>
+    <string name="day_30">30 天</string>
+    <string name="day_90">90 天</string>
+    <string name="day_180">180 天</string>
+    <string name="year_1">1 年</string>
+    <string name="year_2">2 年</string>
+    <string name="year_3">3 年</string>
+    <string name="year_10">10 年</string>
+    <string name="never">永不</string>
+    <string name="auto_delete_note_title">自动删除记事（可设置中关闭对话框）</string>
+    <string name="hour_1">1 小时</string>
+    <string name="day_1">1 天</string>
 </resources>

@@ -38,4 +38,17 @@
     <string name="staggered_grid">Staggered Grid</string>
     <string name="dismiss">Dismiss</string>
     <string name="confirm">Confirm</string>
+    <string name="auto_delete_date">Auto Delete Date</string>
+    <string name="storage_manager">Storage Manager</string>
+    <string name="hour_1">1 Hour</string>
+    <string name="day_1">1 Day</string>
+    <string name="day_30">30 Days</string>
+    <string name="day_90">90 Days</string>
+    <string name="day_180">180 Days</string>
+    <string name="year_1">1 Year</string>
+    <string name="year_2">2 Year</string>
+    <string name="year_3">3 Year</string>
+    <string name="year_10">10 Year</string>
+    <string name="never">Never</string>
+    <string name="auto_delete_note_title">Auto Delete Note (Close this dialog in settings)</string>
 </resources>
