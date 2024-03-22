@@ -10,7 +10,7 @@
     <string name="floating_button">Floating Button</string>
     <string name="about">About</string>
     <string name="version">Version</string>
-    <string name="version_number" translatable="false">v1.0</string>
+    <string name="version_number" translatable="false">v2.0</string>
     <string name="collaborator">Collaborator</string>
     <string name="collaborator_one" translatable="false">Eviarch</string>
     <string name="collaborator_two" translatable="false">Yttehs</string>
