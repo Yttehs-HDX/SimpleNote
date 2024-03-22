@@ -59,4 +59,5 @@
     <string name="import_message_tail">note(s)</string>
     <string name="to_clipboard">To Clipboard</string>
     <string name="from_clipboard">From Clipboard</string>
+    <string name="web_view" translatable="false">Web View</string>
 </resources>

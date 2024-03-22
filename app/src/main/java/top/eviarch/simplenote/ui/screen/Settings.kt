@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,12 +66,14 @@ import java.util.Locale
 fun Settings(
     mainViewModel: MainViewModel,
     settingsViewModel: SettingsViewModel,
+    jumpUrl: (String) -> Unit,
     onBack: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
+        val context = LocalContext.current
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.main_page))
         StyleMode(viewModel = settingsViewModel)
 
@@ -96,10 +99,35 @@ fun Settings(
 
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.about))
-        AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.version), value = SimpleNoteApplication.Context.getString(R.string.version_number), icon = Icons.TwoTone.Info)
-        AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.collaborator), value = SimpleNoteApplication.Context.getString(R.string.collaborator_one), icon = Icons.TwoTone.Person)
-        AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.collaborator), value = SimpleNoteApplication.Context.getString(R.string.collaborator_two), icon = Icons.TwoTone.Person)
-        AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.develop_tool), value = SimpleNoteApplication.Context.getString(R.string.develop_tool_name), icon = Icons.TwoTone.Build)
+        AboutUnit(
+            key = SimpleNoteApplication.Context.getString(R.string.version),
+            value = SimpleNoteApplication.Context.getString(R.string.version_number),
+            icon = Icons.TwoTone.Info,
+            onClick = {
+                jumpUrl("https://github.com/Yttehs-HDX/Simple-Note")
+            }
+        )
+        AboutUnit(
+            key = SimpleNoteApplication.Context.getString(R.string.collaborator),
+            value = SimpleNoteApplication.Context.getString(R.string.collaborator_one),
+            icon = Icons.TwoTone.Person,
+            onClick = {
+                jumpUrl("https://github.com/eviarch666")
+            }
+        )
+        AboutUnit(
+            key = SimpleNoteApplication.Context.getString(R.string.collaborator),
+            value = SimpleNoteApplication.Context.getString(R.string.collaborator_two),
+            icon = Icons.TwoTone.Person,
+            onClick = {
+                jumpUrl("https://github.com/Yttehs-HDX")
+            }
+        )
+        AboutUnit(
+            key = SimpleNoteApplication.Context.getString(R.string.develop_tool),
+            value = SimpleNoteApplication.Context.getString(R.string.develop_tool_name),
+            icon = Icons.TwoTone.Build
+        )
     }
     BackHandler(onBack = onBack)
 }
@@ -454,11 +482,11 @@ fun ButtonUnit(
 fun AboutUnit(
     key: String,
     value: String,
-    icon: ImageVector
+    icon: ImageVector,
+    onClick: () -> Unit = { }
 ) {
     Row(
-        // Click nothing, just for animation here
-        modifier = Modifier.clickable { /* Click nothing */ }
+        modifier = Modifier.clickable { onClick() }
     ) {
         Spacer(modifier = Modifier.width(16.dp))
         Text(

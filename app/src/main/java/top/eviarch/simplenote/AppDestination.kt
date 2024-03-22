@@ -9,6 +9,7 @@ import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.ui.screen.EditNote
 import top.eviarch.simplenote.ui.screen.NotesColumn
 import top.eviarch.simplenote.ui.screen.Settings
+import top.eviarch.simplenote.ui.screen.WebViewContainer
 
 interface AppDestination {
     val route: String
@@ -45,7 +46,6 @@ interface AppDestination {
     data object EditNoteDestination : AppDestination {
         override val route = "note"
 
-        @OptIn(ExperimentalMaterial3Api::class)
         @Composable
         fun Content(
             note: NoteEntity,
@@ -63,19 +63,30 @@ interface AppDestination {
     }
 
     data object SettingsDestination : AppDestination {
-        override val route = "Settings"
+        override val route = "settings"
 
         @Composable
         fun Content(
             mainViewModel: MainViewModel,
             settingsViewModel: SettingsViewModel,
+            jumpUrl: (String) -> Unit,
             onBack: () -> Unit
         ) {
             Settings(
                 mainViewModel = mainViewModel,
                 settingsViewModel = settingsViewModel,
+                jumpUrl = jumpUrl,
                 onBack = onBack
             )
+        }
+    }
+
+    data object WebViewDestination : AppDestination {
+        override val route = "web_view"
+
+        @Composable
+        fun Content(url: String) {
+            WebViewContainer(url = url)
         }
     }
 }

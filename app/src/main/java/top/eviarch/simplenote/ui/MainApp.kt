@@ -38,6 +38,7 @@ import top.eviarch.simplenote.extra.navigateSingleTopTo
 import top.eviarch.simplenote.ui.topbar.EditNoteTopBar
 import top.eviarch.simplenote.ui.topbar.NoteColumnTopBar
 import top.eviarch.simplenote.ui.topbar.SettingsTopBar
+import top.eviarch.simplenote.ui.topbar.WebViewContainerTopBar
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -65,6 +66,8 @@ fun MainApp(
         val noteColumnTopBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(noteColumnTopBarState)
 
         var isReadOnly by remember { mutableStateOf(false) }
+
+        val url by mainViewModel.url.collectAsState()
         Scaffold(
             Modifier.fillMaxSize(),
             floatingActionButton = {
@@ -155,6 +158,14 @@ fun MainApp(
                         navController.navigateBack()
                     }
                 )
+                WebViewContainerTopBar(
+                    visible = targetDestination == AppDestination.WebViewDestination.route,
+                    url = url,
+                    onBack = {
+                        mainViewModel.updateDestination(AppDestination.SettingsDestination.route)
+                        navController.navigateBack()
+                    }
+                )
             }
         ) { paddingValues ->
             @Suppress("DEPRECATION")
@@ -215,11 +226,20 @@ fun MainApp(
                     AppDestination.SettingsDestination.Content(
                         mainViewModel = mainViewModel,
                         settingsViewModel = settingsViewModel,
+                        jumpUrl = { url ->
+                            mainViewModel.updateUrl(url)
+                            val route = AppDestination.WebViewDestination.route
+                            mainViewModel.updateDestination(route)
+                            navController.navigateSingleTopTo(route)
+                        },
                         onBack = {
                             mainViewModel.updateDestination(homeRoute)
                             navController.navigateBack()
                         }
                     )
+                }
+                composable(route = AppDestination.WebViewDestination.route) {
+                    AppDestination.WebViewDestination.Content(url = url)
                 }
             }
         }

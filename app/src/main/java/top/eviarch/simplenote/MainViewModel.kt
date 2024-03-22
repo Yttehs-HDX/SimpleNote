@@ -28,6 +28,11 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     val showAutoDeleteDialog: StateFlow<Boolean>
         get() = _showAutoDeleteDialog
 
+    private val _url = MutableStateFlow("")
+
+    val url: StateFlow<String>
+        get() = _url
+
     fun updateDestination(destination: String) {
         _targetDestination.value = destination
     }
@@ -45,6 +50,10 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
 
     fun updateAutoDeleteDialogVisibility(visible: Boolean) {
         _showAutoDeleteDialog.value = visible
+    }
+
+    fun updateUrl(url: String) {
+        _url.value = url
     }
 
     fun deleteNote(note: NoteEntity) {
