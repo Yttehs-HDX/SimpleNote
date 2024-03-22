@@ -1,6 +1,7 @@
 package top.eviarch.simplenote.ui
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -209,7 +210,8 @@ fun MainApp(
                 }
                 composable(route = AppDestination.SettingsDestination.route) {
                     AppDestination.SettingsDestination.Content(
-                        viewModel = settingsViewModel,
+                        mainViewModel = mainViewModel,
+                        settingsViewModel = settingsViewModel,
                         onBack = {
                             mainViewModel.updateDestination(homeRoute)
                             navController.navigateBack()
@@ -218,19 +220,21 @@ fun MainApp(
                 }
             }
         }
+        val autoDelete by mainViewModel.showAutoDeleteDialog.collectAsState()
         val deleteDate by settingsViewModel.autoDeleteDate.collectAsState()
-        val time = System.currentTimeMillis()
-        val deletingNotes = if (deleteDate == StorageManagerValue.Never) emptyList()
-        else allNotes.filter { it.modifiedDate < time - deleteDate.toTimeMillis() }
-        val showDialog by mainViewModel.showAutoDeleteDialog.collectAsState()
+        val deletingNotes = if (deleteDate == StorageManagerValue.Never) emptyList() else {
+            val timeLimit = System.currentTimeMillis() - deleteDate.toTimeMillis()
+            allNotes.filter { it.modifiedDate < timeLimit }
+        }
+        Log.v("TAG", "autoDelete: $autoDelete")
+        Log.v("TAG", "deletingNotes: $deletingNotes")
         AutoDeleteNoteAlert(
-            showDialog = showDialog,
+            showDialog = autoDelete && deletingNotes.isNotEmpty(),
             deletingNotes = deletingNotes,
             onConfirm = {
                 deletingNotes.forEach {
                     mainViewModel.deleteNote(it)
                 }
-                mainViewModel.updateAutoDeleteDialogVisibility(false)
             },
             onDismiss = {
                 mainViewModel.updateAutoDeleteDialogVisibility(false)

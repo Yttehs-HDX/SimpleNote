@@ -67,11 +67,13 @@ interface AppDestination {
 
         @Composable
         fun Content(
-            viewModel: SettingsViewModel,
+            mainViewModel: MainViewModel,
+            settingsViewModel: SettingsViewModel,
             onBack: () -> Unit
         ) {
             Settings(
-                viewModel = viewModel,
+                mainViewModel = mainViewModel,
+                settingsViewModel = settingsViewModel,
                 onBack = onBack
             )
         }

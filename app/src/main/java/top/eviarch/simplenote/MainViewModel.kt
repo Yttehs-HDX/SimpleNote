@@ -23,7 +23,7 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     val targetNote: StateFlow<NoteEntity>
         get() = _targetNote
 
-    private val _showAutoDeleteDialog = MutableStateFlow(SettingsViewModel().autoDeleteDate.value != StorageManagerValue.Never)
+    private val _showAutoDeleteDialog = MutableStateFlow(true)
 
     val showAutoDeleteDialog: StateFlow<Boolean>
         get() = _showAutoDeleteDialog

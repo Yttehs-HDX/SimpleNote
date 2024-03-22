@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import top.eviarch.simplenote.DateFormatValue
+import top.eviarch.simplenote.MainViewModel
 import top.eviarch.simplenote.R
 import top.eviarch.simplenote.SettingsItem
 import top.eviarch.simplenote.SettingsViewModel
@@ -47,7 +48,8 @@ import top.eviarch.simplenote.core.SimpleNoteApplication
 
 @Composable
 fun Settings(
-    viewModel: SettingsViewModel,
+    mainViewModel: MainViewModel,
+    settingsViewModel: SettingsViewModel,
     onBack: () -> Unit
 ) {
     Column(
@@ -55,17 +57,20 @@ fun Settings(
             .verticalScroll(rememberScrollState())
     ) {
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.main_page))
-        StyleMode(viewModel = viewModel)
+        StyleMode(viewModel = settingsViewModel)
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.note_card))
-        DateFormatMode(viewModel = viewModel)
+        DateFormatMode(viewModel = settingsViewModel)
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.storage_manager))
-        StorageManagerMode(viewModel = viewModel)
+        StorageManagerMode(
+            mainViewModel = mainViewModel,
+            settingsViewModel = settingsViewModel
+        )
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
-        VerticalPositionMode(viewModel = viewModel)
-        HorizontalPositionMode(viewModel = viewModel)
+        VerticalPositionMode(viewModel = settingsViewModel)
+        HorizontalPositionMode(viewModel = settingsViewModel)
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.about))
         AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.version), value = SimpleNoteApplication.Context.getString(R.string.version_number), icon = Icons.TwoTone.Info)
@@ -117,8 +122,11 @@ fun DateFormatMode(viewModel: SettingsViewModel) {
 }
 
 @Composable
-fun StorageManagerMode(viewModel: SettingsViewModel) {
-    val value by viewModel.autoDeleteDate.collectAsState()
+fun StorageManagerMode(
+    mainViewModel: MainViewModel,
+    settingsViewModel: SettingsViewModel
+) {
+    val value by settingsViewModel.autoDeleteDate.collectAsState()
     SettingsUnit(
         key = SimpleNoteApplication.Context.getString(R.string.auto_delete_date),
         value = value.toUiState(),
@@ -127,7 +135,8 @@ fun StorageManagerMode(viewModel: SettingsViewModel) {
                 MenuItem(
                     text = optionValue.toUiState(),
                     onClick = {
-                        viewModel.saveAutoDeleteDateData(optionValue)
+                        settingsViewModel.saveAutoDeleteDateData(optionValue)
+                        mainViewModel.updateAutoDeleteDialogVisibility(true)
                         onClose()
                     }
                 )
