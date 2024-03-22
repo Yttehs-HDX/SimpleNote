@@ -209,7 +209,7 @@ fun ImportDataUnit(
             noteList.forEach { note ->
                 viewModel.updateNote(note)
             }
-            ToastUtil.showToast("Import " + noteList.size + " note(s)")
+            ToastUtil.showToast( "${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
         }
     }
     ButtonUnit(
