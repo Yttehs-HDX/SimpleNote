@@ -57,4 +57,6 @@
     <string name="from_external_storage">"From External Storage"</string>
     <string name="import_message_head">Import</string>
     <string name="import_message_tail">note(s)</string>
+    <string name="to_clipboard">To Clipboard</string>
+    <string name="from_clipboard">From Clipboard</string>
 </resources>

@@ -50,4 +50,6 @@
     <string name="to_external_storage">到外部存储</string>
     <string name="import_data">导入数据</string>
     <string name="from_external_storage">从外部存储</string>
+    <string name="to_clipboard">到剪贴板</string>
+    <string name="from_clipboard">从剪贴板</string>
 </resources>

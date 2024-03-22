@@ -42,6 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -82,6 +84,8 @@ fun Settings(
         )
         ImportDataUnit(viewModel = mainViewModel)
         ExportDataUnit(viewModel = mainViewModel)
+        ImportFromClipboard(viewModel = mainViewModel)
+        ExportToClipboard(viewModel = mainViewModel)
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
         VerticalPositionMode(viewModel = settingsViewModel)
@@ -158,6 +162,58 @@ fun StorageManagerMode(
             }
         }
     )
+}
+
+@Composable
+fun ExportToClipboard(
+    viewModel: MainViewModel
+) {
+    val clipboardManager = LocalClipboardManager.current
+    val allNote by viewModel.noteListFlow.collectAsState(emptyList())
+
+    ButtonUnit(
+        key = SimpleNoteApplication.Context.getString(R.string.export_data),
+        value = SimpleNoteApplication.Context.getString(R.string.to_clipboard),
+        icon = Icons.AutoMirrored.Filled.ArrowBack,
+    ) {
+        val gson = Gson()
+        val jsonString = gson.toJson(allNote)
+        ToastUtil.showToast("Export to clipboard successfully!")
+        clipboardManager.setText(AnnotatedString(jsonString))
+    }
+}
+
+@Composable
+fun ImportFromClipboard(
+    viewModel: MainViewModel
+) {
+    val clipboardManager = LocalClipboardManager.current
+    val text = remember { mutableStateOf("") }
+    ButtonUnit(
+        key = SimpleNoteApplication.Context.getString(R.string.import_data),
+        value = SimpleNoteApplication.Context.getString(R.string.from_clipboard),
+        icon = Icons.AutoMirrored.Filled.ArrowBack,
+    ) {
+        val dataFromClip = clipboardManager.getText()
+        if (dataFromClip != null) {
+            text.value = dataFromClip.text
+        }
+        if (isJsonString(text.value)) {
+            val gson = Gson()
+            val noteList: List<NoteEntity> = gson.fromJson(text.value, object : TypeToken<List<NoteEntity>>() {}.type)
+            noteList.forEach { note ->
+                viewModel.updateNote(note)
+            }
+            viewModel.clearTargetNote()
+            ToastUtil.showToast( "${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
+        } else {
+            ToastUtil.showToast("invalid Json string")
+        }
+    }
+}
+fun isJsonString(input: String): Boolean {
+    val jsonPattern = "^\\s*\\{.*\\}\\s*$|^\\s*\\[.*]\\s*$".toRegex()
+    return jsonPattern.matches(input)
 }
 
 @Composable
