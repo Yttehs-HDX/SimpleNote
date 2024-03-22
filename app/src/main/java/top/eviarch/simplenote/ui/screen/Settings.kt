@@ -73,23 +73,27 @@ fun Settings(
     ) {
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.main_page))
         StyleMode(viewModel = settingsViewModel)
+
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.note_card))
         DateFormatMode(viewModel = settingsViewModel)
+
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.storage_manager))
         StorageManagerMode(
             mainViewModel = mainViewModel,
             settingsViewModel = settingsViewModel
         )
-        ImportDataUnit(viewModel = mainViewModel)
         ExportDataUnit(viewModel = mainViewModel)
-        ImportFromClipboard(viewModel = mainViewModel)
         ExportToClipboard(viewModel = mainViewModel)
+        ImportDataUnit(viewModel = mainViewModel)
+        ImportFromClipboard(viewModel = mainViewModel)
+
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
         VerticalPositionMode(viewModel = settingsViewModel)
         HorizontalPositionMode(viewModel = settingsViewModel)
+
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.about))
         AboutUnit(key = SimpleNoteApplication.Context.getString(R.string.version), value = SimpleNoteApplication.Context.getString(R.string.version_number), icon = Icons.TwoTone.Info)
@@ -174,7 +178,7 @@ fun ExportToClipboard(
     ButtonUnit(
         key = SimpleNoteApplication.Context.getString(R.string.export_data),
         value = SimpleNoteApplication.Context.getString(R.string.to_clipboard),
-        icon = Icons.AutoMirrored.Filled.ArrowBack,
+        icon = Icons.AutoMirrored.Filled.ArrowForward,
     ) {
         val gson = Gson()
         val jsonString = gson.toJson(allNote)
