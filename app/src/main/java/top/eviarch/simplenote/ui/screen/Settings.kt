@@ -1,6 +1,11 @@
 package top.eviarch.simplenote.ui.screen
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.icu.text.SimpleDateFormat
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,6 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.twotone.Build
 import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
@@ -38,6 +45,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import top.eviarch.simplenote.DateFormatValue
 import top.eviarch.simplenote.MainViewModel
 import top.eviarch.simplenote.R
@@ -45,6 +54,10 @@ import top.eviarch.simplenote.SettingsItem
 import top.eviarch.simplenote.SettingsViewModel
 import top.eviarch.simplenote.StyleValue
 import top.eviarch.simplenote.core.SimpleNoteApplication
+import top.eviarch.simplenote.data.NoteEntity
+import top.eviarch.simplenote.extra.ToastUtil
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun Settings(
@@ -67,6 +80,8 @@ fun Settings(
             mainViewModel = mainViewModel,
             settingsViewModel = settingsViewModel
         )
+        ImportDataUnit(viewModel = mainViewModel)
+        ExportDataUnit(viewModel = mainViewModel)
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
         VerticalPositionMode(viewModel = settingsViewModel)
@@ -143,6 +158,69 @@ fun StorageManagerMode(
             }
         }
     )
+}
+
+@Composable
+fun ExportDataUnit(
+    viewModel: MainViewModel
+) {
+    val allNote by viewModel.noteListFlow.collectAsState(emptyList())
+    val exportJsonLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let {
+            val gson = Gson()
+            val jsonString = gson.toJson(allNote)
+            val context = SimpleNoteApplication.Context
+            context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                outputStream.write(jsonString.toByteArray())
+            }
+        }
+    }
+    ButtonUnit(
+        key = SimpleNoteApplication.Context.getString(R.string.export_data),
+        value = SimpleNoteApplication.Context.getString(R.string.to_external_storage),
+        icon = Icons.AutoMirrored.Filled.ArrowForward,
+    ) {
+        val formattedDate = SimpleDateFormat(DateFormatValue.Complex.toString(), Locale.ENGLISH).format(Date(System.currentTimeMillis()))
+        val fileName = "Simple-Note-${formattedDate}.json"
+        exportJsonLauncher.launch(fileName)
+    }
+}
+
+@Composable
+fun ImportDataUnit(
+    viewModel: MainViewModel
+) {
+    val selectJsonLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode != RESULT_OK) {
+            return@rememberLauncherForActivityResult
+        }
+        val data = result.data ?: return@rememberLauncherForActivityResult
+        val uri = data.data ?: return@rememberLauncherForActivityResult
+        val context = SimpleNoteApplication.Context
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val jsonString = inputStream?.bufferedReader().use { it?.readText() }
+        jsonString?.let {
+            val gson = Gson()
+            val noteList: List<NoteEntity> = gson.fromJson(jsonString, object : TypeToken<List<NoteEntity>>() {}.type)
+            noteList.forEach { note ->
+                viewModel.updateNote(note)
+            }
+            ToastUtil.showToast("Import " + noteList.size + " note(s)")
+        }
+    }
+    ButtonUnit(
+        key = SimpleNoteApplication.Context.getString(R.string.import_data),
+        value = SimpleNoteApplication.Context.getString(R.string.from_external_storage),
+        icon = Icons.AutoMirrored.Filled.ArrowBack,
+    ) {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "application/json"
+        selectJsonLauncher.launch(intent)
+    }
 }
 
 @Composable
@@ -266,6 +344,46 @@ fun SettingsUnit(
                 if (isExpand) Icons.TwoTone.KeyboardArrowUp
                 else Icons.TwoTone.KeyboardArrowDown,
                 contentDescription = "Expand"
+            )
+        }
+    }
+}
+
+@Composable
+fun ButtonUnit(
+    key: String,
+    value: String,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.clickable { onClick() }
+    ) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.CenterVertically),
+            text = key,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.CenterVertically),
+            text = value,
+        )
+        Box(
+            modifier = Modifier
+                .minimumInteractiveComponentSize()
+                .align(Alignment.CenterVertically)
+        ) {
+            Icon(
+                modifier = Modifier
+                    .align(Alignment.Center),
+                imageVector = icon,
+                contentDescription = key
             )
         }
     }

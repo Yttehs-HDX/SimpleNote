@@ -44,4 +44,10 @@
     <string name="auto_delete_note_title">自动删除记事（可设置中关闭对话框）</string>
     <string name="hour_1">1 小时</string>
     <string name="day_1">1 天</string>
+    <string name="import_message_head">导入</string>
+    <string name="import_message_tail">篇笔记</string>
+    <string name="export_data">导出数据</string>
+    <string name="to_external_storage">到外部存储</string>
+    <string name="import_data">导入数据</string>
+    <string name="from_external_storage">从外部存储</string>
 </resources>

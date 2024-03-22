@@ -85,4 +85,7 @@ dependencies {
     val accompanistVersion = "0.34.0"
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-navigation-animation:$accompanistVersion")
+
+    // Gson
+    implementation("com.google.code.gson:gson:2.8.8")
 }

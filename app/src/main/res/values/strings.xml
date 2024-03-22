@@ -51,4 +51,10 @@
     <string name="year_10">10 Year</string>
     <string name="never">Never</string>
     <string name="auto_delete_note_title">Auto Delete Note (Close this dialog in settings)</string>
+    <string name="export_data">Export Data</string>
+    <string name="to_external_storage">"To External Storage"</string>
+    <string name="import_data">Import Data</string>
+    <string name="from_external_storage">"From External Storage"</string>
+    <string name="import_message_head">Import</string>
+    <string name="import_message_tail">note(s)</string>
 </resources>
