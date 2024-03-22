@@ -63,8 +63,6 @@ fun MainApp(
 
         val noteColumnTopBarState = rememberTopAppBarState()
         val noteColumnTopBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(noteColumnTopBarState)
-        val editNoteTopBarState = rememberTopAppBarState()
-        val editNoteTopBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(editNoteTopBarState)
         Scaffold(
             Modifier.fillMaxSize(),
             floatingActionButton = {
@@ -127,7 +125,6 @@ fun MainApp(
                     }
                 )
                 EditNoteTopBar(
-                    scrollBehavior = editNoteTopBarScrollBehavior,
                     visible = targetDestination == AppDestination.EditNoteDestination.route,
                     note = targetNote,
                     onSaveNote = { note ->
@@ -196,7 +193,6 @@ fun MainApp(
                     }
                 ) {
                     AppDestination.EditNoteDestination.Content(
-                        scrollBehavior = editNoteTopBarScrollBehavior,
                         note = targetNote,
                         onDone = { note ->
                             mainViewModel.updateNote(note)

@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +36,6 @@ import top.eviarch.simplenote.ui.screen.DeleteWaringAlertDialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteTopBar(
-    scrollBehavior: TopAppBarScrollBehavior,
     visible: Boolean,
     note: NoteEntity,
     onSaveNote: (NoteEntity) -> Unit,
@@ -62,7 +60,6 @@ fun EditNoteTopBar(
         var showDialog by remember { mutableStateOf(false) }
         val interactionSource = remember { MutableInteractionSource() }
         TopAppBar(
-            scrollBehavior = scrollBehavior,
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,

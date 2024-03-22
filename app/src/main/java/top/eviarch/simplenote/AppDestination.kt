@@ -48,13 +48,11 @@ interface AppDestination {
         @OptIn(ExperimentalMaterial3Api::class)
         @Composable
         fun Content(
-            scrollBehavior: TopAppBarScrollBehavior,
             note: NoteEntity,
             onDone: (NoteEntity) -> Unit,
             onBack: () -> Unit
         ) {
             EditNote(
-                scrollBehavior = scrollBehavior,
                 note = note,
                 onDone = onDone,
                 onBack = onBack

@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -28,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import top.eviarch.simplenote.R
 import top.eviarch.simplenote.core.SimpleNoteApplication
@@ -37,7 +35,6 @@ import top.eviarch.simplenote.data.NoteEntity
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNote(
-    scrollBehavior: TopAppBarScrollBehavior,
     note: NoteEntity,
     onDone: (NoteEntity) -> Unit,
     onBack: () -> Unit
@@ -47,7 +44,6 @@ fun EditNote(
     var modifiedDate by rememberSaveable { mutableLongStateOf(note.modifiedDate) }
     Column(
         modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
             .fillMaxSize()
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
