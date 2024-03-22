@@ -49,11 +49,13 @@ interface AppDestination {
         @Composable
         fun Content(
             note: NoteEntity,
+            isReadOnly: Boolean,
             onDone: (NoteEntity) -> Unit,
             onBack: () -> Unit
         ) {
             EditNote(
                 note = note,
+                isReadOnly = isReadOnly,
                 onDone = onDone,
                 onBack = onBack
             )

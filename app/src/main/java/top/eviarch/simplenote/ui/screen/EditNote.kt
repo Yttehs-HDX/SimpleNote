@@ -36,6 +36,7 @@ import top.eviarch.simplenote.data.NoteEntity
 @Composable
 fun EditNote(
     note: NoteEntity,
+    isReadOnly: Boolean,
     onDone: (NoteEntity) -> Unit,
     onBack: () -> Unit
 ) {
@@ -53,6 +54,7 @@ fun EditNote(
                 .clip(RoundedCornerShape(16.dp))
                 .fillMaxWidth(),
             value = title,
+            readOnly = isReadOnly,
             textStyle = MaterialTheme.typography.headlineSmall,
             maxLines = 2,
             onValueChange = {
@@ -88,6 +90,7 @@ fun EditNote(
                 .clip(RoundedCornerShape(16.dp))
                 .fillMaxWidth(),
             value = content,
+            readOnly = isReadOnly,
             onValueChange = {
                 content = it
                 modifiedDate = System.currentTimeMillis()

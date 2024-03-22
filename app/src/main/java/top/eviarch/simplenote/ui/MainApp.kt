@@ -63,6 +63,8 @@ fun MainApp(
 
         val noteColumnTopBarState = rememberTopAppBarState()
         val noteColumnTopBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(noteColumnTopBarState)
+
+        var isReadOnly by remember { mutableStateOf(false) }
         Scaffold(
             Modifier.fillMaxSize(),
             floatingActionButton = {
@@ -127,6 +129,7 @@ fun MainApp(
                 EditNoteTopBar(
                     visible = targetDestination == AppDestination.EditNoteDestination.route,
                     note = targetNote,
+                    isReadOnly = isReadOnly,
                     onSaveNote = { note ->
                         mainViewModel.updateNote(note)
                     },
@@ -137,6 +140,9 @@ fun MainApp(
                         mainViewModel.clearTargetNote()
                         mainViewModel.updateDestination(homeRoute)
                         navController.navigateBack()
+                    },
+                    enableReadOnly = {
+                        isReadOnly = !isReadOnly
                     }
                 )
                 SettingsTopBar(
@@ -194,6 +200,7 @@ fun MainApp(
                 ) {
                     AppDestination.EditNoteDestination.Content(
                         note = targetNote,
+                        isReadOnly = isReadOnly,
                         onDone = { note ->
                             mainViewModel.updateNote(note)
                         },

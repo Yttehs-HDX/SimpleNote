@@ -9,8 +9,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,9 +39,11 @@ import top.eviarch.simplenote.ui.screen.DeleteWaringAlertDialog
 fun EditNoteTopBar(
     visible: Boolean,
     note: NoteEntity,
+    isReadOnly: Boolean,
     onSaveNote: (NoteEntity) -> Unit,
     onDeleteNote: (NoteEntity) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    enableReadOnly: () -> Unit
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -94,10 +97,18 @@ fun EditNoteTopBar(
             },
             actions = {
                 IconButton(
-                    onClick = { onSaveNote(note) }
+                    onClick = {
+                        onSaveNote(note)
+                        enableReadOnly()
+                    }
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Done,
+                        imageVector =
+                        if (isReadOnly) {
+                            Icons.Filled.Lock
+                        } else {
+                            Icons.Filled.Create
+                        },
                         contentDescription = "Save"
                     )
                 }
