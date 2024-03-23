@@ -19,8 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.twotone.Build
 import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
@@ -258,7 +258,7 @@ fun ExportDataMode(
                         color = MaterialTheme.colorScheme.inverseOnSurface,
                         shape = RoundedCornerShape(90f)
                     ),
-                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = "Export"
             )
         }
@@ -365,7 +365,7 @@ fun ImportDataMode(
                         color = MaterialTheme.colorScheme.inverseOnSurface,
                         shape = RoundedCornerShape(90f)
                     ),
-                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Import"
             )
         }
