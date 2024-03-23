@@ -41,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
@@ -238,8 +237,7 @@ fun ExportDataMode(
         )
         IconButton(
             modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .weight(1.5f),
+                .align(Alignment.CenterVertically),
             onClick = {
                 if (value == SimpleNoteApplication.Context.getString(R.string.to_external_storage)){
                     val formattedDate = SimpleDateFormat(DateFormatValue.Complex.toString(), Locale.ENGLISH).format(Date(System.currentTimeMillis()))
@@ -257,7 +255,7 @@ fun ExportDataMode(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .background(
-                        color = Color.Transparent,
+                        color = MaterialTheme.colorScheme.inverseOnSurface,
                         shape = RoundedCornerShape(90f)
                     ),
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
@@ -327,8 +325,7 @@ fun ImportDataMode(
         )
         IconButton(
             modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .weight(1.5f),
+                .align(Alignment.CenterVertically),
             onClick = {
                 if (value == SimpleNoteApplication.Context.getString(R.string.from_external_storage)){
                     val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -365,7 +362,7 @@ fun ImportDataMode(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .background(
-                        color = Color.Transparent,
+                        color = MaterialTheme.colorScheme.inverseOnSurface,
                         shape = RoundedCornerShape(90f)
                     ),
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
