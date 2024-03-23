@@ -9,11 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,7 +29,6 @@ import top.eviarch.simplenote.R
 import top.eviarch.simplenote.core.SimpleNoteApplication
 import top.eviarch.simplenote.data.NoteEntity
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNote(
     note: NoteEntity,
@@ -47,7 +43,6 @@ fun EditNote(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-            .verticalScroll(rememberScrollState())
     ) {
         TextField(
             modifier = Modifier
@@ -88,7 +83,8 @@ fun EditNote(
         TextField(
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .weight(1f),
             value = content,
             readOnly = isReadOnly,
             onValueChange = {

@@ -18,10 +18,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -214,14 +216,32 @@ fun NoteCard(
             val formattedDate = SimpleDateFormat(dateFormat, Locale.getDefault()).format(Date(note.modifiedDate))
             Row {
                 if (note.modifiedDate < System.currentTimeMillis() - dateLimit) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = "Old",
-                        tint = MaterialTheme.colorScheme.error,
-                    )
+                    IconButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        onClick = onLongPress
+                    ) {
+                        Icon(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            imageVector = Icons.Default.Warning,
+                            tint = MaterialTheme.colorScheme.error,
+                            contentDescription = "Old",
+                        )
+                    }
+                } else {
+                    IconButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        onClick = onClick
+                    ) {
+                        Icon(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit",
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = formattedDate.toString(),
                     style = MaterialTheme.typography.bodySmall
                 )
