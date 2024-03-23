@@ -92,7 +92,7 @@ interface SettingsItem<T> {
                     Year2 -> 730 * 24 * 60 * 60 * 1000L
                     Year3 -> 1095 * 24 * 60 * 60 * 1000L
                     Year10 -> 3650 * 24 * 60 * 60 * 1000L
-                    Never -> -1
+                    Never -> Long.MAX_VALUE
                 }
             }
 

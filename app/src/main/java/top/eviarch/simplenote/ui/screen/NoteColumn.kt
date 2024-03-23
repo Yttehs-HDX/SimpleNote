@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -59,6 +60,7 @@ fun NotesColumn(
     noteList: List<NoteEntity>,
     style: StyleValue,
     dateFormat: String,
+    dateLimit: Long,
     searchState: Boolean,
     matchedString: String,
     onClick: (NoteEntity) -> Unit,
@@ -84,6 +86,7 @@ fun NotesColumn(
                                 searchState = searchState,
                                 matchedString = matchedString,
                                 dateFormat = dateFormat,
+                                dateLimit = dateLimit,
                                 onClick = {
                                     onClick(note)
                                 },
@@ -115,6 +118,7 @@ fun NotesColumn(
                                 searchState = searchState,
                                 matchedString = matchedString,
                                 dateFormat = dateFormat,
+                                dateLimit = dateLimit,
                                 onClick = {
                                     onClick(note)
                                 },
@@ -143,6 +147,7 @@ fun NoteCard(
     searchState: Boolean,
     matchedString: String,
     dateFormat: String,
+    dateLimit: Long,
     onClick: () -> Unit,
     onLongPress: () -> Unit
 ) {
@@ -208,6 +213,13 @@ fun NoteCard(
             )
             val formattedDate = SimpleDateFormat(dateFormat, Locale.getDefault()).format(Date(note.modifiedDate))
             Row {
+                if (note.modifiedDate < System.currentTimeMillis() - dateLimit) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = "Old",
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                }
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = formattedDate.toString(),
@@ -258,6 +270,7 @@ fun PreviewNoteCard() {
     NoteCard(
         note = NoteEntity(0, "This is title", "This is content", 0),
         dateFormat = DateFormatValue.Ordinary.toString(),
+        dateLimit = 0,
         searchState = true,
         matchedString = "is",
         onClick = { },

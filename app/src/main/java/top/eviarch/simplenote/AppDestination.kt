@@ -30,11 +30,13 @@ interface AppDestination {
         ) {
             val style by viewModel.style.collectAsState()
             val dateFormat by viewModel.dateFormat.collectAsState()
+            val autoDeleteDate by viewModel.autoDeleteDate.collectAsState()
             NotesColumn(
                 scrollBehavior = scrollBehavior,
                 noteList = noteList,
                 style = style,
                 dateFormat = dateFormat.toString(),
+                dateLimit = autoDeleteDate.toTimeMillis(),
                 searchState = searchState,
                 matchedString = matchedString,
                 onClick = onClick,
