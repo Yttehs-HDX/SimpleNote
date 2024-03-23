@@ -62,4 +62,5 @@
     <string name="web_view" translatable="false">Web View</string>
     <string name="invalid_json_string">Invalid Json String</string>
     <string name="option">Option</string>
+    <string name="export_to_clipboard_mes">Export to clipboard successfully!</string>
 </resources>

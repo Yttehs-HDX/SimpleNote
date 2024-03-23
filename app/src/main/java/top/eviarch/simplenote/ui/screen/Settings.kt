@@ -227,7 +227,7 @@ fun ExportDataMode(
                 onClick = {
                     val gson = Gson()
                     val jsonString = gson.toJson(allNote)
-                    ToastUtil.showToast("Export to clipboard successfully!")
+                    ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.export_to_clipboard_mes))
                     clipboardManager.setText(AnnotatedString(jsonString))
                     onClose()
                 }

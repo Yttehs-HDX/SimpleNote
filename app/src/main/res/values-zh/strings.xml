@@ -54,4 +54,5 @@
     <string name="from_clipboard">从剪贴板</string>
     <string name="invalid_json_string">不合法的Json字符串</string>
     <string name="option">选项</string>
+    <string name="export_to_clipboard_mes">成功导出到剪贴板！</string>
 </resources>
