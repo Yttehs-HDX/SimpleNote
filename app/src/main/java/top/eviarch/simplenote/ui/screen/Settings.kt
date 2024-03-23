@@ -19,8 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.twotone.Build
 import androidx.compose.material.icons.twotone.Info
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
@@ -43,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,6 +56,7 @@ import top.eviarch.simplenote.StyleValue
 import top.eviarch.simplenote.core.SimpleNoteApplication
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.extra.ToastUtil
+import top.eviarch.simplenote.extra.isJson
 import java.util.Date
 import java.util.Locale
 
@@ -73,7 +71,6 @@ fun Settings(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
-        val context = LocalContext.current
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.main_page))
         StyleMode(viewModel = settingsViewModel)
 
@@ -87,10 +84,8 @@ fun Settings(
             mainViewModel = mainViewModel,
             settingsViewModel = settingsViewModel
         )
-        ExportDataUnit(viewModel = mainViewModel)
-        ExportToClipboard(viewModel = mainViewModel)
-        ImportDataUnit(viewModel = mainViewModel)
-        ImportFromClipboard(viewModel = mainViewModel)
+        ExportDataMode(viewModel = mainViewModel)
+        ImportDataMode(viewModel = mainViewModel)
 
         HorizontalDivider()
         SubSettingsTitle(title = SimpleNoteApplication.Context.getString(R.string.floating_button))
@@ -197,59 +192,7 @@ fun StorageManagerMode(
 }
 
 @Composable
-fun ExportToClipboard(
-    viewModel: MainViewModel
-) {
-    val clipboardManager = LocalClipboardManager.current
-    val allNote by viewModel.noteListFlow.collectAsState(emptyList())
-
-    ButtonUnit(
-        key = SimpleNoteApplication.Context.getString(R.string.export_data),
-        value = SimpleNoteApplication.Context.getString(R.string.to_clipboard),
-        icon = Icons.AutoMirrored.Filled.ArrowForward,
-    ) {
-        val gson = Gson()
-        val jsonString = gson.toJson(allNote)
-        ToastUtil.showToast("Export to clipboard successfully!")
-        clipboardManager.setText(AnnotatedString(jsonString))
-    }
-}
-
-@Composable
-fun ImportFromClipboard(
-    viewModel: MainViewModel
-) {
-    val clipboardManager = LocalClipboardManager.current
-    val text = remember { mutableStateOf("") }
-    ButtonUnit(
-        key = SimpleNoteApplication.Context.getString(R.string.import_data),
-        value = SimpleNoteApplication.Context.getString(R.string.from_clipboard),
-        icon = Icons.AutoMirrored.Filled.ArrowBack,
-    ) {
-        val dataFromClip = clipboardManager.getText()
-        if (dataFromClip != null) {
-            text.value = dataFromClip.text
-        }
-        if (isJsonString(text.value)) {
-            val gson = Gson()
-            val noteList: List<NoteEntity> = gson.fromJson(text.value, object : TypeToken<List<NoteEntity>>() {}.type)
-            noteList.forEach { note ->
-                viewModel.updateNote(note)
-            }
-            viewModel.clearTargetNote()
-            ToastUtil.showToast( "${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
-        } else {
-            ToastUtil.showToast("invalid Json string")
-        }
-    }
-}
-fun isJsonString(input: String): Boolean {
-    val jsonPattern = "^\\s*\\{.*\\}\\s*$|^\\s*\\[.*]\\s*$".toRegex()
-    return jsonPattern.matches(input)
-}
-
-@Composable
-fun ExportDataUnit(
+fun ExportDataMode(
     viewModel: MainViewModel
 ) {
     val allNote by viewModel.noteListFlow.collectAsState(emptyList())
@@ -265,21 +208,39 @@ fun ExportDataUnit(
             }
         }
     }
-    ButtonUnit(
+    val clipboardManager = LocalClipboardManager.current
+    SettingsUnit(
         key = SimpleNoteApplication.Context.getString(R.string.export_data),
-        value = SimpleNoteApplication.Context.getString(R.string.to_external_storage),
-        icon = Icons.AutoMirrored.Filled.ArrowForward,
-    ) {
-        val formattedDate = SimpleDateFormat(DateFormatValue.Complex.toString(), Locale.ENGLISH).format(Date(System.currentTimeMillis()))
-        val fileName = "Simple-Note-${formattedDate}.json"
-        exportJsonLauncher.launch(fileName)
-    }
+        value = SimpleNoteApplication.Context.getString(R.string.option),
+        menuItemList = { onClose ->
+            MenuItem(
+                text = SimpleNoteApplication.Context.getString(R.string.to_external_storage),
+                onClick = {
+                    val formattedDate = SimpleDateFormat(DateFormatValue.Complex.toString(), Locale.ENGLISH).format(Date(System.currentTimeMillis()))
+                    val fileName = "Simple-Note-${formattedDate}.json"
+                    exportJsonLauncher.launch(fileName)
+                    onClose()
+                }
+            )
+            MenuItem(
+                text = SimpleNoteApplication.Context.getString(R.string.to_clipboard),
+                onClick = {
+                    val gson = Gson()
+                    val jsonString = gson.toJson(allNote)
+                    ToastUtil.showToast("Export to clipboard successfully!")
+                    clipboardManager.setText(AnnotatedString(jsonString))
+                    onClose()
+                }
+            )
+        }
+    )
 }
 
 @Composable
-fun ImportDataUnit(
+fun ImportDataMode(
     viewModel: MainViewModel
 ) {
+    var clipboardText by remember { mutableStateOf("") }
     val selectJsonLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -301,15 +262,42 @@ fun ImportDataUnit(
             ToastUtil.showToast( "${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
         }
     }
-    ButtonUnit(
+    val clipboardManager = LocalClipboardManager.current
+    SettingsUnit(
         key = SimpleNoteApplication.Context.getString(R.string.import_data),
-        value = SimpleNoteApplication.Context.getString(R.string.from_external_storage),
-        icon = Icons.AutoMirrored.Filled.ArrowBack,
-    ) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "application/json"
-        selectJsonLauncher.launch(intent)
-    }
+        value = SimpleNoteApplication.Context.getString(R.string.option),
+        menuItemList = { onClose ->
+            MenuItem(
+                text = SimpleNoteApplication.Context.getString(R.string.from_external_storage),
+                onClick = {
+                    val intent = Intent(Intent.ACTION_GET_CONTENT)
+                    intent.type = "application/json"
+                    selectJsonLauncher.launch(intent)
+                    onClose()
+                }
+            )
+            MenuItem(
+                text = SimpleNoteApplication.Context.getString(R.string.from_clipboard),
+                onClick = {
+                    clipboardManager.getText()?.let {
+                        clipboardText = it.text
+                    }
+                    if (clipboardText.isJson()) {
+                        val gson = Gson()
+                        val noteList: List<NoteEntity> = gson.fromJson(clipboardText, object : TypeToken<List<NoteEntity>>() {}.type)
+                        noteList.forEach { note ->
+                            viewModel.updateNote(note)
+                        }
+                        viewModel.clearTargetNote()
+                        ToastUtil.showToast( "${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
+                    } else {
+                        ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.invalid_json_string))
+                    }
+                    onClose()
+                }
+            )
+        }
+    )
 }
 
 @Composable
@@ -433,46 +421,6 @@ fun SettingsUnit(
                 if (isExpand) Icons.TwoTone.KeyboardArrowUp
                 else Icons.TwoTone.KeyboardArrowDown,
                 contentDescription = "Expand"
-            )
-        }
-    }
-}
-
-@Composable
-fun ButtonUnit(
-    key: String,
-    value: String,
-    icon: ImageVector,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier.clickable { onClick() }
-    ) {
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterVertically),
-            text = key,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterVertically),
-            text = value,
-        )
-        Box(
-            modifier = Modifier
-                .minimumInteractiveComponentSize()
-                .align(Alignment.CenterVertically)
-        ) {
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.Center),
-                imageVector = icon,
-                contentDescription = key
             )
         }
     }

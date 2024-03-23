@@ -8,3 +8,8 @@ fun String.limitContent(maxLength: Int, ellipsis: String = "..."): String {
         trimmedContent.take(maxLength) + ellipsis
     }
 }
+
+fun String.isJson(): Boolean {
+    val jsonPattern = "^\\s*\\{.*\\}\\s*$|^\\s*\\[.*]\\s*$".toRegex()
+    return jsonPattern.matches(this)
+}
