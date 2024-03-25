@@ -87,8 +87,14 @@ interface AppDestination {
         override val route = "web_view"
 
         @Composable
-        fun Content(url: String) {
-            WebViewContainer(url = url)
+        fun Content(
+            url: String,
+            onBack: () -> Unit
+        ) {
+            WebViewContainer(
+                url = url,
+                onBack = onBack
+            )
         }
     }
 }

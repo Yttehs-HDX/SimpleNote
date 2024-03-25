@@ -238,7 +238,13 @@ fun MainApp(
                     )
                 }
                 composable(route = AppDestination.WebViewDestination.route) {
-                    AppDestination.WebViewDestination.Content(url = url)
+                    AppDestination.WebViewDestination.Content(
+                        url = url,
+                        onBack = {
+                            mainViewModel.updateDestination(AppDestination.SettingsDestination.route)
+                            navController.navigateBack()
+                        }
+                    )
                 }
             }
         }
