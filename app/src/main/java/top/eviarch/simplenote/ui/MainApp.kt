@@ -1,7 +1,6 @@
 package top.eviarch.simplenote.ui
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -249,8 +248,6 @@ fun MainApp(
             val timeLimit = System.currentTimeMillis() - deleteDate.toTimeMillis()
             allNotes.filter { it.modifiedDate < timeLimit }
         }
-        Log.v("TAG", "autoDelete: $autoDelete")
-        Log.v("TAG", "deletingNotes: $deletingNotes")
         AutoDeleteNoteAlert(
             showDialog = autoDelete && deletingNotes.isNotEmpty(),
             deletingNotes = deletingNotes,
