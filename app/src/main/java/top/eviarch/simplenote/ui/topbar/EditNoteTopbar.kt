@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +24,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -105,9 +106,9 @@ fun EditNoteTopBar(
                 ) {
                     Icon(
                         imageVector = if (lock) {
-                            Icons.Filled.Lock
+                            ImageVector.vectorResource(id = R.drawable.baseline_lock_person_24)
                         } else {
-                            Icons.Filled.Create
+                            ImageVector.vectorResource(id = R.drawable.baseline_lock_open_24)
                         },
                         contentDescription = "Lock"
                     )
@@ -120,7 +121,7 @@ fun EditNoteTopBar(
                 ) {
                     Icon(
                         imageVector = if (isReadOnly) {
-                            Icons.Filled.Lock
+                            ImageVector.vectorResource(id = R.drawable.baseline_eye_24)
                         } else {
                             Icons.Filled.Create
                         },
