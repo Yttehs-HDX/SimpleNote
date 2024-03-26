@@ -113,7 +113,9 @@ fun MainApp(
                     searchState = searchState,
                     onSearchStart = {
                         searchState = true
-                        searchedNotes = allNotes
+                        searchedNotes = allNotes.filter { eachNote ->
+                            !eachNote.lock
+                        }
                     },
                     onSearchStop = {
                         matchedString = ""
@@ -123,7 +125,8 @@ fun MainApp(
                     onSearch = { input ->
                         matchedString = input
                         searchedNotes = allNotes.filter { eachNote ->
-                            input in eachNote.title || input in eachNote.content
+                            if (eachNote.lock) false
+                            else input in eachNote.title || input in eachNote.content
                         }
                     },
                     onClickSettingsButton = {
