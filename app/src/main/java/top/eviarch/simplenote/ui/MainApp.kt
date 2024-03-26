@@ -34,8 +34,10 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import top.eviarch.simplenote.AppDestination
 import top.eviarch.simplenote.MainViewModel
+import top.eviarch.simplenote.R
 import top.eviarch.simplenote.SettingsViewModel
 import top.eviarch.simplenote.StorageManagerValue
+import top.eviarch.simplenote.core.SimpleNoteApplication
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.extra.ToastUtil
 import top.eviarch.simplenote.extra.navigateBack
@@ -189,6 +191,17 @@ fun MainApp(
                         matchedString = matchedString,
                         onClick = { note ->
                             if (note.lock) {
+                               ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.note_unlock_hint),Toast.LENGTH_LONG)
+                            } else {
+                                val route = AppDestination.EditNoteDestination.route
+                                mainViewModel.updateDestination(route)
+                                mainViewModel.updateNote(note)
+                                navController.navigateSingleTopTo(route)
+                                searchState = false
+                            }
+                        },
+                        onButtonClick = {note ->
+                            if (note.lock) {
                                 val executor = ContextCompat.getMainExecutor(context)
                                 val biometricPrompt = BiometricPrompt(
                                     context as FragmentActivity, executor,
@@ -203,13 +216,13 @@ fun MainApp(
                                         }
                                         override fun onAuthenticationFailed() {
                                             super.onAuthenticationFailed()
-                                            ToastUtil.showToast("Authentication failed", Toast.LENGTH_LONG)
+                                            ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.authentication_failure), Toast.LENGTH_LONG)
                                         }
                                     })
                                 val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                                    .setTitle("Biometric Authentication")
-                                    .setSubtitle("Please authenticate to edit the note")
-                                    .setNegativeButtonText("Cancel")
+                                    .setTitle(SimpleNoteApplication.Context.getString(R.string.unlock_title))
+                                    .setSubtitle(SimpleNoteApplication.Context.getString(R.string.unlock_subtitle))
+                                    .setNegativeButtonText(SimpleNoteApplication.Context.getString(R.string.cancel))
                                     .build()
                                 biometricPrompt.authenticate(promptInfo)
                             } else {

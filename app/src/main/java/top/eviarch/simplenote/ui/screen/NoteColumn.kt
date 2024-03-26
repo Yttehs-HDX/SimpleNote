@@ -68,6 +68,7 @@ fun NotesColumn(
     searchState: Boolean,
     matchedString: String,
     onClick: (NoteEntity) -> Unit,
+    onButtonClick: (NoteEntity) -> Unit,
     onDeleteNote: (NoteEntity) -> Unit
 ) {
     Box(
@@ -93,6 +94,9 @@ fun NotesColumn(
                                 dateLimit = dateLimit,
                                 onClick = {
                                     onClick(note)
+                                },
+                                onButtonClick = {
+                                    onButtonClick(note)
                                 },
                                 onLongPress = { showDialog = true }
                             )
@@ -126,6 +130,9 @@ fun NotesColumn(
                                 onClick = {
                                     onClick(note)
                                 },
+                                onButtonClick = {
+                                    onButtonClick(note)
+                                },
                                 onLongPress = { showDialog = true }
                             )
                             DeleteWaringAlertDialog(
@@ -153,6 +160,7 @@ fun NoteCard(
     dateFormat: String,
     dateLimit: Long,
     onClick: () -> Unit,
+    onButtonClick: () -> Unit,
     onLongPress: () -> Unit
 ) {
     Card(
@@ -209,7 +217,16 @@ fun NoteCard(
             }
             val content = AnnotatedString(note.content.limitContent(100))
             Text(
-                text = if (searchState) annotatedContent else content,
+                text =
+                if (searchState) {
+                    annotatedContent
+                }
+                else if (note.lock) {
+                    buildAnnotatedString{append("This note is currently locked!")}
+                }
+                else{
+                    content
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
@@ -232,7 +249,7 @@ fun NoteCard(
                 } else if (note.lock) {
                     IconButton(
                         modifier = Modifier.align(Alignment.CenterVertically),
-                        onClick = { /*Just for animation*/ }
+                        onClick =  onButtonClick
                     ) {
                         Icon(
                             modifier = Modifier.align(Alignment.CenterVertically),
@@ -307,6 +324,7 @@ fun PreviewNoteCard() {
         searchState = true,
         matchedString = "is",
         onClick = { },
+        onButtonClick = { },
         onLongPress = { }
     )
 }

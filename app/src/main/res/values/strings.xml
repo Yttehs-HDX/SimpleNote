@@ -63,4 +63,9 @@
     <string name="invalid_json_string">Invalid Json String</string>
     <string name="option">Option</string>
     <string name="export_to_clipboard_mes">Export to clipboard successfully!</string>
+    <string name="note_unlock_hint">This note is currently locked,please click the lock button to unlock.</string>
+    <string name="authentication_failure">Authentication failed</string>
+    <string name="unlock_title">Biometric Authentication</string>
+    <string name="unlock_subtitle">Please authenticate to edit the note</string>
+    <string name="cancel">Cancel</string>
 </resources>

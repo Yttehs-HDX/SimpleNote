@@ -26,6 +26,7 @@ interface AppDestination {
             searchState: Boolean,
             matchedString: String,
             onClick: (NoteEntity) -> Unit,
+            onButtonClick: (NoteEntity) -> Unit,
             onDeleteNote: (NoteEntity) -> Unit
         ) {
             val style by viewModel.style.collectAsState()
@@ -40,6 +41,7 @@ interface AppDestination {
                 searchState = searchState,
                 matchedString = matchedString,
                 onClick = onClick,
+                onButtonClick = onButtonClick,
                 onDeleteNote = onDeleteNote
             )
         }
