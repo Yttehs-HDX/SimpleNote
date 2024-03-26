@@ -68,5 +68,5 @@
     <string name="unlock_title">Biometric Authentication</string>
     <string name="unlock_subtitle">Please authenticate to edit the note</string>
     <string name="cancel">Cancel</string>
-    <string name="note_is_currently_locked">This note is currently locked!</string>
+    <string name="locked_note_hint">This note is currently locked!</string>
 </resources>

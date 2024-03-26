@@ -10,35 +10,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import top.eviarch.simplenote.MainViewModel
 import top.eviarch.simplenote.R
 import top.eviarch.simplenote.core.SimpleNoteApplication
-import top.eviarch.simplenote.data.NoteEntity
 
 @Composable
 fun EditNote(
-    note: NoteEntity,
+    viewModel: MainViewModel,
     isReadOnly: Boolean,
-    onDone: (NoteEntity) -> Unit,
     onBack: () -> Unit
 ) {
-    var title by rememberSaveable { mutableStateOf(note.title) }
-    var content by rememberSaveable { mutableStateOf(note.content) }
-    var modifiedDate by rememberSaveable { mutableLongStateOf(note.modifiedDate) }
+    val note by viewModel.targetNote.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,14 +41,15 @@ fun EditNote(
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
                 .fillMaxWidth(),
-            value = title,
+            value = note.title,
             readOnly = isReadOnly,
             textStyle = MaterialTheme.typography.headlineSmall,
             maxLines = 2,
-            onValueChange = {
-                title = it
-                modifiedDate = System.currentTimeMillis()
-                onDone(NoteEntity(note.id, title, content, modifiedDate))
+            onValueChange = { title ->
+                viewModel.updateNote(note.copy(
+                    title = title,
+                    modifiedDate = System.currentTimeMillis()
+                ))
             },
             placeholder = {
                 Row {
@@ -67,11 +61,6 @@ fun EditNote(
                     )
                 }
             },
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    onDone(NoteEntity(note.id, title, content, modifiedDate))
-                }
-            ),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -85,12 +74,13 @@ fun EditNote(
                 .clip(RoundedCornerShape(16.dp))
                 .fillMaxWidth()
                 .weight(1f),
-            value = content,
+            value = note.content,
             readOnly = isReadOnly,
-            onValueChange = {
-                content = it
-                modifiedDate = System.currentTimeMillis()
-                onDone(NoteEntity(note.id, title, content, modifiedDate))
+            onValueChange = { content ->
+                viewModel.updateNote(note.copy(
+                    content = content,
+                    modifiedDate = System.currentTimeMillis()
+                ))
             },
             placeholder = {
                 Row {
@@ -101,11 +91,6 @@ fun EditNote(
                     )
                 }
             },
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    onDone(NoteEntity(note.id, title, content, modifiedDate))
-                },
-            ),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -116,7 +101,6 @@ fun EditNote(
     }
     BackHandler(
         onBack = {
-            onDone(NoteEntity(note.id, title, content, modifiedDate))
             onBack()
         }
     )

@@ -60,5 +60,5 @@
     <string name="unlock_title">身份认证</string>
     <string name="unlock_subtitle">请验证身份以编辑笔记</string>
     <string name="cancel">取消</string>
-    <string name="note_is_currently_locked">该笔记目前已被锁定</string>
+    <string name="locked_note_hint">该笔记目前已被锁定</string>
 </resources>
