@@ -96,6 +96,22 @@ fun EditNoteTopBar(
                 }
             },
             actions = {
+                var lock by remember { mutableStateOf(note.lock) }
+                IconButton(
+                    onClick = {
+                        lock = !lock
+                        onSaveNote(note.copy(lock = lock))
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (lock) {
+                            Icons.Filled.Lock
+                        } else {
+                            Icons.Filled.Create
+                        },
+                        contentDescription = "Lock"
+                    )
+                }
                 IconButton(
                     onClick = {
                         onSaveNote(note)
@@ -103,13 +119,12 @@ fun EditNoteTopBar(
                     }
                 ) {
                     Icon(
-                        imageVector =
-                        if (isReadOnly) {
+                        imageVector = if (isReadOnly) {
                             Icons.Filled.Lock
                         } else {
                             Icons.Filled.Create
                         },
-                        contentDescription = "Save"
+                        contentDescription = "Read Only"
                     )
                 }
                 IconButton(

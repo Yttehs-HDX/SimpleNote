@@ -1,6 +1,9 @@
 package top.eviarch.simplenote.ui
 
+import android.content.Context
 import android.content.res.Configuration
+import android.widget.Toast
+import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -24,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntSize
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -32,6 +37,7 @@ import top.eviarch.simplenote.MainViewModel
 import top.eviarch.simplenote.SettingsViewModel
 import top.eviarch.simplenote.StorageManagerValue
 import top.eviarch.simplenote.data.NoteEntity
+import top.eviarch.simplenote.extra.ToastUtil
 import top.eviarch.simplenote.extra.navigateBack
 import top.eviarch.simplenote.extra.navigateSingleTopTo
 import top.eviarch.simplenote.ui.topbar.EditNoteTopBar
@@ -42,6 +48,7 @@ import top.eviarch.simplenote.ui.topbar.WebViewContainerTopBar
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainApp(
+    context: Context,
     navController: NavHostController,
     mainViewModel: MainViewModel,
     settingsViewModel: SettingsViewModel
@@ -181,11 +188,37 @@ fun MainApp(
                         searchState = searchState,
                         matchedString = matchedString,
                         onClick = { note ->
-                            val route = AppDestination.EditNoteDestination.route
-                            mainViewModel.updateDestination(route)
-                            mainViewModel.updateNote(note)
-                            navController.navigateSingleTopTo(route)
-                            searchState = false
+                            if (note.lock) {
+                                val executor = ContextCompat.getMainExecutor(context)
+                                val biometricPrompt = BiometricPrompt(
+                                    context as FragmentActivity, executor,
+                                    object : BiometricPrompt.AuthenticationCallback() {
+                                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                                            super.onAuthenticationSucceeded(result)
+                                            val route = AppDestination.EditNoteDestination.route
+                                            mainViewModel.updateDestination(route)
+                                            mainViewModel.updateNote(note)
+                                            navController.navigateSingleTopTo(route)
+                                            searchState = false
+                                        }
+                                        override fun onAuthenticationFailed() {
+                                            super.onAuthenticationFailed()
+                                            ToastUtil.showToast("Authentication failed", Toast.LENGTH_LONG)
+                                        }
+                                    })
+                                val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                                    .setTitle("Biometric Authentication")
+                                    .setSubtitle("Please authenticate to edit the note")
+                                    .setNegativeButtonText("Cancel")
+                                    .build()
+                                biometricPrompt.authenticate(promptInfo)
+                            } else {
+                                val route = AppDestination.EditNoteDestination.route
+                                mainViewModel.updateDestination(route)
+                                mainViewModel.updateNote(note)
+                                navController.navigateSingleTopTo(route)
+                                searchState = false
+                            }
                         },
                         onDeleteNote = { note ->
                             mainViewModel.deleteNote(note)
