@@ -42,6 +42,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -196,13 +198,25 @@ fun NoteCard(
                 }
             }
             val title = AnnotatedString(note.title.limitContent(20))
+            val hidedTitle = buildAnnotatedString {
+                withStyle(style = SpanStyle(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic
+                )) {
+                    append(note.title.limitContent(5))
+                }
+            }
             Text(
-                text = if (searchState) annotatedTitle else title,
+                text = if (searchState) annotatedTitle else if (note.lock) hidedTitle else title,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
+
             val annotatedContent = buildAnnotatedString {
-                val fullStringList = note.content.limitContent(100, ellipsis = "").split(matchedString)
+                val fullStringList = note.content
+                    .limitContent(100, ellipsis = "")
+                    .split(matchedString)
                 for (index in fullStringList.indices) {
                     if (index != 0) {
                         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.error)) {
@@ -216,23 +230,23 @@ fun NoteCard(
                 }
             }
             val content = AnnotatedString(note.content.limitContent(100))
+            val hidedContent = buildAnnotatedString {
+                withStyle(style = SpanStyle(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic
+                )) {
+                    append(SimpleNoteApplication.Context.getString(R.string.locked_note_hint))
+                }
+            }
             Text(
-                text =
-                if (searchState) {
-                    annotatedContent
-                }
-                else if (note.lock) {
-                    buildAnnotatedString{append("This note is currently locked!")}
-                }
-                else{
-                    content
-                },
+                text = if (searchState) annotatedContent else if (note.lock) hidedContent else content,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
                     .heightIn(30.dp)
             )
-            val formattedDate = SimpleDateFormat(dateFormat, Locale.getDefault()).format(Date(note.modifiedDate))
+
             Row {
                 if (note.modifiedDate < System.currentTimeMillis() - dateLimit) {
                     IconButton(
@@ -270,6 +284,7 @@ fun NoteCard(
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
+                val formattedDate = SimpleDateFormat(dateFormat, Locale.getDefault()).format(Date(note.modifiedDate))
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     text = formattedDate.toString(),

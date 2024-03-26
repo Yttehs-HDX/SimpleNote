@@ -258,11 +258,8 @@ fun MainApp(
                     }
                 ) {
                     AppDestination.EditNoteDestination.Content(
-                        note = targetNote,
+                        viewModel = mainViewModel,
                         isReadOnly = isReadOnly,
-                        onDone = { note ->
-                            mainViewModel.updateNote(note)
-                        },
                         onBack = {
                             mainViewModel.clearTargetNote()
                             mainViewModel.updateDestination(homeRoute)
