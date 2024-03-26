@@ -34,9 +34,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -225,6 +227,17 @@ fun NoteCard(
                             imageVector = Icons.Default.Warning,
                             tint = MaterialTheme.colorScheme.error,
                             contentDescription = "Old",
+                        )
+                    }
+                } else if (note.lock) {
+                    IconButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        onClick = { /*Just for animation*/ }
+                    ) {
+                        Icon(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            imageVector = ImageVector.vectorResource(R.drawable.baseline_lock_person_24),
+                            contentDescription = "Locked",
                         )
                     }
                 } else {
