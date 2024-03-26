@@ -222,7 +222,7 @@ fun NoteCard(
                     annotatedContent
                 }
                 else if (note.lock) {
-                    buildAnnotatedString{append("This note is currently locked!")}
+                    buildAnnotatedString{append(SimpleNoteApplication.Context.getString(R.string.note_is_currently_locked))}
                 }
                 else{
                     content
