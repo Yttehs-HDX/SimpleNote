@@ -3,9 +3,14 @@ package top.eviarch.simplenote.data
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import top.eviarch.simplenote.core.SimpleNoteApplication
 
-@Database(entities = [NoteEntity::class], version = 1, exportSchema = false)
+private const val DB_NAME = "writer_database"
+private const val TABLE_NAME = "NoteEntity"
+
+@Database(entities = [NoteEntity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
 
@@ -18,12 +23,19 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(
                 SimpleNoteApplication.Context,
                 AppDatabase::class.java,
-                "writer_database"
+                DB_NAME
             )
+                .addMigrations(MIGRATION_1_2)
                 .build()
                 .also {
                     Instance = it
                 }
+        }
+
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN lock INTEGER NOT NULL DEFAULT 0")
+            }
         }
     }
 }

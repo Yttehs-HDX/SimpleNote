@@ -14,5 +14,7 @@ data class NoteEntity(
 
     val content: String = "",
 
-    val modifiedDate: Long = System.currentTimeMillis()
+    val modifiedDate: Long = System.currentTimeMillis(),
+
+    val lock: Boolean = false
 )
