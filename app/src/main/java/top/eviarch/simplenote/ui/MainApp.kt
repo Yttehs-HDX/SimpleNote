@@ -3,7 +3,6 @@ package top.eviarch.simplenote.ui
 import android.content.Context
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -27,8 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntSize
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -40,6 +37,7 @@ import top.eviarch.simplenote.StorageManagerValue
 import top.eviarch.simplenote.core.SimpleNoteApplication
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.extra.ToastUtil
+import top.eviarch.simplenote.extra.bioAuthentication
 import top.eviarch.simplenote.extra.navigateBack
 import top.eviarch.simplenote.extra.navigateSingleTopTo
 import top.eviarch.simplenote.ui.topbar.EditNoteTopBar
@@ -205,36 +203,16 @@ fun MainApp(
                         },
                         onButtonClick = {note ->
                             if (note.lock) {
-                                val executor = ContextCompat.getMainExecutor(context)
-                                val biometricPrompt = BiometricPrompt(
-                                    context as FragmentActivity, executor,
-                                    object : BiometricPrompt.AuthenticationCallback() {
-                                        override fun onAuthenticationError(
-                                            errorCode: Int,
-                                            errString: CharSequence
-                                        ) {
-                                            super.onAuthenticationError(errorCode, errString)
-                                            ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.authentication_error) + errString, Toast.LENGTH_LONG)
-                                        }
-                                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                                            super.onAuthenticationSucceeded(result)
-                                            val route = AppDestination.EditNoteDestination.route
-                                            mainViewModel.updateDestination(route)
-                                            mainViewModel.updateNote(note)
-                                            navController.navigateSingleTopTo(route)
-                                            searchState = false
-                                        }
-                                        override fun onAuthenticationFailed() {
-                                            super.onAuthenticationFailed()
-                                            ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.authentication_failure), Toast.LENGTH_LONG)
-                                        }
-                                    })
-                                val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                                    .setTitle(SimpleNoteApplication.Context.getString(R.string.unlock_title))
-                                    .setSubtitle(SimpleNoteApplication.Context.getString(R.string.unlock_subtitle))
-                                    .setNegativeButtonText(SimpleNoteApplication.Context.getString(R.string.cancel))
-                                    .build()
-                                biometricPrompt.authenticate(promptInfo)
+                                bioAuthentication(
+                                    context = context,
+                                    onSuccess = {
+                                        val route = AppDestination.EditNoteDestination.route
+                                        mainViewModel.updateDestination(route)
+                                        mainViewModel.updateNote(note)
+                                        navController.navigateSingleTopTo(route)
+                                        searchState = false
+                                    }
+                                )
                             } else {
                                 val route = AppDestination.EditNoteDestination.route
                                 mainViewModel.updateDestination(route)
