@@ -205,6 +205,7 @@ fun MainApp(
                             if (note.lock) {
                                 bioAuthentication(
                                     context = context,
+                                    subTitle = SimpleNoteApplication.Context.getString(R.string.unlock_subtitle),
                                     onSuccess = {
                                         val route = AppDestination.EditNoteDestination.route
                                         mainViewModel.updateDestination(route)

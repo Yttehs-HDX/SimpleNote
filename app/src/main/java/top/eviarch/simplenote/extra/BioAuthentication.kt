@@ -10,6 +10,7 @@ import top.eviarch.simplenote.core.SimpleNoteApplication
 
 fun bioAuthentication (
     context: Context,
+    subTitle: String,
     onSuccess: () -> Unit
 ) {
     val executor = ContextCompat.getMainExecutor(context)
@@ -34,7 +35,7 @@ fun bioAuthentication (
         })
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
         .setTitle(SimpleNoteApplication.Context.getString(R.string.unlock_title))
-        .setSubtitle(SimpleNoteApplication.Context.getString(R.string.unlock_subtitle))
+        .setSubtitle(subTitle)
         .setNegativeButtonText(SimpleNoteApplication.Context.getString(R.string.cancel))
         .build()
     biometricPrompt.authenticate(promptInfo)
