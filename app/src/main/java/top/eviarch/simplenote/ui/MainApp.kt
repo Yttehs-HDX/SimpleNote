@@ -209,6 +209,13 @@ fun MainApp(
                                 val biometricPrompt = BiometricPrompt(
                                     context as FragmentActivity, executor,
                                     object : BiometricPrompt.AuthenticationCallback() {
+                                        override fun onAuthenticationError(
+                                            errorCode: Int,
+                                            errString: CharSequence
+                                        ) {
+                                            super.onAuthenticationError(errorCode, errString)
+                                            ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.authentication_error) + errString, Toast.LENGTH_LONG)
+                                        }
                                         override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                                             super.onAuthenticationSucceeded(result)
                                             val route = AppDestination.EditNoteDestination.route
