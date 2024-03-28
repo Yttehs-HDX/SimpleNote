@@ -3,7 +3,7 @@
   <component name="ProjectMigrations">
     <option name="MigrateToGradleLocalJavaHome">
       <set>
-        <option value="$PROJECT_DIR$" />
+        <option value="/mnt/Externel/Develop/Project/AndroidStudioProjects/SimpleNote" />
       </set>
     </option>
   </component>

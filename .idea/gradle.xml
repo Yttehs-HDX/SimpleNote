@@ -4,28 +4,16 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalProjectPath" value="/mnt/Externel/Develop/Project/AndroidStudioProjects/SimpleNote" />
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="/mnt/Project/Develop/AndroidStudioProjects/Simple-Note" />
-            <option value="/mnt/Project/Develop/AndroidStudioProjects/Simple-Note/app" />
-          </set>
-        </option>
-        <option name="resolveExternalAnnotations" value="false" />
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="/mnt/Project/Develop/AndroidStudioProjects/Simple-Note" />
-        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
-        <option name="modules">
-          <set>
-            <option value="/mnt/Project/Develop/AndroidStudioProjects/Simple-Note" />
-            <option value="/mnt/Project/Develop/AndroidStudioProjects/Simple-Note/app" />
+            <option value="/mnt/Externel/Develop/Project/AndroidStudioProjects/SimpleNote" />
+            <option value="/mnt/Externel/Develop/Project/AndroidStudioProjects/SimpleNote/app" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
-    <option name="parallelModelFetch" value="true" />
   </component>
 </project>
