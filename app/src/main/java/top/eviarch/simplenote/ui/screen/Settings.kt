@@ -1,11 +1,7 @@
 package top.eviarch.simplenote.ui.screen
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
-import android.icu.text.SimpleDateFormat
+import android.os.Environment
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -59,8 +55,10 @@ import top.eviarch.simplenote.core.SimpleNoteApplication
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.extra.ToastUtil
 import top.eviarch.simplenote.extra.isJson
-import java.util.Date
-import java.util.Locale
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileWriter
+import java.io.IOException
 
 @Composable
 fun Settings(
@@ -199,18 +197,6 @@ fun ExportDataMode(
 ) {
     var value by remember { mutableStateOf(SimpleNoteApplication.Context.getString(R.string.to_external_storage)) }
     val allNote by viewModel.noteListFlow.collectAsState(emptyList())
-    val exportJsonLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/json")
-    ) { uri ->
-        uri?.let {
-            val gson = Gson()
-            val jsonString = gson.toJson(allNote)
-            val context = SimpleNoteApplication.Context
-            context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                outputStream.write(jsonString.toByteArray())
-            }
-        }
-    }
     val clipboardManager = LocalClipboardManager.current
     DataTransportUnit(
         key = SimpleNoteApplication.Context.getString(R.string.export_data),
@@ -234,9 +220,18 @@ fun ExportDataMode(
         },
         onClick = {
             if (value == SimpleNoteApplication.Context.getString(R.string.to_external_storage)){
-                val formattedDate = SimpleDateFormat(DateFormatValue.Complex.toString(), Locale.ENGLISH).format(Date(System.currentTimeMillis()))
-                val fileName = "Simple-Note-${formattedDate}.json"
-                exportJsonLauncher.launch(fileName)
+                val fileName = "Simple-Note_backup.json"
+                val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val file = File(folder, fileName)
+                try {
+                    val gson = Gson()
+                    val jsonString = gson.toJson(allNote)
+                    FileWriter(file).use { writer ->
+                        writer.write(jsonString)
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
             } else if (value == SimpleNoteApplication.Context.getString(R.string.to_clipboard)) {
                 val gson = Gson()
                 val jsonString = gson.toJson(allNote)
@@ -252,34 +247,6 @@ fun ImportDataMode(
     viewModel: MainViewModel
 ) {
     var clipboardText by remember { mutableStateOf("") }
-    val selectJsonLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode != RESULT_OK) {
-            return@rememberLauncherForActivityResult
-        }
-        val data = result.data ?: return@rememberLauncherForActivityResult
-        val uri = data.data ?: return@rememberLauncherForActivityResult
-        val context = SimpleNoteApplication.Context
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val jsonString = inputStream?.bufferedReader().use { it?.readText() }
-        jsonString?.let {
-            val gson = Gson()
-            val noteList: List<NoteEntity> =
-                gson.fromJson(jsonString, object : TypeToken<List<NoteEntity>>() {}.type)
-            noteList.forEach { note ->
-                viewModel.updateNote(note)
-            }
-            viewModel.clearTargetNote()
-            ToastUtil.showToast(
-                "${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${
-                    SimpleNoteApplication.Context.getString(
-                        R.string.import_message_tail
-                    )
-                }"
-            )
-        }
-    }
     val clipboardManager = LocalClipboardManager.current
     var value by remember { mutableStateOf(SimpleNoteApplication.Context.getString(R.string.from_external_storage)) }
     DataTransportUnit(
@@ -303,10 +270,27 @@ fun ImportDataMode(
             )
         },
         onClick = {
-            if (value == SimpleNoteApplication.Context.getString(R.string.from_external_storage)){
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.type = "application/json"
-                selectJsonLauncher.launch(intent)
+            if (value == SimpleNoteApplication.Context.getString(R.string.from_external_storage)) {
+                val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val file = File(folder, "Simple-Note_backup.json")
+                val jsonString: String = try {
+                    file.readText()
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                    ""
+                }
+                if (jsonString != "" && jsonString.isJson()) {
+                    val gson = Gson()
+                    val noteList: List<NoteEntity> =
+                        gson.fromJson(jsonString, object : TypeToken<List<NoteEntity>>() {}.type)
+                    noteList.forEach { note ->
+                        viewModel.updateNote(note)
+                    }
+                    viewModel.clearTargetNote()
+                    ToastUtil.showToast("${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
+                } else {
+                    ToastUtil.showToast("No data found")
+                }
             } else if (value == SimpleNoteApplication.Context.getString(R.string.from_clipboard)) {
                 clipboardManager.getText()?.let {
                     clipboardText = it.text
