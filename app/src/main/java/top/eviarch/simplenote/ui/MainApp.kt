@@ -255,6 +255,7 @@ fun MainApp(
                 }
                 composable(route = AppDestination.SettingsDestination.route) {
                     AppDestination.SettingsDestination.Content(
+                        context = context,
                         mainViewModel = mainViewModel,
                         settingsViewModel = settingsViewModel,
                         jumpUrl = { url ->

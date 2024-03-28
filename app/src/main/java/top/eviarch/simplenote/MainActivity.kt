@@ -15,6 +15,8 @@ import top.eviarch.simplenote.core.AppViewModelProvider
 import top.eviarch.simplenote.ui.MainApp
 import top.eviarch.simplenote.ui.theme.SimpleNoteTheme
 
+
+
 class MainActivity : FragmentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {

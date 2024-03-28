@@ -1,5 +1,9 @@
 package top.eviarch.simplenote.ui.screen
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Environment
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -43,6 +47,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import top.eviarch.simplenote.DateFormatValue
@@ -62,6 +68,7 @@ import java.io.IOException
 
 @Composable
 fun Settings(
+    context: Context,
     mainViewModel: MainViewModel,
     settingsViewModel: SettingsViewModel,
     jumpUrl: (String) -> Unit,
@@ -84,7 +91,10 @@ fun Settings(
             mainViewModel = mainViewModel,
             settingsViewModel = settingsViewModel
         )
-        ExportDataMode(viewModel = mainViewModel)
+        ExportDataMode(
+            context = context,
+            viewModel = mainViewModel
+        )
         ImportDataMode(viewModel = mainViewModel)
 
         HorizontalDivider()
@@ -193,7 +203,8 @@ fun StorageManagerMode(
 
 @Composable
 fun ExportDataMode(
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    context: Context
 ) {
     var value by remember { mutableStateOf(SimpleNoteApplication.Context.getString(R.string.to_external_storage)) }
     val allNote by viewModel.noteListFlow.collectAsState(emptyList())
@@ -220,6 +231,7 @@ fun ExportDataMode(
         },
         onClick = {
             if (value == SimpleNoteApplication.Context.getString(R.string.to_external_storage)){
+                permissionAccess(context = context)
                 val fileName = "Simple-Note_backup.json"
                 val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 val file = File(folder, fileName)
@@ -289,7 +301,7 @@ fun ImportDataMode(
                     viewModel.clearTargetNote()
                     ToastUtil.showToast("${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
                 } else {
-                    ToastUtil.showToast("No data found")
+                    ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.no_file_found))
                 }
             } else if (value == SimpleNoteApplication.Context.getString(R.string.from_clipboard)) {
                 clipboardManager.getText()?.let {
@@ -605,4 +617,15 @@ fun PreviewSettingsUnit() {
             }
         }
     )
+}
+
+private const val REQUEST_CODE_STORAGE_PERMISSION = 1001
+
+fun permissionAccess (
+    context: Context,
+) {
+    val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+    if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(context as Activity, arrayOf(permission), REQUEST_CODE_STORAGE_PERMISSION)
+    }
 }

@@ -62,4 +62,5 @@
     <string name="cancel">取消</string>
     <string name="locked_note_hint">该笔记目前已被锁定</string>
     <string name="authentication_error">认证错误： </string>
+    <string name="no_file_found">未找到文件</string>
 </resources>

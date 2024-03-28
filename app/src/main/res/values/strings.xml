@@ -70,4 +70,5 @@
     <string name="cancel">Cancel</string>
     <string name="locked_note_hint">This note is currently locked!</string>
     <string name="authentication_error">Authentication error:</string>
+    <string name="no_file_found">No file found</string>
 </resources>

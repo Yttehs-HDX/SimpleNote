@@ -2,6 +2,7 @@
 accompanistVersion = "0.34.0"
 agp = "8.3.1"
 biometricKtxVersion = "1.2.0-alpha05"
+biometricVersion = "1.1.0"
 gsonVersion = "2.10.1"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
@@ -17,6 +18,7 @@ roomVersion = "2.6.1"
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistVersion" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistVersion" }
+androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometricVersion" }
 androidx-biometric-ktx = { module = "androidx.biometric:biometric-ktx", version.ref = "biometricKtxVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }

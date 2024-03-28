@@ -1,5 +1,6 @@
 package top.eviarch.simplenote
 
+import android.content.Context
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -69,12 +70,14 @@ interface AppDestination {
 
         @Composable
         fun Content(
+            context: Context,
             mainViewModel: MainViewModel,
             settingsViewModel: SettingsViewModel,
             jumpUrl: (String) -> Unit,
             onBack: () -> Unit
         ) {
             Settings(
+                context = context,
                 mainViewModel = mainViewModel,
                 settingsViewModel = settingsViewModel,
                 jumpUrl = jumpUrl,

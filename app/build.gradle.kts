@@ -85,4 +85,5 @@ dependencies {
 
     // Biometric
     implementation(libs.androidx.biometric.ktx)
+    implementation (libs.androidx.biometric)
 }
