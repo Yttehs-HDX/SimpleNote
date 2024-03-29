@@ -56,6 +56,7 @@
     <string name="import_data">Import Data</string>
     <string name="from_external_storage">"From External Storage"</string>
     <string name="import_message_head">Import</string>
+    <string name="export_message_head">Export</string>
     <string name="import_message_tail">note(s)</string>
     <string name="to_clipboard">To Clipboard</string>
     <string name="from_clipboard">From Clipboard</string>
@@ -70,5 +71,7 @@
     <string name="cancel">Cancel</string>
     <string name="locked_note_hint">This note is currently locked!</string>
     <string name="authentication_error">Authentication error:</string>
-    <string name="no_file_found">No file found</string>
+    <string name="no_file_found">No File Found</string>
+    <string name="backup_file_name" translatable="false">Simple-Note_backup.json</string>
+    <string name="export_failed">Export failed</string>
 </resources>

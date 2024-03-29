@@ -63,4 +63,6 @@
     <string name="locked_note_hint">该笔记目前已被锁定</string>
     <string name="authentication_error">认证错误： </string>
     <string name="no_file_found">未找到文件</string>
+    <string name="export_failed">导出失败</string>
+    <string name="export_message_head">导出</string>
 </resources>

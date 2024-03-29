@@ -232,8 +232,8 @@ fun ExportDataMode(
         onClick = {
             if (value == SimpleNoteApplication.Context.getString(R.string.to_external_storage)){
                 permissionAccess(context = context)
-                val fileName = "Simple-Note_backup.json"
                 val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val fileName = SimpleNoteApplication.Context.getString(R.string.backup_file_name)
                 val file = File(folder, fileName)
                 try {
                     val gson = Gson()
@@ -241,8 +241,10 @@ fun ExportDataMode(
                     FileWriter(file).use { writer ->
                         writer.write(jsonString)
                     }
+                    ToastUtil.showToast("${SimpleNoteApplication.Context.getString(R.string.export_message_head)} ${allNote.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
                 } catch (e: IOException) {
                     e.printStackTrace()
+                    ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.export_failed))
                 }
             } else if (value == SimpleNoteApplication.Context.getString(R.string.to_clipboard)) {
                 val gson = Gson()
@@ -284,7 +286,8 @@ fun ImportDataMode(
         onClick = {
             if (value == SimpleNoteApplication.Context.getString(R.string.from_external_storage)) {
                 val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                val file = File(folder, "Simple-Note_backup.json")
+                val fileName = SimpleNoteApplication.Context.getString(R.string.backup_file_name)
+                val file = File(folder, fileName)
                 val jsonString: String = try {
                     file.readText()
                 } catch (e: FileNotFoundException) {
@@ -317,13 +320,7 @@ fun ImportDataMode(
                         viewModel.updateNote(note)
                     }
                     viewModel.clearTargetNote()
-                    ToastUtil.showToast(
-                        "${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${
-                            SimpleNoteApplication.Context.getString(
-                                R.string.import_message_tail
-                            )
-                        }"
-                    )
+                    ToastUtil.showToast("${SimpleNoteApplication.Context.getString(R.string.import_message_head)} ${noteList.size} ${SimpleNoteApplication.Context.getString(R.string.import_message_tail)}")
                 } else {
                     ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.invalid_json_string))
                 }
@@ -621,7 +618,7 @@ fun PreviewSettingsUnit() {
 
 private const val REQUEST_CODE_STORAGE_PERMISSION = 1001
 
-fun permissionAccess (
+private fun permissionAccess (
     context: Context,
 ) {
     val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
