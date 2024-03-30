@@ -36,12 +36,15 @@ import top.eviarch.simplenote.R
 import top.eviarch.simplenote.SettingsViewModel
 import top.eviarch.simplenote.StorageManagerValue
 import top.eviarch.simplenote.core.SimpleNoteApplication
+import top.eviarch.simplenote.data.FolderEntity
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.extra.ToastUtil
+import top.eviarch.simplenote.extra.UUIDUtil
 import top.eviarch.simplenote.extra.bioAuthentication
 import top.eviarch.simplenote.extra.navigateBack
 import top.eviarch.simplenote.extra.navigateSingleTopTo
 import top.eviarch.simplenote.ui.topbar.EditNoteTopBar
+import top.eviarch.simplenote.ui.topbar.FolderManagerTopBar
 import top.eviarch.simplenote.ui.topbar.NoteColumnTopBar
 import top.eviarch.simplenote.ui.topbar.SettingsTopBar
 import top.eviarch.simplenote.ui.topbar.WebViewContainerTopBar
@@ -67,6 +70,9 @@ fun MainApp(
         val targetNote by mainViewModel.targetNote.collectAsState()
 
         val allFolders by folderViewModel.folderListFlow.collectAsState(initial = emptyList())
+        var showSetFolderDialog by remember { mutableStateOf(false) }
+        var selectedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
+        selectedNotes = allNotes
 
         var searchState by rememberSaveable { mutableStateOf(false) }
         var matchedString by rememberSaveable { mutableStateOf("") }
@@ -142,6 +148,20 @@ fun MainApp(
                         searchState = false
                     }
                 )
+                FolderManagerTopBar(
+                    visible = targetDestination == AppDestination.FolderManagerDestination.route,
+                    onAddFolder = {
+                        var name = SimpleNoteApplication.Context.getString(R.string.default_folder_name)
+                        while (allFolders.any { it.name == name }) {
+                            name = "$name-${SimpleNoteApplication.Context.getString(R.string.repeated_suffix)}"
+                        }
+                        folderViewModel.updateFolder(FolderEntity(UUIDUtil.generateUniqueId(), name))
+                    },
+                    onBack = {
+                        mainViewModel.updateDestination(homeRoute)
+                        navController.navigateBack()
+                    }
+                )
                 EditNoteTopBar(
                     visible = targetDestination == AppDestination.EditNoteDestination.route,
                     note = targetNote,
@@ -181,8 +201,6 @@ fun MainApp(
                 )
             }
         ) { paddingValues ->
-            var selectedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
-            selectedNotes = allNotes
             @Suppress("DEPRECATION")
             AnimatedNavHost(
                 modifier = Modifier.padding(paddingValues),
@@ -190,7 +208,6 @@ fun MainApp(
                 startDestination = AppDestination.NotesColumnDestination.route,
             ) {
                 composable(route = AppDestination.NotesColumnDestination.route) {
-                    var showSetFolderDialog by remember { mutableStateOf(false) }
                     AppDestination.NotesColumnDestination.Content(
                         scrollBehavior = noteColumnTopBarScrollBehavior,
                         folderViewModel = folderViewModel,
@@ -200,7 +217,10 @@ fun MainApp(
                         matchedString = matchedString,
                         onClick = { note ->
                             if (note.lock) {
-                               ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.note_unlock_hint),Toast.LENGTH_LONG)
+                                ToastUtil.showToast(
+                                    SimpleNoteApplication.Context.getString(R.string.note_unlock_hint),
+                                    Toast.LENGTH_LONG
+                                )
                             } else {
                                 val route = AppDestination.EditNoteDestination.route
                                 mainViewModel.updateDestination(route)
@@ -209,7 +229,7 @@ fun MainApp(
                                 searchState = false
                             }
                         },
-                        onButtonClick = {note ->
+                        onButtonClick = { note ->
                             if (note.lock) {
                                 bioAuthentication(
                                     context = context,
@@ -233,6 +253,11 @@ fun MainApp(
                         onDeleteNote = { note ->
                             mainViewModel.deleteNote(note)
                             searchedNotes = searchedNotes.filter { it != note }
+                        },
+                        onManageFolders = {
+                            val route = AppDestination.FolderManagerDestination.route
+                            mainViewModel.updateDestination(route)
+                            navController.navigateSingleTopTo(route)
                         },
                         onSelectFolder = { folder ->
                             allNotes.filter { it.folder == folder.name }.forEach {
@@ -259,16 +284,14 @@ fun MainApp(
                             showSetFolderDialog = true
                         }
                     )
-                    SetFolderDialog(
-                        visible = showSetFolderDialog,
-                        folders = allFolders,
-                        onConfirm = { folder ->
-                            mainViewModel.updateNote(targetNote.copy(folder = folder.name))
-                            mainViewModel.clearTargetNote()
-                            showSetFolderDialog = false
-                        },
-                        onDismiss = {
-                            showSetFolderDialog = false
+                }
+                composable(route = AppDestination.FolderManagerDestination.route) {
+                    AppDestination.FolderManagerDestination.Content(
+                        mainViewModel = mainViewModel,
+                        folderViewModel = folderViewModel,
+                        onBack = {
+                            mainViewModel.updateDestination(homeRoute)
+                            navController.navigateBack()
                         }
                     )
                 }
@@ -341,6 +364,21 @@ fun MainApp(
             },
             onDismiss = {
                 mainViewModel.updateAutoDeleteDialogVisibility(false)
+            }
+        )
+        FolderDialog.SetFolderDialog(
+            visible = showSetFolderDialog,
+            note = targetNote,
+            folders = allFolders,
+            onConfirm = { folder ->
+                mainViewModel.updateNote(targetNote.copy(
+                    modifiedDate = System.currentTimeMillis(),
+                    folder = folder.name
+                ))
+                showSetFolderDialog = false
+            },
+            onDismiss = {
+                showSetFolderDialog = false
             }
         )
     }

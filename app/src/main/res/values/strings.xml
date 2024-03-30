@@ -76,4 +76,7 @@
     <string name="export_failed">Export failed</string>
     <string name="all">All</string>
     <string name="select_folder">Select Folder</string>
+    <string name="default_folder_name">New Folder</string>
+    <string name="folder_already_exists">Folder already exists</string>
+    <string name="repeated_suffix">copy</string>
 </resources>

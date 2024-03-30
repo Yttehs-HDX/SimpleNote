@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import top.eviarch.simplenote.data.FolderEntity
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.ui.screen.EditNote
+import top.eviarch.simplenote.ui.screen.FolderManager
 import top.eviarch.simplenote.ui.screen.NotesColumn
 import top.eviarch.simplenote.ui.screen.Settings
 import top.eviarch.simplenote.ui.screen.WebViewContainer
@@ -31,6 +32,7 @@ interface AppDestination {
             onClick: (NoteEntity) -> Unit,
             onButtonClick: (NoteEntity) -> Unit,
             onDeleteNote: (NoteEntity) -> Unit,
+            onManageFolders: () -> Unit,
             onSelectFolder: (FolderEntity) -> Unit,
             onUnselectFolder: (FolderEntity) -> Unit,
             onSelectAllFolders: () -> Unit,
@@ -52,11 +54,29 @@ interface AppDestination {
                 onClick = onClick,
                 onButtonClick = onButtonClick,
                 onDeleteNote = onDeleteNote,
+                onManageFolders = onManageFolders,
                 onSelectFolder = onSelectFolder,
                 onUnselectFolder = onUnselectFolder,
                 onSelectAllFolders = onSelectAllFolders,
                 onUnselectAllFolders = onUnselectAllFolders,
                 onSetFolder = onSetFolder
+            )
+        }
+    }
+
+    data object FolderManagerDestination : AppDestination {
+        override val route = "folder"
+
+        @Composable
+        fun Content(
+            folderViewModel: FolderViewModel,
+            mainViewModel: MainViewModel,
+            onBack: () -> Unit
+        ) {
+            FolderManager(
+                folderViewModel = folderViewModel,
+                mainViewModel = mainViewModel,
+                onBack = onBack
             )
         }
     }

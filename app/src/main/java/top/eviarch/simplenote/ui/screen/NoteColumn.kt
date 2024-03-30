@@ -81,6 +81,7 @@ fun NotesColumn(
     onClick: (NoteEntity) -> Unit,
     onButtonClick: (NoteEntity) -> Unit,
     onDeleteNote: (NoteEntity) -> Unit,
+    onManageFolders: () -> Unit,
     onSelectFolder: (FolderEntity) -> Unit,
     onUnselectFolder: (FolderEntity) -> Unit,
     onSelectAllFolders: () -> Unit,
@@ -92,16 +93,27 @@ fun NotesColumn(
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .fillMaxSize()
     ) {
-        Row(
-            modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp)
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-        ) {
-            val allFolders by folderViewModel.folderListFlow.collectAsState(initial = emptyList())
-            val selectAllFolders by folderViewModel.selectAllFolders.collectAsState()
-            var forceUnselect by remember { mutableStateOf(false) }
-            if (!searchState) {
+        if (!searchState) {
+            Row(
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp)
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+            ) {
+                val allFolders by folderViewModel.folderListFlow.collectAsState(initial = emptyList())
+                val selectAllFolders by folderViewModel.selectAllFolders.collectAsState()
+                var forceUnselect by remember { mutableStateOf(false) }
+                ElevatedFilterChip(
+                    modifier = Modifier.padding(end = 8.dp),
+                    selected = selectAllFolders,
+                    onClick = onManageFolders,
+                    label = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.List,
+                            contentDescription = "Manage Folders"
+                        )
+                    }
+                )
                 ElevatedFilterChip(
                     modifier = Modifier.padding(end = 8.dp),
                     selected = selectAllFolders,
@@ -130,8 +142,11 @@ fun NotesColumn(
                 )
                 allFolders.forEach { folder ->
                     var selected by remember { mutableStateOf(false) }
-                    if (selectAllFolders) { selected = true }
-                    else if (forceUnselect) { selected = false }
+                    if (selectAllFolders) {
+                        selected = true
+                    } else if (forceUnselect) {
+                        selected = false
+                    }
                     ElevatedFilterChip(
                         modifier = Modifier.padding(end = 8.dp),
                         selected = selected,
