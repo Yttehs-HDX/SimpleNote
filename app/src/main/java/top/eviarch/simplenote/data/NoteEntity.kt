@@ -3,12 +3,10 @@ package top.eviarch.simplenote.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-const val EmptyId = 0L
-
 @Entity
 data class NoteEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = EmptyId,
+    @PrimaryKey
+    val id: Long = 0L,
 
     val title: String = "",
 
@@ -16,5 +14,7 @@ data class NoteEntity(
 
     val modifiedDate: Long = System.currentTimeMillis(),
 
-    val lock: Boolean = false
+    val lock: Boolean = false,
+
+    val folder: String = ""
 )

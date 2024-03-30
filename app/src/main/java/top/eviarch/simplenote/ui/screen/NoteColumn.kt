@@ -2,6 +2,7 @@ package top.eviarch.simplenote.ui.screen
 
 import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,23 +12,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,9 +54,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import top.eviarch.simplenote.DateFormatValue
+import top.eviarch.simplenote.FolderViewModel
 import top.eviarch.simplenote.R
 import top.eviarch.simplenote.StyleValue
 import top.eviarch.simplenote.core.SimpleNoteApplication
+import top.eviarch.simplenote.data.FolderEntity
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.extra.ToastUtil
 import top.eviarch.simplenote.extra.limitContent
@@ -63,6 +71,7 @@ import kotlin.math.roundToInt
 @Composable
 fun NotesColumn(
     scrollBehavior: TopAppBarScrollBehavior,
+    folderViewModel: FolderViewModel,
     noteList: List<NoteEntity>,
     style: StyleValue,
     dateFormat: String,
@@ -71,13 +80,88 @@ fun NotesColumn(
     matchedString: String,
     onClick: (NoteEntity) -> Unit,
     onButtonClick: (NoteEntity) -> Unit,
-    onDeleteNote: (NoteEntity) -> Unit
+    onDeleteNote: (NoteEntity) -> Unit,
+    onSelectFolder: (FolderEntity) -> Unit,
+    onUnselectFolder: (FolderEntity) -> Unit,
+    onSelectAllFolders: () -> Unit,
+    onUnselectAllFolders: () -> Unit,
+    onSetFolder: (NoteEntity) -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
             .fillMaxSize()
     ) {
+        Row(
+            modifier = Modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+        ) {
+            val allFolders by folderViewModel.folderListFlow.collectAsState(initial = emptyList())
+            val selectAllFolders by folderViewModel.selectAllFolders.collectAsState()
+            var forceUnselect by remember { mutableStateOf(false) }
+            if (!searchState) {
+                ElevatedFilterChip(
+                    modifier = Modifier.padding(end = 8.dp),
+                    selected = selectAllFolders,
+                    onClick = {
+                        if (!selectAllFolders) {
+                            onSelectAllFolders()
+                            folderViewModel.setSelectAllFolders(true)
+                        } else {
+                            forceUnselect = true
+                            onUnselectAllFolders()
+                            folderViewModel.setSelectAllFolders(false)
+                        }
+                    },
+                    label = {
+                        Row {
+                            if (selectAllFolders) {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = "Select"
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                            Text(text = SimpleNoteApplication.Context.getString(R.string.all))
+                        }
+                    }
+                )
+                allFolders.forEach { folder ->
+                    var selected by remember { mutableStateOf(false) }
+                    if (selectAllFolders) { selected = true }
+                    else if (forceUnselect) { selected = false }
+                    ElevatedFilterChip(
+                        modifier = Modifier.padding(end = 8.dp),
+                        selected = selected,
+                        onClick = {
+                            if (selected) {
+                                selected = false
+                                onUnselectFolder(folder)
+                                folderViewModel.setSelectAllFolders(false)
+                            } else {
+                                forceUnselect = false
+                                selected = true
+                                onSelectFolder(folder)
+                            }
+                        },
+                        label = {
+                            Row {
+                                if (selected) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = "Select"
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                }
+                                Text(folder.name)
+                            }
+                        }
+                    )
+                }
+            }
+        }
         if (noteList.isEmpty()) {
             EmptyNoteList()
         } else {
@@ -100,13 +184,18 @@ fun NotesColumn(
                                 onButtonClick = {
                                     onButtonClick(note)
                                 },
-                                onLongPress = { showDialog = true }
+                                onLongPress = { showDialog = true },
+                                onSetFolder = onSetFolder
                             )
                             DeleteWaringAlertDialog(
                                 showDialog = showDialog,
                                 onConfirm = {
                                     onDeleteNote(note)
-                                    ToastUtil.forceShowToast(SimpleNoteApplication.Context.getString(R.string.delete_succeed))
+                                    ToastUtil.forceShowToast(
+                                        SimpleNoteApplication.Context.getString(
+                                            R.string.delete_succeed
+                                        )
+                                    )
                                     showDialog = false
                                 },
                                 onDismiss = { showDialog = false }
@@ -135,13 +224,18 @@ fun NotesColumn(
                                 onButtonClick = {
                                     onButtonClick(note)
                                 },
-                                onLongPress = { showDialog = true }
+                                onLongPress = { showDialog = true },
+                                onSetFolder = onSetFolder
                             )
                             DeleteWaringAlertDialog(
                                 showDialog = showDialog,
                                 onConfirm = {
                                     onDeleteNote(note)
-                                    ToastUtil.forceShowToast(SimpleNoteApplication.Context.getString(R.string.delete_succeed))
+                                    ToastUtil.forceShowToast(
+                                        SimpleNoteApplication.Context.getString(
+                                            R.string.delete_succeed
+                                        )
+                                    )
                                     showDialog = false
                                 },
                                 onDismiss = { showDialog = false }
@@ -163,7 +257,8 @@ fun NoteCard(
     dateLimit: Long,
     onClick: () -> Unit,
     onButtonClick: () -> Unit,
-    onLongPress: () -> Unit
+    onLongPress: () -> Unit,
+    onSetFolder: (NoteEntity) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -249,39 +344,54 @@ fun NoteCard(
 
             Row {
                 if (note.modifiedDate < System.currentTimeMillis() - dateLimit) {
-                    IconButton(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        onClick = onLongPress
-                    ) {
-                        Icon(
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            imageVector = Icons.Default.Warning,
-                            tint = MaterialTheme.colorScheme.error,
-                            contentDescription = "Old",
-                        )
-                    }
+                    Icon(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = {
+                                        onLongPress()
+                                    },
+                                    onLongPress = {
+                                        onSetFolder(note)
+                                    }
+                                )
+                            },
+                        imageVector = Icons.Default.Warning,
+                        tint = MaterialTheme.colorScheme.error,
+                        contentDescription = "Old",
+                    )
                 } else if (note.lock) {
-                    IconButton(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        onClick =  onButtonClick
-                    ) {
-                        Icon(
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            imageVector = ImageVector.vectorResource(R.drawable.baseline_lock_person_24),
-                            contentDescription = "Locked",
-                        )
-                    }
+                    Icon(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = {
+                                        onButtonClick()
+                                    }
+                                )
+                            },
+                        imageVector = ImageVector.vectorResource(R.drawable.baseline_lock_person_24),
+                        contentDescription = "Locked",
+                    )
                 } else {
-                    IconButton(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        onClick = onClick
-                    ) {
-                        Icon(
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
-                        )
-                    }
+                    Icon(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = {
+                                        onClick()
+                                    },
+                                    onLongPress = {
+                                        onSetFolder(note)
+                                    }
+                                )
+                            },
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit",
+                    )
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 val formattedDate = SimpleDateFormat(dateFormat, Locale.getDefault()).format(Date(note.modifiedDate))
@@ -340,6 +450,7 @@ fun PreviewNoteCard() {
         matchedString = "is",
         onClick = { },
         onButtonClick = { },
-        onLongPress = { }
+        onLongPress = { },
+        onSetFolder = { }
     )
 }

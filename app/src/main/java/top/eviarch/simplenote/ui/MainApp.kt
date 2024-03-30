@@ -30,6 +30,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import top.eviarch.simplenote.AppDestination
+import top.eviarch.simplenote.FolderViewModel
 import top.eviarch.simplenote.MainViewModel
 import top.eviarch.simplenote.R
 import top.eviarch.simplenote.SettingsViewModel
@@ -51,6 +52,7 @@ fun MainApp(
     context: Context,
     navController: NavHostController,
     mainViewModel: MainViewModel,
+    folderViewModel: FolderViewModel,
     settingsViewModel: SettingsViewModel
 ) {
     Surface(
@@ -63,6 +65,8 @@ fun MainApp(
 
         val allNotes by mainViewModel.noteListFlow.collectAsState(initial = emptyList())
         val targetNote by mainViewModel.targetNote.collectAsState()
+
+        val allFolders by folderViewModel.folderListFlow.collectAsState(initial = emptyList())
 
         var searchState by rememberSaveable { mutableStateOf(false) }
         var matchedString by rememberSaveable { mutableStateOf("") }
@@ -177,6 +181,8 @@ fun MainApp(
                 )
             }
         ) { paddingValues ->
+            var selectedNotes by remember { mutableStateOf<List<NoteEntity>>(emptyList()) }
+            selectedNotes = allNotes
             @Suppress("DEPRECATION")
             AnimatedNavHost(
                 modifier = Modifier.padding(paddingValues),
@@ -184,10 +190,12 @@ fun MainApp(
                 startDestination = AppDestination.NotesColumnDestination.route,
             ) {
                 composable(route = AppDestination.NotesColumnDestination.route) {
+                    var showSetFolderDialog by remember { mutableStateOf(false) }
                     AppDestination.NotesColumnDestination.Content(
                         scrollBehavior = noteColumnTopBarScrollBehavior,
-                        viewModel = settingsViewModel,
-                        noteList = if (searchState) searchedNotes else allNotes,
+                        folderViewModel = folderViewModel,
+                        settingsViewModel = settingsViewModel,
+                        noteList = if (searchState) searchedNotes else selectedNotes,
                         searchState = searchState,
                         matchedString = matchedString,
                         onClick = { note ->
@@ -225,6 +233,42 @@ fun MainApp(
                         onDeleteNote = { note ->
                             mainViewModel.deleteNote(note)
                             searchedNotes = searchedNotes.filter { it != note }
+                        },
+                        onSelectFolder = { folder ->
+                            allNotes.filter { it.folder == folder.name }.forEach {
+                                if (it !in selectedNotes) {
+                                    selectedNotes = selectedNotes + it
+                                }
+                            }
+                        },
+                        onUnselectFolder = { folder ->
+                            allNotes.filter { it.folder == folder.name }.forEach {
+                                if (it in selectedNotes) {
+                                    selectedNotes = selectedNotes - it
+                                }
+                            }
+                        },
+                        onSelectAllFolders = {
+                            selectedNotes = allNotes
+                        },
+                        onUnselectAllFolders = {
+                            selectedNotes = emptyList()
+                        },
+                        onSetFolder = { note ->
+                            mainViewModel.updateTargetNote(note)
+                            showSetFolderDialog = true
+                        }
+                    )
+                    SetFolderDialog(
+                        visible = showSetFolderDialog,
+                        folders = allFolders,
+                        onConfirm = { folder ->
+                            mainViewModel.updateNote(targetNote.copy(folder = folder.name))
+                            mainViewModel.clearTargetNote()
+                            showSetFolderDialog = false
+                        },
+                        onDismiss = {
+                            showSetFolderDialog = false
                         }
                     )
                 }

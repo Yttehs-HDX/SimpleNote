@@ -8,11 +8,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import top.eviarch.simplenote.core.SimpleNoteApplication
 
 private const val DB_NAME = "writer_database"
-private const val TABLE_NAME = "NoteEntity"
 
-@Database(entities = [NoteEntity::class], version = 2, exportSchema = false)
+@Database(entities = [NoteEntity::class, FolderEntity::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
+    abstract fun folderDao(): FolderDao
 
     companion object {
         @Volatile
@@ -25,7 +25,8 @@ abstract class AppDatabase : RoomDatabase() {
                 AppDatabase::class.java,
                 DB_NAME
             )
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+//                .fallbackToDestructiveMigration()
                 .build()
                 .also {
                     Instance = it
@@ -34,7 +35,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN lock INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE NoteEntity ADD COLUMN lock INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE NoteEntity ADD COLUMN folder TEXT NOT NULL DEFAULT \"\"")
             }
         }
     }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import top.eviarch.simplenote.data.AppDatabase
 import top.eviarch.simplenote.data.NoteEntity
-import java.util.UUID
+import top.eviarch.simplenote.extra.UUIDUtil
 
 class MainViewModel(database: AppDatabase) : ViewModel() {
     private val noteDao = database.noteDao()
@@ -19,7 +19,7 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     val targetDestination: StateFlow<String>
         get() = _targetDestination
 
-    private val _targetNote = MutableStateFlow(NoteEntity(id = generateUniqueId()))
+    private val _targetNote = MutableStateFlow(NoteEntity(id = UUIDUtil.generateUniqueId()))
     val targetNote: StateFlow<NoteEntity>
         get() = _targetNote
 
@@ -38,14 +38,18 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
     }
 
     fun updateNote(note: NoteEntity) {
-        _targetNote.value = note
+        updateTargetNote(note)
         viewModelScope.launch {
             noteDao.insertOrUpdate(note)
         }
     }
 
+    fun updateTargetNote(note: NoteEntity) {
+        _targetNote.value = note
+    }
+
     fun clearTargetNote() {
-        _targetNote.value = NoteEntity(id = generateUniqueId())
+        _targetNote.value = NoteEntity(id = UUIDUtil.generateUniqueId())
     }
 
     fun updateAutoDeleteDialogVisibility(visible: Boolean) {
@@ -61,10 +65,6 @@ class MainViewModel(database: AppDatabase) : ViewModel() {
         viewModelScope.launch {
             noteDao.deleteNote(note)
         }
-    }
-
-    private fun generateUniqueId(): Long {
-        return UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE
     }
 
     private fun getAllNotes(): Flow<List<NoteEntity>> {

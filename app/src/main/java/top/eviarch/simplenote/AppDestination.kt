@@ -6,6 +6,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import top.eviarch.simplenote.data.FolderEntity
 import top.eviarch.simplenote.data.NoteEntity
 import top.eviarch.simplenote.ui.screen.EditNote
 import top.eviarch.simplenote.ui.screen.NotesColumn
@@ -22,19 +23,26 @@ interface AppDestination {
         @Composable
         fun Content(
             scrollBehavior: TopAppBarScrollBehavior,
-            viewModel: SettingsViewModel,
+            folderViewModel: FolderViewModel,
+            settingsViewModel: SettingsViewModel,
             noteList: List<NoteEntity>,
             searchState: Boolean,
             matchedString: String,
             onClick: (NoteEntity) -> Unit,
             onButtonClick: (NoteEntity) -> Unit,
-            onDeleteNote: (NoteEntity) -> Unit
+            onDeleteNote: (NoteEntity) -> Unit,
+            onSelectFolder: (FolderEntity) -> Unit,
+            onUnselectFolder: (FolderEntity) -> Unit,
+            onSelectAllFolders: () -> Unit,
+            onUnselectAllFolders: () -> Unit,
+            onSetFolder: (NoteEntity) -> Unit
         ) {
-            val style by viewModel.style.collectAsState()
-            val dateFormat by viewModel.dateFormat.collectAsState()
-            val autoDeleteDate by viewModel.autoDeleteDate.collectAsState()
+            val style by settingsViewModel.style.collectAsState()
+            val dateFormat by settingsViewModel.dateFormat.collectAsState()
+            val autoDeleteDate by settingsViewModel.autoDeleteDate.collectAsState()
             NotesColumn(
                 scrollBehavior = scrollBehavior,
+                folderViewModel = folderViewModel,
                 noteList = noteList,
                 style = style,
                 dateFormat = dateFormat.toString(),
@@ -43,7 +51,12 @@ interface AppDestination {
                 matchedString = matchedString,
                 onClick = onClick,
                 onButtonClick = onButtonClick,
-                onDeleteNote = onDeleteNote
+                onDeleteNote = onDeleteNote,
+                onSelectFolder = onSelectFolder,
+                onUnselectFolder = onUnselectFolder,
+                onSelectAllFolders = onSelectAllFolders,
+                onUnselectAllFolders = onUnselectAllFolders,
+                onSetFolder = onSetFolder
             )
         }
     }

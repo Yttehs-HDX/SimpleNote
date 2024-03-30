@@ -4,15 +4,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import top.eviarch.simplenote.FolderViewModel
 import top.eviarch.simplenote.MainViewModel
 import top.eviarch.simplenote.SettingsViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            MainViewModel(
-                mainApplication().container.database
-            )
+            MainViewModel(mainApplication().container.database)
+        }
+        initializer {
+            FolderViewModel(mainApplication().container.database)
         }
         initializer {
             SettingsViewModel()

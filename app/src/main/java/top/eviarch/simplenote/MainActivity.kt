@@ -15,8 +15,6 @@ import top.eviarch.simplenote.core.AppViewModelProvider
 import top.eviarch.simplenote.ui.MainApp
 import top.eviarch.simplenote.ui.theme.SimpleNoteTheme
 
-
-
 class MainActivity : FragmentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +27,7 @@ class MainActivity : FragmentActivity() {
                     context = this,
                     navController = rememberAnimatedNavController(),
                     settingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+                    folderViewModel = viewModel(factory = AppViewModelProvider.Factory),
                     mainViewModel = viewModel(factory = AppViewModelProvider.Factory)
                 )
             }
