@@ -217,14 +217,12 @@ fun MainApp(
                         matchedString = matchedString,
                         onClick = { note ->
                             if (note.lock) {
-                                ToastUtil.showToast(
-                                    SimpleNoteApplication.Context.getString(R.string.note_unlock_hint),
-                                    Toast.LENGTH_LONG
-                                )
+                                ToastUtil.showToast(SimpleNoteApplication.Context.getString(R.string.note_unlock_hint), Toast.LENGTH_LONG)
+                                mainViewModel.updateTargetNote(targetNote)
                             } else {
+                                mainViewModel.updateNote(note)
                                 val route = AppDestination.EditNoteDestination.route
                                 mainViewModel.updateDestination(route)
-                                mainViewModel.updateNote(note)
                                 navController.navigateSingleTopTo(route)
                                 searchState = false
                             }
@@ -243,9 +241,9 @@ fun MainApp(
                                     }
                                 )
                             } else {
+                                mainViewModel.updateNote(note)
                                 val route = AppDestination.EditNoteDestination.route
                                 mainViewModel.updateDestination(route)
-                                mainViewModel.updateNote(note)
                                 navController.navigateSingleTopTo(route)
                                 searchState = false
                             }
@@ -260,18 +258,10 @@ fun MainApp(
                             navController.navigateSingleTopTo(route)
                         },
                         onSelectFolder = { folder ->
-                            allNotes.filter { it.folder == folder.name }.forEach {
-                                if (it !in selectedNotes) {
-                                    selectedNotes = selectedNotes + it
-                                }
-                            }
+                            selectedNotes = selectedNotes + allNotes.filter { it.folder == folder.name }
                         },
                         onUnselectFolder = { folder ->
-                            allNotes.filter { it.folder == folder.name }.forEach {
-                                if (it in selectedNotes) {
-                                    selectedNotes = selectedNotes - it
-                                }
-                            }
+                            selectedNotes = selectedNotes.filter { it.folder != folder.name }
                         },
                         onSelectAllFolders = {
                             selectedNotes = allNotes
@@ -341,7 +331,8 @@ fun MainApp(
                     AppDestination.WebViewDestination.Content(
                         url = url,
                         onBack = {
-                            mainViewModel.updateDestination(AppDestination.SettingsDestination.route)
+                            val route = AppDestination.SettingsDestination.route
+                            mainViewModel.updateDestination(route)
                             navController.navigateBack()
                         }
                     )
@@ -358,6 +349,7 @@ fun MainApp(
             showDialog = autoDelete && deletingNotes.isNotEmpty(),
             deletingNotes = deletingNotes,
             onConfirm = {
+                mainViewModel.clearTargetNote()
                 deletingNotes.forEach {
                     mainViewModel.deleteNote(it)
                 }
@@ -371,10 +363,7 @@ fun MainApp(
             note = targetNote,
             folders = allFolders,
             onConfirm = { folder ->
-                mainViewModel.updateNote(targetNote.copy(
-                    modifiedDate = System.currentTimeMillis(),
-                    folder = folder.name
-                ))
+                mainViewModel.updateNote(targetNote.copy(folder = folder.name))
                 showSetFolderDialog = false
             },
             onDismiss = {
