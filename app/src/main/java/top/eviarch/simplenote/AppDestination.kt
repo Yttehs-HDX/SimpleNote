@@ -14,7 +14,7 @@ import top.eviarch.simplenote.ui.screen.NotesColumn
 import top.eviarch.simplenote.ui.screen.Settings
 import top.eviarch.simplenote.ui.screen.WebViewContainer
 
-interface AppDestination {
+sealed interface AppDestination {
     val route: String
 
     data object NotesColumnDestination : AppDestination {

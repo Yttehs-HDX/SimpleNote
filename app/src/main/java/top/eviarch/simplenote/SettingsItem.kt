@@ -7,7 +7,7 @@ typealias DateFormatValue = SettingsItem.DateFormat.DateFormatValue
 typealias StorageManagerValue = SettingsItem.StorageManager.StorageManagerValue
 typealias PositionValue = Pair<Float, Float>
 
-interface SettingsItem<T> {
+sealed interface SettingsItem<T> {
     val key: String
     val defaultValue: T
 
